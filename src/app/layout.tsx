@@ -119,8 +119,8 @@ export default async function RootLayout({
               url: 'https://devfelipeaugusto.com.br',
               image: 'https://devfelipeaugusto.com.br/og-image.png',
               sameAs: [
-                'https://github.com/felipedev90',
-                'https://www.linkedin.com/in/felipesilva90/',
+                'https://github.com/felipe-augst',
+                'https://www.linkedin.com/in/felipeaugst/',
               ],
               jobTitle: 'Fullstack Developer',
               address: {
