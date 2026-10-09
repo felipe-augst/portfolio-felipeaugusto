@@ -4,12 +4,12 @@ export const SOCIAL_LINKS = [
   {
     platform: 'github',
     label: 'Github',
-    href: 'https://github.com/felipedev90',
+    href: 'https://github.com/felipe-augst',
   },
   {
     platform: 'linkedin',
     label: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/felipesilva90/',
+    href: 'https://www.linkedin.com/in/felipeaugst/',
   },
   {
     platform: 'email',
