@@ -4,7 +4,7 @@ Portfolio profissional construído com foco em performance, acessibilidade e pr�
 
 🔗 **Live**: [devfelipeaugusto.com.br](https://devfelipeaugusto.com.br)
 
-![CI](https://github.com/felipedev90/portfolio-felipeaugusto/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/felipe-augst/portfolio-felipeaugusto/actions/workflows/ci.yml/badge.svg)
 
 ## Stack
 
@@ -74,4 +74,4 @@ src/
 
 ---
 
-Construído por [Felipe Augusto](https://www.linkedin.com/in/felipesilva90/) — Jundiaí, SP
+Construído por [Felipe Augusto](https://www.linkedin.com/in/felipeaugst/) — Jundiaí, SP

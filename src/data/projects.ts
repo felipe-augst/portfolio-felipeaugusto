@@ -21,7 +21,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipedev90/dev-store.git',
+      github: 'https://github.com/felipe-augst/dev-store.git',
       live: 'https://dev-store-zeta.vercel.app/',
     },
     featured: true,
@@ -42,7 +42,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.jwt,
     ],
     links: {
-      github: 'https://github.com/felipedev90/devstore-api.git',
+      github: 'https://github.com/felipe-augst/devstore-api.git',
       live: 'https://dev-store-zeta.vercel.app/',
     },
     featured: true,
@@ -69,7 +69,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipedev90/verzel-elitedev-eventos.git',
+      github: 'https://github.com/felipe-augst/verzel-elitedev-eventos.git',
       live: 'https://verzel-elitedev-eventos.vercel.app/',
     },
     featured: true,
@@ -91,7 +91,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipedev90/portfolio-felipeaugusto.git',
+      github: 'https://github.com/felipe-augst/portfolio-felipeaugusto.git',
       live: 'https://devfelipeaugusto.com.br',
     },
     featured: false,
@@ -113,7 +113,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipedev90/brunelli-irezumi',
+      github: 'https://github.com/felipe-augst/brunelli-irezumi',
       live: 'https://brunelli-irezumi.com.br/',
     },
     featured: false,
@@ -136,7 +136,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.githubactions,
     ],
     links: {
-      github: 'https://github.com/felipedev90/cidadeviva-api.git',
+      github: 'https://github.com/felipe-augst/cidadeviva-api.git',
     },
     featured: false,
   },
@@ -157,7 +157,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipedev90/lacrei-saude.git',
+      github: 'https://github.com/felipe-augst/lacrei-saude.git',
       live: 'https://lacrei-saude-teste-tecnico-felipe-augusto.vercel.app/',
     },
     featured: false,
@@ -179,7 +179,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipedev90/selmabolos.git',
+      github: 'https://github.com/felipe-augst/selmabolos.git',
       live: 'https://selmabolos.com.br/',
     },
     featured: false,
