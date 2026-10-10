@@ -108,19 +108,17 @@ test('com movimento reduzido, a tela de boas-vindas não alterna o texto nem ani
   expect([...greetings]).toEqual(['Bem-vindo ao meu portfólio'])
 })
 
-test('as rotas não têm violações de acessibilidade, com e sem a tela de boas-vindas', async ({
+// As rotas sem a tela ficam com o e2e/axe.spec.ts.
+test('com a tela de boas-vindas visível, a home não tem violações de acessibilidade', async ({
   page,
   makeAxeBuilder,
 }) => {
   await page.goto('/')
   await expect(splashScreen(page)).toBeVisible()
-  expect((await makeAxeBuilder().analyze()).violations).toEqual([])
-  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_HIDE_TIMEOUT_MS })
 
-  for (const route of ['/', '/stack', '/projects']) {
-    await page.goto(route)
-    expect((await makeAxeBuilder().analyze()).violations).toEqual([])
-  }
+  const { violations } = await makeAxeBuilder().analyze()
+
+  expect(violations).toEqual([])
 })
 
 test.describe('sem JavaScript', () => {
