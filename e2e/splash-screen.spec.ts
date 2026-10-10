@@ -51,6 +51,27 @@ test('em nova página do mesmo contexto, a tela de boas-vindas nunca fica visív
   await expect(splashScreen(page)).toBeHidden({ timeout: 0 })
 })
 
+test('com storage indisponível, a tela de boas-vindas aparece e a página não quebra', async ({
+  page,
+}) => {
+  const pageErrors: Error[] = []
+  page.on('pageerror', (error) => pageErrors.push(error))
+  // Como no modo privado com storage bloqueado: acessar o sessionStorage lança exceção.
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'sessionStorage', {
+      get() {
+        throw new DOMException('Storage bloqueado', 'SecurityError')
+      },
+    })
+  })
+
+  await page.goto('/')
+
+  await expect(splashScreen(page)).toBeVisible()
+  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_TOTAL_MS })
+  expect(pageErrors).toEqual([])
+})
+
 test.describe('sem JavaScript', () => {
   test.use({ javaScriptEnabled: false })
 
