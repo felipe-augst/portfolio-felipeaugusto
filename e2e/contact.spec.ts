@@ -74,6 +74,26 @@ test('o título do contato é lido como a frase completa', async ({ page }) => {
   await expect(heading).toHaveAccessibleName(TITLE)
 })
 
+test('a palavra visível do título do contato muda só depois que ele aparece e para antes de 6s', async ({
+  page,
+}) => {
+  test.setTimeout(60_000)
+  await page.goto('/')
+  // O título começa fora da tela. Uma rotação que começasse no carregamento já teria terminado.
+  await page.waitForTimeout(OBSERVATION_MS)
+
+  const title = contactTitle(page)
+  await title.scrollIntoViewIfNeeded()
+  const start = Date.now()
+  await expectFullyOpaque(title)
+  const changes = await watchChanges(animatedPart(title), start, OBSERVATION_MS + 2_000)
+
+  expect(changes.length, 'a palavra mudou depois que o título apareceu').toBeGreaterThan(0)
+  expect(changes.at(-1), `instantes das mudanças: ${changes.join(', ')}`).toBeLessThan(
+    OBSERVATION_MS,
+  )
+})
+
 test.describe('com movimento reduzido', () => {
   test.use({ reducedMotion: 'reduce' })
 
