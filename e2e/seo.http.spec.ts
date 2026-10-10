@@ -70,6 +70,36 @@ test('cada rota tem título e descrição próprios, também na prévia', async 
   }
 })
 
+test('robots.txt não bloqueia /_next/ nem /api/ e aponta para o sitemap', async ({ request }) => {
+  const robots = await (await request.get('/robots.txt')).text()
+  const disallowed = robots
+    .split('\n')
+    .filter((line) => /^disallow:/i.test(line))
+    .map((line) => line.slice('disallow:'.length).trim())
+    .filter(Boolean)
+
+  // Um caminho fica bloqueado quando começa com alguma regra `Disallow`.
+  for (const path of ['/_next/static/chunks/app.js', '/api/']) {
+    expect(
+      disallowed.filter((rule) => path.startsWith(rule)),
+      `regras que bloqueiam ${path}`,
+    ).toEqual([])
+  }
+  expect(robots).toMatch(new RegExp(`^Sitemap: ${SITE_URL}/sitemap\\.xml$`, 'm'))
+})
+
+test('sitemap lista /, /stack e /projects com lastModified fixo', async ({ request }) => {
+  const sitemap = await (await request.get('/sitemap.xml')).text()
+  const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)].map(([, loc]) =>
+    withoutQuery(loc),
+  )
+
+  expect(locations).toEqual(expect.arrayContaining(ROUTES.map((route) => `${SITE_URL}${route}`)))
+  expect(sitemap).toContain('<lastmod>')
+  // A data é fixada no build: outra requisição devolve o mesmo documento.
+  expect(await (await request.get('/sitemap.xml')).text()).toBe(sitemap)
+})
+
 test('a descrição de /stack não diz frontend', async ({ request }) => {
   const html = await (await request.get('/stack')).text()
 
