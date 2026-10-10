@@ -27,6 +27,30 @@ test('nenhuma requisição além de GET acontece durante ou depois do carregamen
   expect(nonGetRequests).toEqual([])
 })
 
+test('em contexto novo, a tela de boas-vindas aparece e some', async ({ page }) => {
+  await page.goto('/')
+
+  await expect(splashScreen(page)).toBeVisible()
+  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_TOTAL_MS })
+})
+
+test('em nova página do mesmo contexto, a tela de boas-vindas nunca fica visível', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_TOTAL_MS })
+
+  // A flag fica no sessionStorage, que é da aba: a nova página é uma nova navegação na mesma aba.
+  // Confere antes da hidratação, depois do load e depois do tempo que a tela duraria.
+  await page.goto('/stack', { waitUntil: 'commit' })
+  await page.waitForLoadState('domcontentloaded')
+  await expect(splashScreen(page)).toBeHidden({ timeout: 0 })
+  await page.waitForLoadState('load')
+  await expect(splashScreen(page)).toBeHidden({ timeout: 0 })
+  await page.waitForTimeout(SPLASH_TOTAL_MS)
+  await expect(splashScreen(page)).toBeHidden({ timeout: 0 })
+})
+
 test.describe('sem JavaScript', () => {
   test.use({ javaScriptEnabled: false })
 
