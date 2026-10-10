@@ -11,18 +11,20 @@ export const metadata = buildPageMetadata(PAGES.home)
 
 export default function Home() {
   return (
-    <main>
-      <Hero />
-      <RevealOnScroll delay={0.1}>
-        <About />
-      </RevealOnScroll>
-      <RevealOnScroll delay={0.2}>
-        <FeaturedProjects />
-      </RevealOnScroll>
-      <RevealOnScroll delay={0.3}>
-        <Contact />
-      </RevealOnScroll>
+    <>
+      <main>
+        <Hero />
+        <RevealOnScroll delay={0.1}>
+          <About />
+        </RevealOnScroll>
+        <RevealOnScroll delay={0.2}>
+          <FeaturedProjects />
+        </RevealOnScroll>
+        <RevealOnScroll delay={0.3}>
+          <Contact />
+        </RevealOnScroll>
+      </main>
       <Footer />
-    </main>
+    </>
   )
 }
