@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Fraunces, DM_Sans, Cinzel } from 'next/font/google'
 import './globals.css'
-import { cookies } from 'next/headers'
 import { SplashScreen } from '@/components/layout/SplashScreen'
 import { Nav } from '@/components/layout/Nav'
 
@@ -87,14 +86,11 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const cookieStore = await cookies()
-  const skeletonShown = cookieStore.get('skeleton_shown')?.value === '1'
-
   return (
     <html
       lang="pt-BR"
@@ -133,7 +129,7 @@ export default async function RootLayout({
             }),
           }}
         />
-        <SplashScreen initialShown={skeletonShown} />
+        <SplashScreen />
         <Nav />
         {children}
       </body>
