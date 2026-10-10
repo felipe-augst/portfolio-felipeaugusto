@@ -72,6 +72,16 @@ test('com storage indisponível, a tela de boas-vindas aparece e a página não 
   expect(pageErrors).toEqual([])
 })
 
+test('toda página marca o elemento raiz como "JS disponível" antes da hidratação', async ({
+  page,
+}) => {
+  // Na segunda página a tela já foi vista, e o marcador continua valendo.
+  for (const route of ['/', '/stack']) {
+    await page.goto(route, { waitUntil: 'domcontentloaded' })
+    expect(await page.locator('html').getAttribute('data-js')).not.toBeNull()
+  }
+})
+
 test.describe('sem JavaScript', () => {
   test.use({ javaScriptEnabled: false })
 
