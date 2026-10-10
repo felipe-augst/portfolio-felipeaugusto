@@ -2,23 +2,18 @@ import { ABOUT } from '@/data/about'
 import { SKILL_CATEGORIES } from '@/data/skills'
 import { Button } from '../ui/Button'
 import { ArrowRight } from 'lucide-react'
+import { Section } from '@/components/ui/Section'
+import { SectionEyebrow } from '@/components/ui/SectionEyebrow'
+import { SectionHeading } from '@/components/ui/SectionHeading'
 
 export function About() {
   return (
-    <section
-      id="about"
-      className="px-6 pb-10 md:px-12 xl:py-32 md:py-20 lg:py-40 max-w-350 mx-auto"
-    >
-      <div className="flex font-serif uppercase items-center gap-5 mb-14 text-[18px] tracking-[0.35em] text-sand-muted">
-        <span className="w-8 h-px bg-accent" />
-        Sobre
-      </div>
+    <Section id="about">
+      <SectionEyebrow className="mb-14">Sobre</SectionEyebrow>
 
       <div className="grid md:grid-cols-[1.1fr_1fr] gap-16 md:gap-16 lg:gap-24 items-start">
         <div>
-          <h2 className="font-serif text-4xl md:text-6xl font-light leading-tight tracking-[-0.03em] mb-10">
-            {ABOUT.title} <span className="text-accent not-italic">{ABOUT.titleHighlight}</span>
-          </h2>
+          <SectionHeading title={ABOUT.title} highlight={ABOUT.titleHighlight} className="mb-10" />
           {ABOUT.paragraphs.map((paragraph) => (
             <p key={paragraph} className="text-sand-muted mb-5 leading-relaxed max-w-xl">
               {paragraph}
@@ -52,6 +47,6 @@ export function About() {
           Ver stack completa
         </Button>
       </div>
-    </section>
+    </Section>
   )
 }
