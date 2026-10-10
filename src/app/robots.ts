@@ -1,15 +1,16 @@
 import type { MetadataRoute } from 'next'
+import { SITE } from '@/data/site'
 
+// Libera o site inteiro: os buscadores precisam de `/_next/` para renderizar a página.
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/_next/'],
       },
     ],
-    sitemap: 'https://devfelipeaugusto.com.br/sitemap.xml',
-    host: 'https://devfelipeaugusto.com.br',
+    sitemap: new URL('/sitemap.xml', SITE.url).href,
+    host: SITE.url,
   }
 }

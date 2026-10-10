@@ -4,6 +4,9 @@ import './globals.css'
 import { cookies } from 'next/headers'
 import { Skeleton } from '@/components/layout/Skeleton'
 import { Nav } from '@/components/layout/Nav'
+import { PAGES, SITE } from '@/data/site'
+import { PERSON_JSON_LD, serializeJsonLd } from '@/lib/json-ld'
+import { SITE_OPEN_GRAPH } from '@/lib/metadata'
 
 const fraunces = Fraunces({
   variable: '--font-fraunces',
@@ -27,50 +30,34 @@ const cinzel = Cinzel({
   weight: ['400', '500', '600'],
 })
 
+// Padrões do site. Cada página declara os próprios título, descrição, canonical e `og:url`.
 export const metadata: Metadata = {
-  metadataBase: new URL('https://devfelipeaugusto.com.br'),
+  metadataBase: new URL(SITE.url),
   title: {
-    default: 'Felipe Augusto | Fullstack Developer',
-    template: '%s | Felipe Augusto',
+    default: PAGES.home.title,
+    template: `%s | ${SITE.name}`,
   },
-  description:
-    'Fullstack Developer construindo produtos digitais com React, Next.js, TypeScript e Node.js. Portfolio de projetos em produção com foco em performance, acessibilidade e qualidade de código.',
+  description: SITE.description,
   keywords: [
-    'Fullstack Developer',
+    SITE.role,
     'React',
     'Next.js',
     'TypeScript',
     'Node.js',
     'Portfolio',
-    'Felipe Augusto',
+    SITE.name,
     'Desenvolvedor Fullstack',
-    'Jundiaí',
+    SITE.location.city,
   ],
-  authors: [{ name: 'Felipe Augusto', url: 'https://devfelipeaugusto.com.br' }],
-  creator: 'Felipe Augusto',
+  authors: [{ name: SITE.name, url: SITE.url }],
+  creator: SITE.name,
   openGraph: {
-    type: 'website',
-    locale: 'pt_BR',
-    url: 'https://devfelipeaugusto.com.br',
-    siteName: 'Felipe Augusto',
-    title: 'Felipe Augusto — Fullstack Developer',
-    description:
-      'Fullstack Developer construindo produtos digitais com React, Next.js, TypeScript e Node.js.',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Felipe Augusto — Fullstack Developer',
-      },
-    ],
+    ...SITE_OPEN_GRAPH,
+    title: PAGES.home.title,
+    description: SITE.description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Felipe Augusto — Fullstack Developer',
-    description:
-      'Fullstack Developer construindo produtos digitais com React, Next.js, TypeScript e Node.js.',
-    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -81,9 +68,6 @@ export const metadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
-  },
-  alternates: {
-    canonical: 'https://devfelipeaugusto.com.br',
   },
 }
 
@@ -111,27 +95,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Person',
-              name: 'Felipe Augusto',
-              url: 'https://devfelipeaugusto.com.br',
-              image: 'https://devfelipeaugusto.com.br/og-image.png',
-              sameAs: [
-                'https://github.com/felipe-augst',
-                'https://www.linkedin.com/in/felipeaugst/',
-              ],
-              jobTitle: 'Fullstack Developer',
-              address: {
-                '@type': 'PostalAddress',
-                addressLocality: 'Jundiaí',
-                addressRegion: 'SP',
-                addressCountry: 'BR',
-              },
-              knowsAbout: ['React', 'Next.js', 'TypeScript', 'Node.js', 'Fullstack Development'],
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(PERSON_JSON_LD) }}
         />
         <Skeleton initialShown={skeletonShown} />
         <Nav />
