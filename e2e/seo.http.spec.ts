@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures'
-import { getLinkHref, getMeta } from './html'
+import { getLinkHref, getMeta, getTitle } from './html'
 
 // URL de produção: canonical, `og:url` e imagens apontam para ela, e não para o servidor local.
 const SITE_URL = 'https://devfelipeaugusto.com.br'
@@ -53,3 +53,26 @@ for (const route of ROUTES) {
     }
   })
 }
+
+test('cada rota tem título e descrição próprios, também na prévia', async ({ request }) => {
+  const pages = await Promise.all(ROUTES.map(async (route) => (await request.get(route)).text()))
+  const fields = {
+    title: pages.map(getTitle),
+    description: pages.map((html) => getMeta(html, 'description')),
+    'og:title': pages.map((html) => getMeta(html, 'og:title')),
+    'og:description': pages.map((html) => getMeta(html, 'og:description')),
+  }
+
+  for (const [field, values] of Object.entries(fields)) {
+    const declared = values.filter(Boolean)
+    expect(declared, `${field} ausente em alguma rota`).toHaveLength(ROUTES.length)
+    expect(new Set(declared).size, `${field} repetido: ${declared.join(' / ')}`).toBe(ROUTES.length)
+  }
+})
+
+test('a descrição de /stack não diz frontend', async ({ request }) => {
+  const html = await (await request.get('/stack')).text()
+
+  expect(getMeta(html, 'description')).toBeTruthy()
+  expect(getMeta(html, 'description')).not.toMatch(/front-?end/i)
+})

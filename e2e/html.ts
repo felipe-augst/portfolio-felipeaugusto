@@ -22,6 +22,12 @@ function getAttribute(tag: string, name: string) {
   return value === undefined ? undefined : decodeEntities(value)
 }
 
+/** Texto do `<title>`. */
+export function getTitle(html: string) {
+  const title = html.match(/<title>([^<]*)<\/title>/)?.[1]
+  return title === undefined ? undefined : decodeEntities(title)
+}
+
 /** `content` da `<meta>` cujo `property` ou `name` é `key` (por exemplo, `og:url`). */
 export function getMeta(html: string, key: string) {
   const tag = findTags(html, 'meta').find(
