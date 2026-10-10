@@ -1,6 +1,11 @@
 import { ImageResponse } from 'next/og'
+import { SITE } from '@/data/site'
 
-export const alt = 'Felipe Augusto — Frontend Developer'
+// Gerador único das imagens de prévia: o twitter-image e as subrotas reexportam este módulo.
+
+const [FIRST_NAME, ...LAST_NAMES] = SITE.name.split(' ')
+
+export const alt = `${SITE.name} — ${SITE.role}`
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -30,7 +35,7 @@ export default async function OpengraphImage() {
         }}
       >
         <div style={{ width: '48px', height: '2px', background: '#d4a574' }} />
-        Fullstack Developer
+        {SITE.role}
       </div>
 
       <div
@@ -50,7 +55,7 @@ export default async function OpengraphImage() {
             display: 'flex',
           }}
         >
-          Felipe
+          {FIRST_NAME}
         </div>
         <div
           style={{
@@ -63,7 +68,7 @@ export default async function OpengraphImage() {
             display: 'flex',
           }}
         >
-          Augusto.
+          {`${LAST_NAMES.join(' ')}.`}
         </div>
       </div>
 
@@ -86,7 +91,7 @@ export default async function OpengraphImage() {
           <span style={{ color: '#3a3830' }}>·</span>
           <span>Node.js</span>
         </div>
-        <div style={{ color: '#6b6960' }}>devfelipeaugusto.com.br</div>
+        <div style={{ color: '#6b6960' }}>{new URL(SITE.url).host}</div>
       </div>
     </div>,
     { ...size },

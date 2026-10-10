@@ -55,21 +55,12 @@ export const metadata: Metadata = {
     title: 'Felipe Augusto — Fullstack Developer',
     description:
       'Fullstack Developer construindo produtos digitais com React, Next.js, TypeScript e Node.js.',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Felipe Augusto — Fullstack Developer',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Felipe Augusto — Fullstack Developer',
     description:
       'Fullstack Developer construindo produtos digitais com React, Next.js, TypeScript e Node.js.',
-    images: ['/og-image.png'],
   },
   robots: {
     index: true,
