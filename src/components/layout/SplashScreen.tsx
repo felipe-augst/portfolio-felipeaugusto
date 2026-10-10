@@ -19,9 +19,13 @@ export function SplashScreen() {
     // O script inline do <head> já decidiu se a tela aparece nesta página.
     if (!document.documentElement.hasAttribute(SPLASH_ATTRIBUTE)) return
 
-    const languageInterval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % GREETINGS.length)
-    }, 1500)
+    // Com movimento reduzido, o texto não alterna; a duração da tela continua a mesma.
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const languageInterval = reducedMotion
+      ? undefined
+      : setInterval(() => {
+          setIndex((prev) => (prev + 1) % GREETINGS.length)
+        }, 1500)
 
     const fadeTimer = setTimeout(() => {
       setFaded(true)
@@ -57,14 +61,14 @@ export function SplashScreen() {
       )}
     >
       <div className="font-serif text-sand text-5xl md:text-7xl font-light tracking-[0.03em] flex flex-col items-center text-center">
-        <div key={index} className="animate-in fade-in duration-300">
+        <div key={index} className="motion-safe:animate-in motion-safe:fade-in duration-300">
           {currentGreeting.welcome}{' '}
           <em className="text-accent not-italic">{currentGreeting.highlight}</em>
         </div>
       </div>
 
       <div className="relative h-px w-64 bg-border-strong overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-r from-transparent via-accent to-transparent animate-scan" />
+        <div className="absolute inset-0 bg-linear-to-r from-transparent via-accent to-transparent motion-safe:animate-scan" />
       </div>
     </div>
   )
