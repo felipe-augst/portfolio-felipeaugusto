@@ -21,4 +21,6 @@ export type SiteConfig = {
 
 export type PageSeo = {
   path: string
+  title: string
+  description: string
 }

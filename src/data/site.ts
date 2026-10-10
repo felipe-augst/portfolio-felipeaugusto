@@ -22,14 +22,23 @@ export const SITE = {
   },
 } as const satisfies SiteConfig
 
+// Título completo de cada rota, como aparece na aba e na prévia de compartilhamento.
 export const PAGES = {
   home: {
     path: '/',
+    title: `${SITE.name} | ${SITE.role}`,
+    description: SITE.description,
   },
   stack: {
     path: '/stack',
+    title: `Tecnologias | ${SITE.name}`,
+    description:
+      'Tecnologias e ferramentas que uso no dia a dia como desenvolvedor fullstack: interfaces, APIs, bancos de dados, testes e CI/CD.',
   },
   projects: {
     path: '/projects',
+    title: `Projetos | ${SITE.name}`,
+    description:
+      'Projetos em produção de Felipe Augusto: aplicações web, APIs REST e sites com Next.js, TypeScript e Node.js, com o código aberto no GitHub.',
   },
 } as const satisfies Record<string, PageSeo>

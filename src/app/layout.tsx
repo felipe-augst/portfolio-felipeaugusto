@@ -4,7 +4,7 @@ import './globals.css'
 import { cookies } from 'next/headers'
 import { Skeleton } from '@/components/layout/Skeleton'
 import { Nav } from '@/components/layout/Nav'
-import { SITE } from '@/data/site'
+import { PAGES, SITE } from '@/data/site'
 import { SITE_OPEN_GRAPH } from '@/lib/metadata'
 
 const fraunces = Fraunces({
@@ -29,38 +29,34 @@ const cinzel = Cinzel({
   weight: ['400', '500', '600'],
 })
 
+// Padrões do site. Cada página declara os próprios título, descrição, canonical e `og:url`.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: 'Felipe Augusto | Fullstack Developer',
-    template: '%s | Felipe Augusto',
+    default: PAGES.home.title,
+    template: `%s | ${SITE.name}`,
   },
-  description:
-    'Fullstack Developer construindo produtos digitais com React, Next.js, TypeScript e Node.js. Portfolio de projetos em produção com foco em performance, acessibilidade e qualidade de código.',
+  description: SITE.description,
   keywords: [
-    'Fullstack Developer',
+    SITE.role,
     'React',
     'Next.js',
     'TypeScript',
     'Node.js',
     'Portfolio',
-    'Felipe Augusto',
+    SITE.name,
     'Desenvolvedor Fullstack',
-    'Jundiaí',
+    SITE.location.city,
   ],
-  authors: [{ name: 'Felipe Augusto', url: 'https://devfelipeaugusto.com.br' }],
-  creator: 'Felipe Augusto',
+  authors: [{ name: SITE.name, url: SITE.url }],
+  creator: SITE.name,
   openGraph: {
     ...SITE_OPEN_GRAPH,
-    title: 'Felipe Augusto — Fullstack Developer',
-    description:
-      'Fullstack Developer construindo produtos digitais com React, Next.js, TypeScript e Node.js.',
+    title: PAGES.home.title,
+    description: SITE.description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Felipe Augusto — Fullstack Developer',
-    description:
-      'Fullstack Developer construindo produtos digitais com React, Next.js, TypeScript e Node.js.',
   },
   robots: {
     index: true,

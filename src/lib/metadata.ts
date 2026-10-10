@@ -10,10 +10,15 @@ export const SITE_OPEN_GRAPH = {
   siteName: SITE.name,
 } as const satisfies Metadata['openGraph']
 
-/** Metadados próprios de uma rota. Caminhos relativos resolvem contra o `metadataBase` do layout. */
-export function buildPageMetadata({ path }: PageSeo): Metadata {
+/**
+ * Metadados próprios de uma rota. Caminhos relativos resolvem contra o `metadataBase` do layout.
+ * O Next preenche título, descrição e imagem do Twitter a partir do `openGraph`.
+ */
+export function buildPageMetadata({ path, title, description }: PageSeo): Metadata {
   return {
+    title: { absolute: title },
+    description,
     alternates: { canonical: path },
-    openGraph: { ...SITE_OPEN_GRAPH, url: path },
+    openGraph: { ...SITE_OPEN_GRAPH, url: path, title, description },
   }
 }
