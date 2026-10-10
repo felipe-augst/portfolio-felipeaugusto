@@ -65,6 +65,7 @@ Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 
 Decisões que não estão na spec #33. A mais recente fica no topo.
 
+- **2026-10-09:** a implementação segue TDD, com um critério de aceite por ciclo red → green (commit do teste e depois o da implementação). Os testes são permanentes: um teste só é alterado ou removido quando o ticket muda o comportamento que ele verifica, e o PR declara isso.
 - **2026-10-09:** commits e PRs têm só o dono do repositório como autor, sem co-autoria de IA nem menção a ferramentas de IA. A configuração do projeto em `.claude/settings.json` desliga a atribuição automática.
 - **2026-10-09:** os PRs para a `develop` usam `Closes #NN`, mas a issue é fechada manualmente depois do merge. As closing keywords só fecham issues em PRs para a branch padrão, e o fechamento é o que libera os tickets bloqueados.
 - **2026-10-09:** os PRs de ticket entram na `develop` com squash. O release `develop` → `main` usa merge commit.

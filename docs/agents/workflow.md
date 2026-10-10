@@ -37,14 +37,19 @@ Concluído quando a issue está atribuída a você.
 
 Para trabalhar em paralelo em outro terminal, use um `git worktree` por ticket. Dois tickets no mesmo diretório trocariam a branch um do outro.
 
-### 4. Implemente em red → green
+### 4. Implemente em ciclos red → green
 
 1. Leia a issue inteira (corpo + comentários) e a seção da spec #33 da área do ticket.
 2. Leia o guia relevante em `node_modules/next/dist/docs/` antes de escrever código.
-3. Escreva primeiro os testes E2E dos critérios de aceite e veja-os _red_. Depois implemente até ficarem _green_. Antes do #35, o projeto ainda não tem suíte: verifique cada critério manualmente e registre como verificou.
-4. Aplique `docs/agents/standards.md`.
-5. Se o ticket mudar uma convenção, estrutura ou padrão descrito em `AGENTS.md` ou em `docs/agents/`, atualize o documento no mesmo PR.
-6. Registre no status, em "Registro de decisões", toda decisão de implementação que não esteja na spec.
+3. Trabalhe **um critério de aceite por vez**. Cada ciclo é um tracer bullet:
+   1. **Red:** escreva o teste E2E desse critério e rode só esse arquivo. O teste precisa falhar na asserção do comportamento que ainda não existe. Falha de seletor, de sintaxe ou de servidor ainda não é _red_: corrija o teste até a falha ser a certa. Commite o teste como `test(<scope>): ...`.
+   2. **Green:** implemente o mínimo que faz esse teste passar, sem antecipar os próximos critérios. Rode a suíte inteira: os testes anteriores também precisam continuar _green_. Commite como `<tipo>(<scope>): ...`.
+   3. Passe para o próximo critério.
+4. Critério que não é comportamento observável de fora (versão de dependência, `.gitattributes`, documentação) não entra no ciclo: verifique pelo CI ou manualmente e registre como verificou. Antes do #35, o projeto ainda não tem suíte, e todos os critérios seguem essa regra.
+5. Com todos os critérios _green_, refatore. Cada passo de refatoração mantém a suíte _green_.
+6. Aplique `docs/agents/standards.md`.
+7. Se o ticket mudar uma convenção, estrutura ou padrão descrito em `AGENTS.md` ou em `docs/agents/`, atualize o documento no mesmo PR.
+8. Registre no status, em "Registro de decisões", toda decisão de implementação que não esteja na spec.
 
 Escopo de outro ticket fica fora do diff. Anote no handoff o que foi deixado para outro ticket e para qual.
 
@@ -53,6 +58,7 @@ Escopo de outro ticket fica fora do diff. Anote no handoff o que foi deixado par
 Concluído só quando **todos** valem:
 
 - cada critério de aceite da issue está atendido e tem evidência (teste E2E ou verificação registrada);
+- todo teste de ticket anterior que foi alterado ou removido no diff está justificado por um critério deste ticket;
 - `format:check`, `lint`, `typecheck`, `build` e a suíte E2E passam localmente;
 - a saída do `build` lista as rotas que o ticket tocou como `○ (Static)`.
 

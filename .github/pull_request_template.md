@@ -12,6 +12,12 @@ Closes #
 
 - [ ]
 
+## Testes alterados ou removidos
+
+<!-- Para cada teste existente que foi alterado ou removido: qual teste e qual critério deste ticket muda o comportamento que ele verificava. Se não houver, escreva "Nenhum". -->
+
+Nenhum
+
 ## Verificação
 
 - [ ] `npm run format:check`
