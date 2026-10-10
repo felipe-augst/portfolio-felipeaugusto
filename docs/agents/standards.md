@@ -30,10 +30,12 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar (su�
 ## Rotas e metadados
 
 - Cada rota declara `title`, `description`, `alternates.canonical` e `openGraph.url` próprios. O layout raiz fornece apenas os padrões do site.
-- Imagens de prévia (OG/Twitter) vêm do gerador por arquivo do App Router. Toda URL de imagem em metadados ou no JSON-LD responde 200.
-- URL do site, nome, cargo, localização e CV vêm da configuração central do site em `src/data/`.
+- A página exporta `metadata = buildPageMetadata(PAGES.<rota>)` (`src/lib/metadata.ts`). Caminho, título completo e descrição da rota ficam em `PAGES`, em `src/data/site.ts`.
+- Imagens de prévia (OG/Twitter) vêm do gerador por arquivo do App Router, `src/app/opengraph-image.tsx`. Toda URL de imagem em metadados ou no JSON-LD responde 200.
+- O `openGraph` de uma página substitui o do layout e, com ele, a imagem gerada na raiz. Toda subrota com metadados próprios tem um `opengraph-image.ts` que reexporta o gerador da raiz. A imagem do Twitter vem da raiz enquanto a página não declarar `twitter`.
+- URL do site, nome, cargo, localização e CV vêm da configuração central do site, `SITE`, em `src/data/site.ts`.
 - O cargo é "Fullstack Developer" em todo lugar.
-- Toda rota pública nova entra no sitemap. O robots.txt libera o site inteiro.
+- Toda rota pública nova entra em `PAGES`, que alimenta o sitemap. O robots.txt libera o site inteiro.
 - O JSON-LD é serializado com `<` escapado.
 
 ## Imagens e fontes

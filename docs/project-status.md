@@ -43,9 +43,9 @@ Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida qu
 
 ### #37 — fix/37-seo-metadata
 
-- **Estado:** branch criada a partir da `develop` em `5c0fd67`. Nenhum critério implementado ainda.
-- **Próximo passo:** primeiro ciclo red → green: canonical e `og:url` por rota.
-- **Atenção:** Hero e Contato só passam a consumir a configuração central no #46; aqui ela é criada e usada por layout, robots, sitemap, imagem OG e JSON-LD. O `<main>`/`<h1>` das subpáginas e a 404 são do #38, e o cookie do layout é do #36.
+- **Estado:** os 14 critérios estão atendidos e verificados. Cinco ciclos red → green em `e2e/seo.http.spec.ts` (16 testes de request), com o helper `e2e/html.ts`. Localmente passam `format:check`, `lint`, `typecheck`, `build` e a suíte E2E (25 testes). Conferi a imagem OG de `/stack` renderizada.
+- **Próximo passo:** abrir o PR para a `develop`.
+- **Atenção:** `SITE.cv` e `SITE.availability` ainda não têm consumidor. Hero e Contato passam a usá-los no #46, junto com o "Jundiaí / SP" escrito à mão no Contato. No build, `/`, `/stack` e `/projects` continuam `ƒ (Dynamic)` por causa do cookie lido no layout, que é escopo do #36. As rotas de metadados deste ticket (`opengraph-image`, `twitter-image`, `robots.txt`, `sitemap.xml`) saem `○ (Static)`. O `<main>`/`<h1>` das subpáginas e a 404 ficam para o #38. Uma 404 sem metadados próprios herda os padrões do layout, sem canonical. Duas suítes rodando ao mesmo tempo em worktrees diferentes disputam a porta 3100: o Playwright para com "already used". Basta rodar de novo quando a outra terminar.
 
 <!--
 Modelo de entrada:
@@ -68,6 +68,11 @@ Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 ## Registro de decisões
 
 Decisões que não estão na spec #33. A mais recente fica no topo.
+
+- **2026-10-10:** a configuração central é `SITE` em `src/data/site.ts`, ao lado de `PAGES`, que guarda caminho, título completo e descrição de cada rota pública e alimenta o sitemap. As páginas exportam `buildPageMetadata(PAGES.<rota>)` (`src/lib/metadata.ts`), que declara título absoluto, descrição, canonical e `openGraph` com os padrões do site repetidos, porque o merge de metadados do Next é raso. O layout fica com os padrões e um `twitter` só com `card`: o Next preenche título, descrição e imagem do Twitter a partir do `openGraph` da página.
+- **2026-10-10:** o merge raso faz o `openGraph` da página descartar a imagem gerada na raiz. Por isso `/stack` e `/projects` têm um `opengraph-image.ts` que reexporta `src/app/opengraph-image.tsx`. A home não precisa: o arquivo da raiz vale para o próprio segmento. O `twitter-image.ts` existe só na raiz e as subrotas o herdam, porque nenhuma página declara `twitter`.
+- **2026-10-10:** no JSON-LD, `image` aponta para a rota `/opengraph-image`, o `sameAs` usa só os perfis (GitHub e LinkedIn) dos links sociais, sem e-mail nem WhatsApp, e o `knowsAbout` vem dos nomes do `CORE_STACK`. Antes eram 4 tecnologias e "Fullstack Development" escritos à mão.
+- **2026-10-10:** os testes de SEO comparam canonical, `og:url` e imagens com a URL de produção (`https://devfelipeaugusto.com.br`), escrita no próprio teste como valor esperado. Para pedir uma imagem ao servidor de teste, o teste usa só o caminho e a query da URL absoluta.
 
 - **2026-10-10:** os perfis de navegador da suíte E2E usam o Chromium completo no headless novo (`channel: 'chromium'`), no lugar do headless shell padrão do Playwright. O Smart App Control do Windows bloqueia o executável do headless shell, e o Chromium completo é o mesmo navegador do Chrome. O CI instala com `--no-shell`.
 - **2026-10-10:** testes de nível de request ficam em arquivos `*.http.spec.ts` e rodam só no projeto `http` do Playwright. Os demais `*.spec.ts` rodam em `desktop-chromium` e `mobile-chromium` (Pixel 7).
