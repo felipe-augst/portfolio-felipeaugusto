@@ -13,7 +13,7 @@ export default function NotFound() {
       <p className="mb-12 max-w-xl leading-relaxed text-sand-muted">
         O endereço que você acessou não existe ou mudou de lugar.
       </p>
-      <Button href="/" trailingIcon={ArrowRight}>
+      <Button href="/" trailingIcon={ArrowRight} className="self-start">
         Ir para a página inicial
       </Button>
     </PageShell>
