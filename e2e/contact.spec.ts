@@ -12,6 +12,24 @@ function contactTitle(page: Page) {
   return page.getByRole('heading', { level: 2, name: TITLE })
 }
 
+// A tela de boas-vindas cobre a página na primeira visita da sessão, e o axe não confere o
+// contraste do que está coberto. Ela é decorativa (aria-hidden): o locator usa as saudações.
+// Ao terminar, ela pode ficar transparente, oculta ou sair do DOM.
+async function waitForSplashToEnd(page: Page) {
+  const splash = page.getByText(/^(Bem-vindo ao|Welcome to|Willkommen in) /)
+  await expect
+    .poll(
+      () =>
+        splash.evaluateAll((elements) =>
+          elements.some((element) =>
+            element.checkVisibility({ opacityProperty: true, visibilityProperty: true }),
+          ),
+        ),
+      { timeout: 10_000 },
+    )
+    .toBe(false)
+}
+
 // A parte animada do título fica fora da árvore de acessibilidade.
 function animatedPart(title: Locator) {
   return title.locator('[aria-hidden="true"]')
@@ -92,6 +110,21 @@ test('a palavra visível do título do contato muda só depois que ele aparece e
   expect(changes.at(-1), `instantes das mudanças: ${changes.join(', ')}`).toBeLessThan(
     OBSERVATION_MS,
   )
+})
+
+test('a seção de contato não tem violações de acessibilidade (axe)', async ({
+  page,
+  makeAxeBuilder,
+}) => {
+  await page.goto('/')
+  await waitForSplashToEnd(page)
+  const title = contactTitle(page)
+  await title.scrollIntoViewIfNeeded()
+  await expectFullyOpaque(title)
+
+  const { violations } = await makeAxeBuilder().include('#contact').analyze()
+
+  expect(violations).toEqual([])
 })
 
 test.describe('com movimento reduzido', () => {
