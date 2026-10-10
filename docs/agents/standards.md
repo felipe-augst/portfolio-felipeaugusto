@@ -90,8 +90,9 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar (su�
 - **Seam único.** Os testes usam um único seam: Playwright contra o build de produção (`next build` + `next start`). Toda a verificação acontece nesse nível.
 - **Comportamento externo.** Os testes verificam o que é visível de fora: status HTTP, headers, HTML servido, árvore de acessibilidade, foco, visibilidade e rede.
 - **Locators** são por papel e nome acessível em pt-BR (`getByRole`), para sobreviverem a refactors.
+- **Arquivos.** Os testes ficam em `e2e/` e importam `test` e `expect` de `e2e/fixtures.ts`. Teste de nível de request, sem navegador, usa o sufixo `.http.spec.ts` e roda só no projeto `http`. Os demais `*.spec.ts` rodam nos projetos `desktop-chromium` e `mobile-chromium`.
 - **Critérios de aceite.** Cada critério de aceite tem pelo menos um teste, e o teste nasce _red_ antes da correção (ciclo no passo 4 de `docs/agents/workflow.md`).
 - **Testes permanentes.** Um teste de critério de aceite é a trava contra regressão daquele comportamento nos tickets seguintes, e fica na suíte enquanto o comportamento existir.
 - **Mudança de comportamento.** Um teste existente só é alterado ou removido quando o ticket muda ou elimina o comportamento que ele verifica. O PR declara isso na seção "Testes alterados ou removidos", citando o critério que justifica.
 - **Teste existente falhando.** É regressão: o código é corrigido e o teste fica como está.
-- **Axe.** O axe (tags WCAG 2.0/2.1 A e AA) roda nas rotas tocadas, nos perfis desktop e mobile.
+- **Axe.** O axe (tags WCAG 2.0/2.1 A e AA) roda nas rotas tocadas, nos perfis desktop e mobile, pela fixture `makeAxeBuilder`.

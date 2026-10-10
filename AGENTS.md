@@ -27,9 +27,11 @@ Fonte de verdade das convenções, para humanos e agentes de IA.
 ## Stack
 
 - Next.js 16 (App Router) + React 19
+- Node 24 LTS, versão única em `.nvmrc` e `engines`
 - TypeScript 5 (strict + noUncheckedIndexedAccess)
 - Tailwind v4 CSS-first: design tokens em `globals.css`, classes geradas via `@theme inline`
 - ESLint 9 (flat config) + Prettier; Husky + lint-staged + commitlint
+- Playwright + `@axe-core/playwright` para a suíte E2E
 
 ## Estrutura de pastas
 
@@ -41,6 +43,7 @@ Fonte de verdade das convenções, para humanos e agentes de IA.
 - `src/types/` — tipagens compartilhadas
 - `src/lib/` — utilities puras
 - `src/hooks/` — custom hooks
+- `e2e/` — suíte E2E (Playwright) contra o build de produção
 - `docs/agents/` — documentação operacional para agentes
 
 ## Nomenclatura
