@@ -52,17 +52,31 @@ async function expectFullyOpaque(locator: Locator) {
 }
 
 // Texto que o elemento pinta: só os trechos sem `display: none`, `visibility: hidden` ou
-// opacidade 0, nele ou num ancestral.
+// opacidade 0, nele ou num ancestral, e não recortados por inteiro por um ancestral com overflow.
 function paintedText(locator: Locator) {
   return locator.evaluate((root) => {
+    function isPainted(element: Element) {
+      if (!element.checkVisibility({ opacityProperty: true, visibilityProperty: true })) {
+        return false
+      }
+      const rect = element.getBoundingClientRect()
+      for (let node = element.parentElement; node; node = node.parentElement) {
+        if (getComputedStyle(node).overflow === 'visible') continue
+        const clip = node.getBoundingClientRect()
+        const overlaps =
+          rect.top < clip.bottom &&
+          rect.bottom > clip.top &&
+          rect.left < clip.right &&
+          rect.right > clip.left
+        if (!overlaps) return false
+      }
+      return true
+    }
+
     const parts: string[] = []
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-      const visible = node.parentElement?.checkVisibility({
-        opacityProperty: true,
-        visibilityProperty: true,
-      })
-      if (visible) parts.push(node.textContent ?? '')
+      if (node.parentElement && isPainted(node.parentElement)) parts.push(node.textContent ?? '')
     }
     return parts.join(' ').replace(/\s+/g, ' ').trim()
   })
