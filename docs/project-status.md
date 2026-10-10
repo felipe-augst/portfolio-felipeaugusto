@@ -19,33 +19,33 @@ Status:
 - `em revisão` — PR aberto para a `develop`;
 - `entregue` — mergeado na `develop` e issue fechada.
 
-| Issue | Ticket                                                   | Bloqueado por      | Status     | Branch                      | PR  |
-| ----- | -------------------------------------------------------- | ------------------ | ---------- | --------------------------- | --- |
-| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue   | `chore/34-update-next-deps` | #49 |
-| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | em revisão | `chore/35-e2e-infra-ci`     | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | bloqueado  | —                           | —   |
-| #37   | SEO e metadados por rota                                 | #35                | bloqueado  | —                           | —   |
-| #38   | Shell de página, landmarks e página 404                  | #35                | bloqueado  | —                           | —   |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | bloqueado  | —                           | —   |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | bloqueado  | —                           | —   |
-| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | bloqueado  | —                           | —   |
-| #42   | Seção de contato acessível                               | #35                | bloqueado  | —                           | —   |
-| #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado  | —                           | —   |
-| #44   | Headers de segurança + CSP report-only                   | #36                | bloqueado  | —                           | —   |
-| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado  | —                           | —   |
-| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado  | —                           | —   |
+| Issue | Ticket                                                   | Bloqueado por      | Status       | Branch                         | PR  |
+| ----- | -------------------------------------------------------- | ------------------ | ------------ | ------------------------------ | --- |
+| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue     | `chore/34-update-next-deps`    | #49 |
+| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue     | `chore/35-e2e-infra-ci`        | #50 |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | em andamento | `feat/36-static-routes-splash` | —   |
+| #37   | SEO e metadados por rota                                 | #35                | em andamento | `fix/37-seo-metadata`          | —   |
+| #38   | Shell de página, landmarks e página 404                  | #35                | livre        | —                              | —   |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | livre        | —                              | —   |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | bloqueado    | —                              | —   |
+| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | livre        | —                              | —   |
+| #42   | Seção de contato acessível                               | #35                | livre        | —                              | —   |
+| #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado    | —                              | —   |
+| #44   | Headers de segurança + CSP report-only                   | #36                | bloqueado    | —                              | —   |
+| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
+| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** nenhuma. O #35 está em revisão, e o merge dele libera #36, #37, #38, #39, #41 e #42.
+**Frontier:** #38. Também estão livres #39, #41 e #42. O #36 e o #37 estão em andamento em paralelo, cada um no seu worktree.
 
 ## Handoff
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
-### #35 — chore/35-e2e-infra-ci
+### #36 — feat/36-static-routes-splash
 
-- **Estado:** PR #50 aberto para a `develop`, com todos os critérios verificados. Localmente passam `format:check` (sem ruído de CRLF), `lint`, `typecheck`, `build` e a suíte E2E (9 testes). No CI, conferi três execuções: tudo verde com cache vazio; uma sonda que falhou de propósito e publicou o artefato `playwright-report`; e tudo verde de novo com o cache dos navegadores encontrado. A sonda já foi removida.
-- **Próximo passo:** o dono revisa e faz o merge do #50 com squash. Depois, execute o passo 7: fechar o #35, liberar #36, #37, #38, #39, #41 e #42, e remover o aviso de CRLF.
-- **Atenção:** o Dependabot só passa a valer quando o `dependabot.yml` chegar à `main`, no release v2.0.0 (ver o registro de decisões). Até lá, o CI avisa que `actions/checkout`, `actions/setup-node` e `actions/cache` v4 rodam em Node 20, que está deprecated; a troca de major dessas actions fica para o Dependabot ou para um ticket próprio. No CI, o `next build` roda duas vezes: na etapa Build e no `webServer`. O cache do Turbopack deixa a segunda execução rápida, e o job inteiro leva ~1m10s.
+- **Estado:** branch criada a partir da `develop` (`5c0fd67`) no worktree `../portfolio-felipeaugusto-36`. Leva também o passo 7 do #35 (este status) e o `--autostash` no passo 3 do workflow. Nenhum critério de aceite implementado.
+- **Próximo passo:** passo 4 do workflow: ler a issue, a seção da spec #33 e o guia do Next em `node_modules/next/dist/docs/` sobre renderização estática e scripts no `<head>`; depois, red → green pelo primeiro critério.
+- **Atenção:** o #37 roda em paralelo no worktree `.claude/worktrees/crystalline-imagining-cray` (`fix/37-seo-metadata`), e a entrada de handoff dele fica na branch dele. O Playwright sobe o servidor na porta fixa 3100 com `reuseExistingServer: false`, então duas suítes E2E ao mesmo tempo colidem: rode uma de cada vez. Os dois tickets devem mexer no layout raiz, então quem fizer o merge depois atualiza a branch com a `develop` antes.
 
 <!--
 Modelo de entrada:
@@ -61,8 +61,7 @@ Modelo de entrada:
 
 Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 
-- **Até o #35:** no Windows, o `format:check` local acusa CRLF em ~45 arquivos por falta de `.gitattributes`. No CI ele passa. Considere ruído apenas as falhas de fim de linha.
-- **Até o #35:** a `main` não tem branch protection, apesar de a documentação antiga dizer que tinha. Configurar a proteção é decisão do dono do repo.
+- **Até o dono decidir:** a `main` não tem branch protection, apesar de a documentação antiga dizer que tinha. Configurar a proteção é decisão do dono do repo.
 - **Até o #46:** o `AGENTS.md` abre com o bloco gerenciado do Next (`<!-- BEGIN:nextjs-agent-rules -->` … `<!-- END:nextjs-agent-rules -->`), que veio do create-next-app. Desde o Next 16.3, o `next dev` reescreve o conteúdo entre esses marcadores com o texto da versão instalada quando detecta um agente de IA (opção `agentRules`, ligada por padrão), e isso gera diff no `AGENTS.md`. Não commite essa mudança junto com um ticket. Manter o bloco ou desligar com `agentRules: false` é decisão de documentação do #46. No Next 16.4, o `next build` também pode parar com um lembrete de upgrade (`experimental.agentUpgrade`) quando houver advisory para a versão instalada. Repetir o comando continua o build.
 
 ## Registro de decisões
@@ -84,6 +83,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-10 — Suíte E2E com Playwright, CI endurecido, Dependabot, `.gitattributes`, Node 24 e regra de `import type` mergeados na `develop` (#50), e o #35 foi fechado. Ficam livres #36, #37, #38, #39, #41 e #42.
 - 2026-10-10 — Next.js e `eslint-config-next` 16.4.0 + `npm audit fix` mergeados na `develop` (#49), e o #34 foi fechado. O audit de produção dá 0 vulnerabilidades, e o #35 está livre.
 - 2026-10-09 — CI passa a rodar em push e PR para a `develop` (#48). A parte do gatilho do #35 foi antecipada; o resto do ticket continua aberto.
 - 2026-10-09 — Documentação de agentes, skill `/ticket` e configuração sem atribuição de IA mergeadas na `develop` (#47).
