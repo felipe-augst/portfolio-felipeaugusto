@@ -13,6 +13,9 @@ export function Contact() {
   const [index, setIndex] = useState(0)
 
   useEffect(() => {
+    // Com movimento reduzido, o título fica estático na primeira palavra.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const interval = setInterval(() => {
       setIndex((current) => (current + 1) % animatedWords.length)
     }, 2500)
