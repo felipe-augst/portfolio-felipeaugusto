@@ -137,6 +137,24 @@ test('os ícones dos links sociais do contato são decorativos', async ({ page }
   }
 })
 
+test('os links sociais do contato avisam quando abrem em nova aba', async ({ page }) => {
+  await page.goto('/')
+
+  const contact = page.locator('#contact')
+
+  for (const name of ['GitHub', 'LinkedIn', 'WhatsApp']) {
+    const link = contact.getByRole('link', { name: new RegExp(`^Acessar ${name}`, 'i') })
+    await expect(link).toHaveAttribute('target', '_blank')
+    await expect(link).toHaveAccessibleName(`Acessar ${name} (abre em nova aba)`)
+  }
+
+  // Links mailto: abrem na mesma aba.
+  const email = contact.getByRole('link', { name: /^Acessar E-mail/i })
+  await expect(email).toHaveAttribute('href', /^mailto:/)
+  await expect(email).not.toHaveAttribute('target')
+  await expect(email).toHaveAccessibleName('Acessar E-mail')
+})
+
 test('a seção de contato não tem violações de acessibilidade (axe)', async ({
   page,
   makeAxeBuilder,
