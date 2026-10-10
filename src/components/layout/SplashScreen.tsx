@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/cn'
-import { markSkeletonShown } from '@/actions/skeleton'
 
 const GREETINGS = [
   { welcome: 'Bem-vindo ao', highlight: 'meu portfólio' },
@@ -21,7 +20,6 @@ export function SplashScreen() {
 
     const fadeTimer = setTimeout(() => {
       setFaded(true)
-      void markSkeletonShown()
       clearInterval(languageInterval)
     }, 3500)
 
