@@ -53,9 +53,10 @@ Servidor em [http://localhost:3000](http://localhost:3000).
 
 - **Commits**: Conventional Commits com scope obrigatório em kebab-case
   - Exemplo: `feat(hero): add cta button`, `fix(menu): correct overflow`
-- **Branches**: `feat/*`, `fix/*`, `chore/*`, `refactor/*`, `test/*`
-- **Branch base**: `main`, protegida via CI verde
-- **Detalhes adicionais**: ver [`CLAUDE.md`](./CLAUDE.md)
+- **Branches**: `<tipo>/<issue>-<slug>` (`feat`, `fix`, `chore`, `refactor`, `test`, `docs`), saindo da `develop`
+- **Fluxo**: PRs entram na `develop`; a `main` (produção) recebe só releases versionados (`v1.0.0`, `v2.0.0`…)
+- **Agentes de IA**: no Claude Code, `/ticket` executa o workflow (`/ticket`, `/ticket 35`, `/ticket status`, `/ticket release`)
+- **Detalhes adicionais**: ver [`AGENTS.md`](./AGENTS.md), [`docs/agents/workflow.md`](./docs/agents/workflow.md) e o progresso em [`docs/project-status.md`](./docs/project-status.md)
 
 ## Estrutura
 
