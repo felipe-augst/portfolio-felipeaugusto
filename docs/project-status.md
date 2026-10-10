@@ -24,8 +24,8 @@ Status:
 | #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue     | `chore/34-update-next-deps`    | #49 |
 | #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue     | `chore/35-e2e-infra-ci`        | #50 |
 | #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | em andamento | `feat/36-static-routes-splash` | —   |
-| #37   | SEO e metadados por rota                                 | #35                | em andamento | `fix/37-seo-metadata`          | —   |
-| #38   | Shell de página, landmarks e página 404                  | #35                | livre        | —                              | —   |
+| #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
+| #38   | Shell de página, landmarks e página 404                  | #35                | em andamento | `feat/38-page-shell-404`       | —   |
 | #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | livre        | —                              | —   |
 | #40   | Remover motion e respeitar movimento reduzido            | #36                | bloqueado    | —                              | —   |
 | #41   | Menu como diálogo modal + navegação interna consistente  | #35                | livre        | —                              | —   |
@@ -35,7 +35,7 @@ Status:
 | #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
 | #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** #38. Também estão livres #39, #41 e #42. O #36 e o #37 estão em andamento em paralelo, cada um no seu worktree.
+**Frontier:** #39. Também estão livres #41 e #42. O #36 e o #38 estão em andamento em paralelo, cada um no seu worktree.
 
 ## Handoff
 
@@ -43,9 +43,9 @@ Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida qu
 
 ### #36 — feat/36-static-routes-splash
 
-- **Estado:** branch criada a partir da `develop` (`5c0fd67`) no worktree `../portfolio-felipeaugusto-36`. Leva também o passo 7 do #35 (este status) e o `--autostash` no passo 3 do workflow. Nenhum critério de aceite implementado.
-- **Próximo passo:** passo 4 do workflow: ler a issue, a seção da spec #33 e o guia do Next em `node_modules/next/dist/docs/` sobre renderização estática e scripts no `<head>`; depois, red → green pelo primeiro critério.
-- **Atenção:** o #37 roda em paralelo no worktree `.claude/worktrees/crystalline-imagining-cray` (`fix/37-seo-metadata`), e a entrada de handoff dele fica na branch dele. O Playwright sobe o servidor na porta fixa 3100 com `reuseExistingServer: false`, então duas suítes E2E ao mesmo tempo colidem: rode uma de cada vez. Os dois tickets devem mexer no layout raiz, então quem fizer o merge depois atualiza a branch com a `develop` antes.
+- **Estado:** os 13 critérios estão atendidos, em sete ciclos red → green em `e2e/static-rendering.http.spec.ts` e `e2e/splash-screen.spec.ts`, mais axe com e sem a tela. A branch tem um merge da `develop` com o #37 (#51).
+- **Próximo passo:** abrir o PR para a `develop` (passo 6).
+- **Atenção:** o #44 precisa pôr o hash de `HEAD_SCRIPT` (`src/lib/head-script.ts`) na CSP, e qualquer mudança no script muda o hash. O #40 usa o atributo `data-js` (`JS_ATTRIBUTE`), que ainda não tem variante no Tailwind. O README ainda descreve o `Skeleton` com `dynamic`/`ssr: false` e `useSyncExternalStore`, o que não bate com o código; atualizar é do #46. O reset global de movimento reduzido ainda faz cintilar as animações infinitas fora da tela de boas-vindas (#40).
 
 <!--
 Modelo de entrada:
@@ -63,7 +63,8 @@ Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 
 - **Enquanto houver tickets em paralelo:** a suíte E2E sobe o servidor na porta fixa 3100 com `reuseExistingServer: false`. Duas suítes ao mesmo tempo, em worktrees diferentes, falham com `http://localhost:3100 is already used`. Rode uma de cada vez, ou use uma config local, fora do repo, que importe a `playwright.config.ts` e troque só a porta (`baseURL`, `webServer.command`, `webServer.url`) e os caminhos (`testDir`, `outputDir`, `webServer.cwd`).
 - **Até o #46:** depois de um `next dev`, o `typecheck` e o `next build` falham com `TS6133` em `.next/dev/types/validator.ts`, um arquivo gerado pelo dev que o `tsconfig` inclui (`.next/dev/types/**/*.ts`). Apague `.next/dev` antes de verificar. Tirar esse include do `tsconfig` é decisão de limpeza do #46.
-- **Até o dono decidir:** a `main` não tem branch protection, apesar de a documentação antiga dizer que tinha. Configurar a proteção é decisão do dono do repo.
+- **Até o dono configurar:** a `main` não tem branch protection (conferido em 2026-10-10, depois da entrega do #35), apesar de a documentação antiga dizer que tinha. Configurar a proteção é decisão do dono do repo.
+- **Até o release v2.0.0:** o CI avisa que `actions/checkout`, `actions/setup-node` e `actions/cache` v4 rodam em Node 20, que está deprecated. A troca de major dessas actions fica para o Dependabot, que só começa a valer quando o `dependabot.yml` chegar à `main`, ou para um ticket próprio.
 - **Até o #46:** o `AGENTS.md` abre com o bloco gerenciado do Next (`<!-- BEGIN:nextjs-agent-rules -->` … `<!-- END:nextjs-agent-rules -->`), que veio do create-next-app. Desde o Next 16.3, o `next dev` reescreve o conteúdo entre esses marcadores com o texto da versão instalada quando detecta um agente de IA (opção `agentRules`, ligada por padrão), e isso gera diff no `AGENTS.md`. Não commite essa mudança junto com um ticket. Manter o bloco ou desligar com `agentRules: false` é decisão de documentação do #46. No Next 16.4, o `next build` também pode parar com um lembrete de upgrade (`experimental.agentUpgrade`) quando houver advisory para a versão instalada. Repetir o comando continua o build.
 
 ## Registro de decisões
@@ -73,6 +74,11 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 - **2026-10-10:** o script inline do `<head>` é `HEAD_SCRIPT`, em `src/lib/head-script.ts`, e não no componente da tela: exports de um módulo `'use client'` chegam ao Server Component como referência de cliente, não como string. Ele marca o `<html>` com `data-js` (sempre) e `data-splash` (primeira página da sessão, flag `splash-seen` no `sessionStorage`). A tela usa a variante `splash:` do Tailwind (`@custom-variant` no `globals.css`) e remove o `data-splash` no `transitionend` do fade. O `<html>` tem `suppressHydrationWarning`. O conteúdo do script é fixo, e o #44 coloca o hash dele na CSP.
 - **2026-10-10:** a tela de boas-vindas é decorativa (`aria-hidden`), sem papel nem nome acessível. Por isso os testes dela localizam pelas saudações (`getByText`), exceção à regra de `getByRole`. Os testes de timer esperam em tempo real: com `page.clock`, o tempo pode avançar antes de a hidratação registrar os timers. Para afirmar "nunca visível", o teste confere na hora com `isVisible()`, porque `toBeHidden({ timeout: 0 })` espera sem limite.
 - **2026-10-10:** em `next dev`, os atributos do `<html>` sobrevivem à hidratação (amostrado a cada 0,5 s), e a tela aparece e some como em produção. Não foi preciso reaplicar os atributos no remount do Strict Mode, como o guia `preventing-flash-before-hydration` sugere.
+- **2026-10-10:** a configuração central é `SITE` em `src/data/site.ts`, ao lado de `PAGES`, que guarda caminho, título completo e descrição de cada rota pública e alimenta o sitemap. As páginas exportam `buildPageMetadata(PAGES.<rota>)` (`src/lib/metadata.ts`), que declara título absoluto, descrição, canonical e `openGraph` com os padrões do site repetidos, porque o merge de metadados do Next é raso. O layout fica com os padrões e um `twitter` só com `card`: o Next preenche título, descrição e imagem do Twitter a partir do `openGraph` da página.
+- **2026-10-10:** o merge raso faz o `openGraph` da página descartar a imagem gerada na raiz. Por isso `/stack` e `/projects` têm um `opengraph-image.ts` que reexporta `src/app/opengraph-image.tsx`. A home não precisa: o arquivo da raiz vale para o próprio segmento. O `twitter-image.ts` existe só na raiz e as subrotas o herdam, porque nenhuma página declara `twitter`.
+- **2026-10-10:** no JSON-LD, `image` aponta para a rota `/opengraph-image`, o `sameAs` usa só os perfis (GitHub e LinkedIn) dos links sociais, sem e-mail nem WhatsApp, e o `knowsAbout` vem dos nomes do `CORE_STACK`. Antes eram 4 tecnologias e "Fullstack Development" escritos à mão.
+- **2026-10-10:** os testes de SEO comparam canonical, `og:url` e imagens com a URL de produção (`https://devfelipeaugusto.com.br`), escrita no próprio teste como valor esperado. Para pedir uma imagem ao servidor de teste, o teste usa só o caminho e a query da URL absoluta.
+
 - **2026-10-10:** os perfis de navegador da suíte E2E usam o Chromium completo no headless novo (`channel: 'chromium'`), no lugar do headless shell padrão do Playwright. O Smart App Control do Windows bloqueia o executável do headless shell, e o Chromium completo é o mesmo navegador do Chrome. O CI instala com `--no-shell`.
 - **2026-10-10:** testes de nível de request ficam em arquivos `*.http.spec.ts` e rodam só no projeto `http` do Playwright. Os demais `*.spec.ts` rodam em `desktop-chromium` e `mobile-chromium` (Pixel 7).
 - **2026-10-10:** o `webServer` do Playwright sempre roda `next build` + `next start` na porta 3100, com `reuseExistingServer: false`, para a suíte nunca pegar um dev server que esteja aberto. O custo é um segundo build no CI.
@@ -88,7 +94,8 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
-- 2026-10-10 — Suíte E2E com Playwright, CI endurecido, Dependabot, `.gitattributes`, Node 24 e regra de `import type` mergeados na `develop` (#50), e o #35 foi fechado. Ficam livres #36, #37, #38, #39, #41 e #42.
+- 2026-10-10 — #37 em revisão no PR #51: configuração central do site, metadados e imagens de prévia por rota, robots, sitemap e JSON-LD.
+- 2026-10-10 — Suíte E2E com Playwright, CI endurecido (permissões de leitura, audit de produção, job E2E com artefato e cache dos navegadores), Dependabot, `.gitattributes` e Node 24 mergeados na `develop` (#50), e o #35 foi fechado. Ficam livres #36, #37, #38, #39, #41 e #42.
 - 2026-10-10 — Next.js e `eslint-config-next` 16.4.0 + `npm audit fix` mergeados na `develop` (#49), e o #34 foi fechado. O audit de produção dá 0 vulnerabilidades, e o #35 está livre.
 - 2026-10-09 — CI passa a rodar em push e PR para a `develop` (#48). A parte do gatilho do #35 foi antecipada; o resto do ticket continua aberto.
 - 2026-10-09 — Documentação de agentes, skill `/ticket` e configuração sem atribuição de IA mergeadas na `develop` (#47).

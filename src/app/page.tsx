@@ -4,6 +4,10 @@ import { Contact } from '@/components/sections/Contact'
 import { Footer } from '@/components/layout/Footer'
 import { FeaturedProjects } from '@/components/sections/FeaturedProjects'
 import { RevealOnScroll } from '@/components/ui/RevealOnScroll'
+import { PAGES } from '@/data/site'
+import { buildPageMetadata } from '@/lib/metadata'
+
+export const metadata = buildPageMetadata(PAGES.home)
 
 export default function Home() {
   return (
