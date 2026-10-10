@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import type { TransitionEvent } from 'react'
 import { cn } from '@/lib/cn'
-import { SPLASH_ATTRIBUTE } from '@/lib/splash-screen'
+import { SPLASH_ATTRIBUTE } from '@/lib/head-script'
 
 const GREETINGS = [
   { welcome: 'Bem-vindo ao', highlight: 'meu portfólio' },

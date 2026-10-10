@@ -3,7 +3,7 @@ import { Fraunces, DM_Sans, Cinzel } from 'next/font/google'
 import './globals.css'
 import { SplashScreen } from '@/components/layout/SplashScreen'
 import { Nav } from '@/components/layout/Nav'
-import { SPLASH_SCRIPT } from '@/lib/splash-screen'
+import { HEAD_SCRIPT } from '@/lib/head-script'
 
 const fraunces = Fraunces({
   variable: '--font-fraunces',
@@ -100,7 +100,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: SPLASH_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
         <link
           rel="preload"
           as="image"
