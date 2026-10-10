@@ -19,21 +19,21 @@ Status:
 - `em revisão` — PR aberto para a `develop`;
 - `entregue` — mergeado na `develop` e issue fechada.
 
-| Issue | Ticket                                                   | Bloqueado por      | Status       | Branch                      | PR  |
-| ----- | -------------------------------------------------------- | ------------------ | ------------ | --------------------------- | --- |
-| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue     | `chore/34-update-next-deps` | #49 |
-| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue     | `chore/35-e2e-infra-ci`     | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | livre        | —                           | —   |
-| #37   | SEO e metadados por rota                                 | #35                | em andamento | `fix/37-seo-metadata`       | —   |
-| #38   | Shell de página, landmarks e página 404                  | #35                | livre        | —                           | —   |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | livre        | —                           | —   |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | bloqueado    | —                           | —   |
-| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | livre        | —                           | —   |
-| #42   | Seção de contato acessível                               | #35                | livre        | —                           | —   |
-| #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado    | —                           | —   |
-| #44   | Headers de segurança + CSP report-only                   | #36                | bloqueado    | —                           | —   |
-| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                           | —   |
-| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                           | —   |
+| Issue | Ticket                                                   | Bloqueado por      | Status     | Branch                      | PR  |
+| ----- | -------------------------------------------------------- | ------------------ | ---------- | --------------------------- | --- |
+| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue   | `chore/34-update-next-deps` | #49 |
+| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue   | `chore/35-e2e-infra-ci`     | #50 |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | livre      | —                           | —   |
+| #37   | SEO e metadados por rota                                 | #35                | em revisão | `fix/37-seo-metadata`       | #51 |
+| #38   | Shell de página, landmarks e página 404                  | #35                | livre      | —                           | —   |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | livre      | —                           | —   |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | bloqueado  | —                           | —   |
+| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | livre      | —                           | —   |
+| #42   | Seção de contato acessível                               | #35                | livre      | —                           | —   |
+| #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado  | —                           | —   |
+| #44   | Headers de segurança + CSP report-only                   | #36                | bloqueado  | —                           | —   |
+| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado  | —                           | —   |
+| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado  | —                           | —   |
 
 **Frontier:** #36, #38, #39, #41 e #42.
 
@@ -43,8 +43,8 @@ Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida qu
 
 ### #37 — fix/37-seo-metadata
 
-- **Estado:** os 14 critérios estão atendidos e verificados. Cinco ciclos red → green em `e2e/seo.http.spec.ts` (16 testes de request), com o helper `e2e/html.ts`. Localmente passam `format:check`, `lint`, `typecheck`, `build` e a suíte E2E (25 testes). Conferi a imagem OG de `/stack` renderizada.
-- **Próximo passo:** abrir o PR para a `develop`.
+- **Estado:** PR #51 aberto para a `develop`. Os 14 critérios estão atendidos e verificados. Cinco ciclos red → green em `e2e/seo.http.spec.ts` (16 testes de request), com o helper `e2e/html.ts`. Localmente passam `format:check`, `lint`, `typecheck`, `build` e a suíte E2E (25 testes). Conferi a imagem OG de `/stack` renderizada.
+- **Próximo passo:** o dono revisa e faz o merge do #51 com squash. Depois, execute o passo 7: fechar o #37 e remover este handoff. Fechar o #37 não libera nenhum ticket sozinho: o #46 ainda espera #36, #38–#45.
 - **Atenção:** `SITE.cv` e `SITE.availability` ainda não têm consumidor. Hero e Contato passam a usá-los no #46, junto com o "Jundiaí / SP" escrito à mão no Contato. No build, `/`, `/stack` e `/projects` continuam `ƒ (Dynamic)` por causa do cookie lido no layout, que é escopo do #36. As rotas de metadados deste ticket (`opengraph-image`, `twitter-image`, `robots.txt`, `sitemap.xml`) saem `○ (Static)`. O `<main>`/`<h1>` das subpáginas e a 404 ficam para o #38. Uma 404 sem metadados próprios herda os padrões do layout, sem canonical. Duas suítes rodando ao mesmo tempo em worktrees diferentes disputam a porta 3100: o Playwright para com "already used". Basta rodar de novo quando a outra terminar.
 
 <!--
@@ -89,7 +89,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
-- 2026-10-10 — #37 iniciado na branch `fix/37-seo-metadata`.
+- 2026-10-10 — #37 em revisão no PR #51: configuração central do site, metadados e imagens de prévia por rota, robots, sitemap e JSON-LD.
 - 2026-10-10 — Suíte E2E com Playwright, CI endurecido (permissões de leitura, audit de produção, job E2E com artefato e cache dos navegadores), Dependabot, `.gitattributes` e Node 24 mergeados na `develop` (#50), e o #35 foi fechado. Ficam livres #36, #37, #38, #39, #41 e #42.
 - 2026-10-10 — Next.js e `eslint-config-next` 16.4.0 + `npm audit fix` mergeados na `develop` (#49), e o #34 foi fechado. O audit de produção dá 0 vulnerabilidades, e o #35 está livre.
 - 2026-10-09 — CI passa a rodar em push e PR para a `develop` (#48). A parte do gatilho do #35 foi antecipada; o resto do ticket continua aberto.
