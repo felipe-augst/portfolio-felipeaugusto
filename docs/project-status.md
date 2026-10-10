@@ -41,6 +41,12 @@ Status:
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
+### #36 — feat/36-static-routes-splash
+
+- **Estado:** PR #52 aberto para a `develop`, com os 13 critérios atendidos e verificados. Foram sete ciclos red → green em `e2e/static-rendering.http.spec.ts` (3 testes de request) e `e2e/splash-screen.spec.ts` (8 testes por perfil, incluindo axe com a tela visível). Os timers só com a tela habilitada foram verificados à mão, com `setTimeout`/`setInterval` instrumentados. A branch tem merges da `develop` com o #37 (#51) e o #38 (#53). Localmente passam `format:check`, `lint`, `typecheck`, `build` (todas as rotas `○ (Static)`) e a suíte E2E (60 testes, e 120 de 120 com `--repeat-each 2`).
+- **Próximo passo:** o dono revisa e faz o merge do #52 com squash. Depois, execute o passo 7: fechar o #36, o que libera o #40 e o #44.
+- **Atenção:** o #44 precisa pôr o hash de `HEAD_SCRIPT` (`src/lib/head-script.ts`) na CSP, e qualquer mudança no script muda o hash. O #40 usa o atributo `data-js` (`JS_ATTRIBUTE`), que ainda não tem variante no Tailwind. O README ainda descreve o `Skeleton` com `dynamic`/`ssr: false` e `useSyncExternalStore`, o que não bate com o código; atualizar é do #46. O reset global de movimento reduzido ainda faz cintilar as animações infinitas fora da tela de boas-vindas (#40).
+
 ### #38 — feat/38-page-shell-404
 
 - **Estado:** PR #53 aberto para a `develop`. Os 8 critérios estão atendidos e verificados. Foram três ciclos red → green: `e2e/not-found.spec.ts`, `e2e/landmarks.http.spec.ts` (com o helper `countTags` em `e2e/html.ts`) e `e2e/home-sections.spec.ts`. Depois vieram o refactor da home e o `e2e/axe.spec.ts`. Localmente passam `format:check`, `lint`, `typecheck`, `build` e a suíte E2E (41 testes). Conferi capturas em desktop e mobile da 404, da `/stack`, da `/projects` e das seções da home.
@@ -61,6 +67,8 @@ Modelo de entrada:
 
 Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 
+- **Enquanto houver tickets em paralelo:** a suíte E2E sobe o servidor na porta fixa 3100 com `reuseExistingServer: false`. Duas suítes ao mesmo tempo, em worktrees diferentes, falham com `http://localhost:3100 is already used`. Rode uma de cada vez, ou use uma config local, fora do repo, que importe a `playwright.config.ts` e troque só a porta (`baseURL`, `webServer.command`, `webServer.url`) e os caminhos (`testDir`, `outputDir`, `webServer.cwd`).
+- **Até o #46:** depois de um `next dev`, o `typecheck` e o `next build` falham com `TS6133` em `.next/dev/types/validator.ts`, um arquivo gerado pelo dev que o `tsconfig` inclui (`.next/dev/types/**/*.ts`). Apague `.next/dev` antes de verificar. Tirar esse include do `tsconfig` é decisão de limpeza do #46.
 - **Até o dono configurar:** a `main` não tem branch protection (conferido em 2026-10-10, depois da entrega do #35), apesar de a documentação antiga dizer que tinha. Configurar a proteção é decisão do dono do repo.
 - **Até o release v2.0.0:** o CI avisa que `actions/checkout`, `actions/setup-node` e `actions/cache` v4 rodam em Node 20, que está deprecated. A troca de major dessas actions fica para o Dependabot, que só começa a valer quando o `dependabot.yml` chegar à `main`, ou para um ticket próprio.
 - **Até o #46:** o `AGENTS.md` abre com o bloco gerenciado do Next (`<!-- BEGIN:nextjs-agent-rules -->` … `<!-- END:nextjs-agent-rules -->`), que veio do create-next-app. Desde o Next 16.3, o `next dev` reescreve o conteúdo entre esses marcadores com o texto da versão instalada quando detecta um agente de IA (opção `agentRules`, ligada por padrão), e isso gera diff no `AGENTS.md`. Não commite essa mudança junto com um ticket. Manter o bloco ou desligar com `agentRules: false` é decisão de documentação do #46. No Next 16.4, o `next build` também pode parar com um lembrete de upgrade (`experimental.agentUpgrade`) quando houver advisory para a versão instalada. Repetir o comando continua o build.
@@ -69,6 +77,10 @@ Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 
 Decisões que não estão na spec #33. A mais recente fica no topo.
 
+- **2026-10-10:** o script inline do `<head>` é `HEAD_SCRIPT`, em `src/lib/head-script.ts`, e não no componente da tela: exports de um módulo `'use client'` chegam ao Server Component como referência de cliente, não como string. Ele marca o `<html>` com `data-js` (sempre) e `data-splash` (primeira página da sessão, flag `splash-seen` no `sessionStorage`). A tela usa a variante `splash:` do Tailwind (`@custom-variant` no `globals.css`) e remove o `data-splash` no `transitionend` do fade. O `<html>` tem `suppressHydrationWarning`. O conteúdo do script é fixo, e o #44 coloca o hash dele na CSP.
+- **2026-10-10:** a tela de boas-vindas é decorativa (`aria-hidden`), sem papel nem nome acessível. Por isso os testes dela localizam pelas saudações (`getByText`), exceção à regra de `getByRole`. Os testes de timer esperam em tempo real: com `page.clock`, o tempo pode avançar antes de a hidratação registrar os timers. Para afirmar "nunca visível", o teste confere na hora com `isVisible()`, porque `toBeHidden({ timeout: 0 })` espera sem limite.
+- **2026-10-10:** a primeira saudação da tela de boas-vindas aparece sem fade-in, e o fade-in fica só na troca de idioma. Com o `e2e/axe.spec.ts` do #38, o axe às vezes pegava o texto a cerca de 10% de opacidade logo no carregamento (contraste 1,18) e falhava sob carga. As trocas de idioma (1,5 s e 3 s) e o fade final ainda baixam o contraste por 300–700 ms, mas o axe roda logo depois do load, antes delas.
+- **2026-10-10:** em `next dev`, os atributos do `<html>` sobrevivem à hidratação (amostrado a cada 0,5 s), e a tela aparece e some como em produção. Não foi preciso reaplicar os atributos no remount do Strict Mode, como o guia `preventing-flash-before-hydration` sugere.
 - **2026-10-10:** o `PageShell` põe o "Voltar" no topo, alinhado à esquerda, seguido do rótulo e do `<h1>` (um `SectionHeading` com `as="h1"`). Cada página tem um único "Voltar": o da `/stack` subiu do fim da página, e o segundo "Voltar" da `/projects`, que só aparecia abaixo de lg, saiu. Os `<h1>` repetem o texto dos links da home: "Stack completa" e "Todos os projetos". A 404 tem o rótulo "Erro 404" e o título "Página não encontrada". O fundo em gradiente, que só a `/stack` tinha, vale para todas as páginas do shell.
 - **2026-10-10:** o `SectionEyebrow` fica com `aria-hidden`: o leitor de tela ouve só o título da seção. O `Section` aplica o mesmo espaçamento em todos os breakpoints, e com isso Sobre ganha 40 px em cima no mobile e deixa de inverter lg/xl.
 - **2026-10-10:** a 404 é o `app/not-found.tsx`. O `global-not-found` é experimental e pularia o layout raiz. O título é "Página não encontrada | Felipe Augusto", sem canonical, e o Next injeta `noindex`. O rodapé da home saiu de dentro do `<main>` e passa a ser o landmark `contentinfo`.
@@ -94,6 +106,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
 - 2026-10-10 — #38 em revisão no PR #53: shell de página com `<main>` e `<h1>`, 404 em pt-BR e componentes de seção compartilhados.
+- 2026-10-10 — #36 em revisão no PR #52: rotas estáticas, tela de boas-vindas decidida no `<head>` uma vez por sessão, marcador `data-js` e site sem Server Action.
 - 2026-10-10 — SEO e metadados por rota mergeados na `develop` (#51), e o #37 foi fechado. Nenhum ticket é liberado: o #46 ainda espera #36 e #38–#45.
 - 2026-10-10 — #37 em revisão no PR #51: configuração central do site, metadados e imagens de prévia por rota, robots, sitemap e JSON-LD.
 - 2026-10-10 — Suíte E2E com Playwright, CI endurecido (permissões de leitura, audit de produção, job E2E com artefato e cache dos navegadores), Dependabot, `.gitattributes` e Node 24 mergeados na `develop` (#50), e o #35 foi fechado. Ficam livres #36, #37, #38, #39, #41 e #42.

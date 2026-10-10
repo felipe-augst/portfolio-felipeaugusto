@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { Fraunces, DM_Sans, Cinzel } from 'next/font/google'
 import './globals.css'
-import { cookies } from 'next/headers'
-import { Skeleton } from '@/components/layout/Skeleton'
+import { SplashScreen } from '@/components/layout/SplashScreen'
 import { Nav } from '@/components/layout/Nav'
 import { PAGES, SITE } from '@/data/site'
+import { HEAD_SCRIPT } from '@/lib/head-script'
 import { PERSON_JSON_LD, serializeJsonLd } from '@/lib/json-ld'
 import { SITE_OPEN_GRAPH } from '@/lib/metadata'
 
@@ -71,20 +71,20 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const cookieStore = await cookies()
-  const skeletonShown = cookieStore.get('skeleton_shown')?.value === '1'
-
   return (
     <html
       lang="pt-BR"
       className={`${fraunces.variable} ${dmSans.variable} ${cinzel.variable} h-full antialiased`}
+      // O script do <head> põe atributos no <html> antes da hidratação.
+      suppressHydrationWarning
     >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
         <link
           rel="preload"
           as="image"
@@ -97,7 +97,7 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(PERSON_JSON_LD) }}
         />
-        <Skeleton initialShown={skeletonShown} />
+        <SplashScreen />
         <Nav />
         {children}
       </body>
