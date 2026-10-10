@@ -5,6 +5,7 @@ import { MapPin, ArrowRight } from 'lucide-react'
 import { CONTACT } from '@/data/contact'
 import { SOCIAL_LINKS, SOCIAL_ICONS } from '@/data/social'
 import Image from 'next/image'
+import { Section } from '@/components/ui/Section'
 
 export function Contact() {
   const { prefix, animatedWords, suffix } = CONTACT.hero
@@ -22,10 +23,7 @@ export function Contact() {
   const longestWord = animatedWords.reduce((a, b) => (a.length > b.length ? a : b))
 
   return (
-    <section
-      id="contact"
-      className="px-6 md:px-12 py-10 md:py-20 lg:py-32 xl:py-40  max-w-350 mx-auto"
-    >
+    <Section id="contact">
       <div className="flex font-serif uppercase items-center gap-5 mb-14 text-[18px] tracking-[0.35em] text-sand-muted">
         <span className="w-8 h-px bg-accent" />
         Contato
@@ -110,6 +108,6 @@ export function Contact() {
           </Button>
         </div>
       </div>
-    </section>
+    </Section>
   )
 }

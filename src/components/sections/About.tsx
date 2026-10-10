@@ -2,13 +2,11 @@ import { ABOUT } from '@/data/about'
 import { SKILL_CATEGORIES } from '@/data/skills'
 import { Button } from '../ui/Button'
 import { ArrowRight } from 'lucide-react'
+import { Section } from '@/components/ui/Section'
 
 export function About() {
   return (
-    <section
-      id="about"
-      className="px-6 pb-10 md:px-12 xl:py-32 md:py-20 lg:py-40 max-w-350 mx-auto"
-    >
+    <Section id="about">
       <div className="flex font-serif uppercase items-center gap-5 mb-14 text-[18px] tracking-[0.35em] text-sand-muted">
         <span className="w-8 h-px bg-accent" />
         Sobre
@@ -52,6 +50,6 @@ export function About() {
           Ver stack completa
         </Button>
       </div>
-    </section>
+    </Section>
   )
 }
