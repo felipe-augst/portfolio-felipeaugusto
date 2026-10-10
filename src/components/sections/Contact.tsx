@@ -28,29 +28,32 @@ export function Contact() {
       <SectionEyebrow className="mb-14">Contato</SectionEyebrow>
       <div className="grid xl:grid-cols-[1.1fr_1fr] gap-16 md:gap-18 items-center lg:items-start">
         <h2 className="font-display text-center md:text-start text-5xl md:text-7xl lg:text-[90px] font-light leading-tight tracking-[-0.03em]">
-          <span>{prefix}</span>
-          <span className="relative flex flex-col justify-center overflow-hidden px-1 py-1">
-            <span className="invisible pointer-events-none font-medium">{longestWord}</span>
-            {animatedWords.map((word, i) => {
-              const isPrevious = i === (index - 1 + animatedWords.length) % animatedWords.length
-              const isActive = i === index
-              let positionClass = 'translate-y-full opacity-0'
-              if (isActive) {
-                positionClass = 'translate-y-0 opacity-100'
-              } else if (isPrevious) {
-                positionClass = '-translate-y-full opacity-0'
-              }
-              return (
-                <span
-                  key={word}
-                  className={`absolute inset-0 flex justify-center md:justify-start items-center md:items-start text-accent font-medium transition-all duration-500 ease-in-out ${positionClass}`}
-                >
-                  {word}
-                </span>
-              )
-            })}
+          <span className="sr-only">{[prefix, animatedWords[0], suffix].join(' ')}</span>
+          <span aria-hidden="true">
+            <span>{prefix}</span>
+            <span className="relative flex flex-col justify-center overflow-hidden px-1 py-1">
+              <span className="invisible pointer-events-none font-medium">{longestWord}</span>
+              {animatedWords.map((word, i) => {
+                const isPrevious = i === (index - 1 + animatedWords.length) % animatedWords.length
+                const isActive = i === index
+                let positionClass = 'translate-y-full opacity-0'
+                if (isActive) {
+                  positionClass = 'translate-y-0 opacity-100'
+                } else if (isPrevious) {
+                  positionClass = '-translate-y-full opacity-0'
+                }
+                return (
+                  <span
+                    key={word}
+                    className={`absolute inset-0 flex justify-center md:justify-start items-center md:items-start text-accent font-medium transition-all duration-500 ease-in-out ${positionClass}`}
+                  >
+                    {word}
+                  </span>
+                )
+              })}
+            </span>
+            <span>{suffix}</span>
           </span>
-          <span>{suffix}</span>
         </h2>
 
         <div className="flex flex-col w-full max-w-md md:items-center md:mx-auto">
