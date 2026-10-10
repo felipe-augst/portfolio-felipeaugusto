@@ -126,6 +126,17 @@ test('a palavra visível do título do contato muda só depois que ele aparece e
   )
 })
 
+test('os ícones dos links sociais do contato são decorativos', async ({ page }) => {
+  await page.goto('/')
+
+  const socialLinks = page.locator('#contact').getByRole('link', { name: /^Acessar / })
+
+  await expect(socialLinks).not.toHaveCount(0)
+  for (const link of await socialLinks.all()) {
+    await expect(link.getByRole('img')).toHaveCount(0)
+  }
+})
+
 test('a seção de contato não tem violações de acessibilidade (axe)', async ({
   page,
   makeAxeBuilder,
