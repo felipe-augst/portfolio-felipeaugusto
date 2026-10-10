@@ -19,8 +19,8 @@ export function PageShell({ eyebrow, title, titleHighlight, children }: PageShel
         className="absolute inset-0 bg-linear-to-t from-bg-2 to-transparent"
       />
 
-      <div className="relative z-10 mt-15 flex w-full max-w-5xl flex-col items-start md:mt-20">
-        <BackButton className="mb-12" />
+      <div className="relative z-10 mt-15 flex w-full max-w-5xl flex-col md:mt-20">
+        <BackButton className="mb-12 self-start" />
         <SectionEyebrow className="mb-4">{eyebrow}</SectionEyebrow>
         <SectionHeading as="h1" title={title} highlight={titleHighlight} className="mb-16" />
         {children}
