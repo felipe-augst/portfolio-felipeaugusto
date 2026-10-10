@@ -13,6 +13,7 @@ Portfolio profissional construído com foco em performance, acessibilidade e pr�
 - **Estilização**: Tailwind CSS v4 (CSS-first com `@theme inline`)
 - **Carrossel**: Embla Carousel (mobile only)
 - **Tooling**: ESLint 9, Prettier, Husky, lint-staged, commitlint
+- **Testes**: Playwright (E2E contra o build de produção) + axe-core
 - **Deploy**: Vercel
 - **CI/CD**: GitHub Actions
 
@@ -30,6 +31,8 @@ Portfolio profissional construído com foco em performance, acessibilidade e pr�
 
 ## Como rodar
 
+Requer Node 24 (versão em `.nvmrc`).
+
 ```bash
 npm install
 npm run dev
@@ -37,17 +40,39 @@ npm run dev
 
 Servidor em [http://localhost:3000](http://localhost:3000).
 
+## Testes E2E
+
+A suíte usa Playwright e roda sempre contra o build de produção. O `npm run test:e2e` faz `next build`, sobe o `next start` na porta 3100 e derruba o servidor no fim. A porta 3100 precisa estar livre: a suíte nunca reaproveita um servidor que já esteja rodando, nem o dev server.
+
+```bash
+npx playwright install --no-shell chromium  # uma vez, e de novo quando o Playwright mudar de versão
+npm run test:e2e                           # suíte completa
+npx playwright test --project=http         # só os testes de request, sem navegador
+npx playwright show-report                 # relatório HTML da última execução
+```
+
+Os testes ficam em `e2e/`, em três projetos:
+
+| Projeto            | O que roda                                                                |
+| ------------------ | ------------------------------------------------------------------------- |
+| `http`             | arquivos `*.http.spec.ts`: requests sem navegador (status, headers, HTML) |
+| `desktop-chromium` | demais arquivos `*.spec.ts`, no Chromium desktop                          |
+| `mobile-chromium`  | os mesmos arquivos, no Chromium com emulação de Pixel 7                   |
+
+No CI, a suíte roda em todo push e PR para `develop` e `main`. Quando ela falha, o relatório do Playwright fica disponível como artefato `playwright-report` na execução do workflow.
+
 ## Scripts
 
-| Script                 | Descrição                     |
-| ---------------------- | ----------------------------- |
-| `npm run dev`          | Desenvolvimento com Turbopack |
-| `npm run build`        | Build de produção             |
-| `npm run lint`         | ESLint                        |
-| `npm run lint:fix`     | ESLint com auto-fix           |
-| `npm run typecheck`    | TypeScript sem emitir         |
-| `npm run format`       | Prettier (escreve)            |
-| `npm run format:check` | Prettier (verifica)           |
+| Script                 | Descrição                                         |
+| ---------------------- | ------------------------------------------------- |
+| `npm run dev`          | Desenvolvimento com Turbopack                     |
+| `npm run build`        | Build de produção                                 |
+| `npm run lint`         | ESLint                                            |
+| `npm run lint:fix`     | ESLint com auto-fix                               |
+| `npm run typecheck`    | TypeScript sem emitir                             |
+| `npm run format`       | Prettier (escreve)                                |
+| `npm run format:check` | Prettier (verifica)                               |
+| `npm run test:e2e`     | Suíte E2E (Playwright) contra o build de produção |
 
 ## Convenções
 

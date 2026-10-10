@@ -1,4 +1,4 @@
-import { ContactContent } from '@/types/contact'
+import type { ContactContent } from '@/types/contact'
 
 export const CONTACT = {
   hero: {

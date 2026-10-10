@@ -1,0 +1,14 @@
+# LF em todos os arquivos de texto, no repositório e na working copy, em qualquer sistema.
+* text=auto eol=lf
+
+# Binários: sem conversão de fim de linha nem diff textual.
+*.avif binary
+*.gif binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.png binary
+*.webp binary
+*.woff binary
+*.woff2 binary
