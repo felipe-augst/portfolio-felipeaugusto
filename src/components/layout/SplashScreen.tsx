@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import type { TransitionEvent } from 'react'
 import { cn } from '@/lib/cn'
+import { SPLASH_ATTRIBUTE } from '@/lib/splash-screen'
 
 const GREETINGS = [
   { welcome: 'Bem-vindo ao', highlight: 'meu portfólio' },
@@ -14,6 +16,9 @@ export function SplashScreen() {
   const [index, setIndex] = useState(0)
 
   useEffect(() => {
+    // O script inline do <head> já decidiu se a tela aparece nesta página.
+    if (!document.documentElement.hasAttribute(SPLASH_ATTRIBUTE)) return
+
     const languageInterval = setInterval(() => {
       setIndex((prev) => (prev + 1) % GREETINGS.length)
     }, 1500)
@@ -29,12 +34,20 @@ export function SplashScreen() {
     }
   }, [])
 
+  // Fim do fade: sem o atributo, a tela sai do layout.
+  function handleTransitionEnd(event: TransitionEvent<HTMLDivElement>) {
+    if (faded && event.target === event.currentTarget) {
+      document.documentElement.removeAttribute(SPLASH_ATTRIBUTE)
+    }
+  }
+
   const currentGreeting = GREETINGS[index]
   if (!currentGreeting) return null
 
   return (
     <div
       aria-hidden="true"
+      onTransitionEnd={handleTransitionEnd}
       className={cn(
         'fixed inset-0 z-100',
         // Oculta no HTML estático; só aparece com o atributo do <html>.
