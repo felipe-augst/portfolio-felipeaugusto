@@ -38,7 +38,6 @@ export const PAGES = {
   projects: {
     path: '/projects',
     title: `Projetos | ${SITE.name}`,
-    description:
-      'Projetos em produção de Felipe Augusto: aplicações web, APIs REST e sites com Next.js, TypeScript e Node.js, com o código aberto no GitHub.',
+    description: `Projetos em produção de ${SITE.name}: aplicações web, APIs REST e sites com Next.js, TypeScript e Node.js, com o código aberto no GitHub.`,
   },
 } as const satisfies Record<string, PageSeo>
