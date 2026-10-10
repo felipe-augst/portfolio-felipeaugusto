@@ -57,7 +57,6 @@ Modelo de entrada:
 
 Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 
-- **Até o #35:** o CI só roda na `main`, então PRs para a `develop` não têm checagem automática. Rode `format:check`, `lint`, `typecheck` e `build` localmente.
 - **Até o #35:** no Windows, o `format:check` local acusa CRLF em ~45 arquivos por falta de `.gitattributes`. No CI ele passa. Considere ruído apenas as falhas de fim de linha.
 - **Até o #35:** a `main` não tem branch protection, apesar de a documentação antiga dizer que tinha. Configurar a proteção é decisão do dono do repo.
 
@@ -75,7 +74,8 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
-- 2026-10-09 — Documentação de agentes, skill `/ticket` e configuração sem atribuição de IA enviadas para revisão em PR para a `develop`.
+- 2026-10-09 — CI passa a rodar em push e PR para a `develop` (#48). A parte do gatilho do #35 foi antecipada; o resto do ticket continua aberto.
+- 2026-10-09 — Documentação de agentes, skill `/ticket` e configuração sem atribuição de IA mergeadas na `develop` (#47).
 - 2026-10-09 — Histórico reescrito para remover os trailers de co-autoria de IA de 2 commits: `a13a22d` → `88fcfe3`, `4bc7dbc` → `a78a331`, `55e7b17` → `4a6ba99`. Os trees são idênticos. Force-push na `main` e na `develop`, e a tag `v1.0.0` foi recriada. A descrição do PR #30 foi limpa.
 - 2026-10-09 — Documentação de agentes criada: `AGENTS.md`, `docs/agents/workflow.md`, `docs/agents/standards.md`, `docs/project-status.md` e template de PR.
 - 2026-10-09 — Tag `v1.0.0` criada na `main`; milestone `v2.0.0` criado com #33–#46.
