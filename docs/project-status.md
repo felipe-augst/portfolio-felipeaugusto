@@ -29,13 +29,13 @@ Status:
 | #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em andamento | —                              | —   |
 | #40   | Remover motion e respeitar movimento reduzido            | #36                | livre        | —                              | —   |
 | #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em andamento | —                              | —   |
-| #42   | Seção de contato acessível                               | #35                | em andamento | `fix/42-accessible-contact`    | —   |
+| #42   | Seção de contato acessível                               | #35                | em revisão   | `fix/42-accessible-contact`    | #55 |
 | #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado    | —                              | —   |
 | #44   | Headers de segurança + CSP report-only                   | #36                | livre        | —                              | —   |
 | #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
 | #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** #40. Também está livre o #44. O #39 e o #41 estão em andamento em outros terminais, e o #42 neste.
+**Frontier:** #40. Também está livre o #44. O #39 e o #41 estão em andamento em outros terminais, e o #42 está em revisão no PR #55.
 
 ## Handoff
 
@@ -45,8 +45,8 @@ _O #39 e o #41 estão em andamento, com o handoff nas próprias branches._
 
 ### #42 — fix/42-accessible-contact
 
-- **Estado:** os 9 critérios estão atendidos e verificados. Foram seis ciclos red → green em `e2e/contact.spec.ts`: nome acessível do título, título parado com movimento reduzido, um único ciclo depois de o título aparecer, axe na seção, ícones sociais decorativos e aviso de nova aba nos links sociais externos (esse último vem de `docs/agents/standards.md`). Depois veio o refactor: `RotatingWord` (ilha de cliente) e `Contact` como Server Component. A lista de palavras vazia foi conferida à mão (dados trocados por `[]`, build, página sem erro, título "Vamos algo juntos?"), e os dados voltaram. Com a `develop` do #36 mergeada na branch, passam `format:check`, `lint`, `typecheck` e `build` (todas as rotas `○ (Static)`), e a suíte E2E passou três vezes seguidas (72 testes × 3).
-- **Próximo passo:** o dono revisa e faz o merge do PR com squash. Depois, execute o passo 7: fechar o #42 e remover este handoff. Fechar o #42 não libera nenhum ticket sozinho: o #45 ainda espera #39, #40 e #43.
+- **Estado:** PR #55 aberto para a `develop`. Os 9 critérios estão atendidos e verificados. Foram seis ciclos red → green em `e2e/contact.spec.ts`: nome acessível do título, título parado com movimento reduzido, um único ciclo depois de o título aparecer, axe na seção, ícones sociais decorativos e aviso de nova aba nos links sociais externos (esse último vem de `docs/agents/standards.md`). Depois veio o refactor: `RotatingWord` (ilha de cliente) e `Contact` como Server Component. A lista de palavras vazia foi conferida à mão (dados trocados por `[]`, build, página sem erro, título "Vamos algo juntos?"), e os dados voltaram. Com a `develop` do #36 mergeada na branch, passam `format:check`, `lint`, `typecheck` e `build` (todas as rotas `○ (Static)`), e a suíte E2E passou três vezes seguidas (72 testes × 3).
+- **Próximo passo:** o dono revisa e faz o merge do #55 com squash. Depois, execute o passo 7: fechar o #42 e remover este handoff. Fechar o #42 não libera nenhum ticket sozinho: o #45 ainda espera #39, #40 e #43.
 - **Atenção:** antes do merge do #36, o `e2e/axe.spec.ts` (#38) falhou em 3 de ~8 rodadas locais por contraste da saudação da tela de boas-vindas no meio do fade-in (a 72 px), fora da seção de contato. O #36 tirou o fade-in da primeira saudação, e depois do merge a falha não voltou em 3 rodadas. As trocas de idioma ainda têm fade-in, e o `tailwindcss-animate` sai no #40. O `Hero` ainda escreve o caminho do CV à mão (fica para quem mexer no Hero, #40 ou #46). Os links sociais do menu (`MenuOverlay`) abrem o `mailto:` em nova aba e não avisam a nova aba; isso é do #41. Os testes de animação leem o "texto pintado" (helpers `paintedText` e `watchChanges` em `e2e/contact.spec.ts`), porque o Playwright considera visível um elemento com opacidade 0; o #40 pode reaproveitar esses helpers.
 
 <!--
@@ -106,6 +106,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-10 — #42 em revisão no PR #55: título do contato legível por leitor de tela e com um único ciclo, contraste do card, links sociais com ícone nos dados e seção como Server Component.
 - 2026-10-10 — Rotas estáticas, tela de boas-vindas decidida no `<head>` uma vez por sessão, marcador `data-js` e site sem Server Action mergeados na `develop` (#52), e o #36 foi fechado. Ficam livres #40 e #44.
 - 2026-10-10 — #42 em andamento na branch `fix/42-accessible-contact`.
 - 2026-10-10 — Shell de página, landmarks e 404 em pt-BR mergeados na `develop` (#53), e o #38 foi fechado. Nenhum ticket é liberado: o #46 ainda espera #36 e #39–#45.
