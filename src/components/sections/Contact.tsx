@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '../ui/Button'
 import { MapPin, ArrowRight } from 'lucide-react'
 import { CONTACT } from '@/data/contact'
@@ -11,16 +11,29 @@ import { SectionEyebrow } from '@/components/ui/SectionEyebrow'
 export function Contact() {
   const { prefix, animatedWords, suffix } = CONTACT.hero
   const [index, setIndex] = useState(0)
+  const wordsRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
+    const element = wordsRef.current
+    if (!element) return
     // Com movimento reduzido, o título fica estático na primeira palavra.
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const interval = setInterval(() => {
-      setIndex((current) => (current + 1) % animatedWords.length)
-    }, 2500)
+    // Um único ciclo, que começa quando o título aparece e para na última palavra.
+    const timers: number[] = []
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return
+      observer.disconnect()
+      for (let i = 1; i < animatedWords.length; i++) {
+        timers.push(window.setTimeout(() => setIndex(i), i * 1500))
+      }
+    })
+    observer.observe(element)
 
-    return () => clearInterval(interval)
+    return () => {
+      observer.disconnect()
+      timers.forEach((timer) => window.clearTimeout(timer))
+    }
   }, [animatedWords.length])
 
   // Encontra a palavra mais longa para definir a largura do contêiner invisível
@@ -34,15 +47,16 @@ export function Contact() {
           <span className="sr-only">{[prefix, animatedWords[0], suffix].join(' ')}</span>
           <span aria-hidden="true">
             <span>{prefix}</span>
-            <span className="relative flex flex-col justify-center overflow-hidden px-1 py-1">
+            <span
+              ref={wordsRef}
+              className="relative flex flex-col justify-center overflow-hidden px-1 py-1"
+            >
               <span className="invisible pointer-events-none font-medium">{longestWord}</span>
               {animatedWords.map((word, i) => {
-                const isPrevious = i === (index - 1 + animatedWords.length) % animatedWords.length
-                const isActive = i === index
                 let positionClass = 'translate-y-full opacity-0'
-                if (isActive) {
+                if (i === index) {
                   positionClass = 'translate-y-0 opacity-100'
-                } else if (isPrevious) {
+                } else if (i < index) {
                   positionClass = '-translate-y-full opacity-0'
                 }
                 return (
