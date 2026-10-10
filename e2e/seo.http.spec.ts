@@ -1,3 +1,4 @@
+import type { APIRequestContext } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { getJsonLdScripts, getLinkHref, getMeta, getTitle } from './html'
 
@@ -13,11 +14,18 @@ function withoutQuery(url: string | undefined) {
   return `${origin}${pathname}`
 }
 
-// Caminho de uma URL absoluta do site, para pedir o mesmo recurso ao servidor de teste.
-function toLocalPath(url: string) {
+async function fetchText(request: APIRequestContext, path: string) {
+  return (await request.get(path)).text()
+}
+
+// Pede ao servidor de teste o recurso de uma URL absoluta do site e confere que é uma imagem.
+async function expectImage(request: APIRequestContext, url: string, label = url) {
   const { origin, pathname, search } = new URL(url)
-  expect(origin).toBe(SITE_URL)
-  return `${pathname}${search}`
+  expect(origin, label).toBe(SITE_URL)
+
+  const image = await request.get(`${pathname}${search}`)
+  expect(image.status(), label).toBe(200)
+  expect(image.headers()['content-type'], label).toMatch(/^image\//)
 }
 
 const PREVIEW_IMAGES = ['og:image', 'twitter:image']
@@ -41,7 +49,7 @@ function toUrls(image: unknown): string[] {
 
 for (const route of ROUTES) {
   test(`${route} declara canonical e og:url da própria rota`, async ({ request }) => {
-    const html = await (await request.get(route)).text()
+    const html = await fetchText(request, route)
 
     expect(withoutQuery(getLinkHref(html, 'canonical'))).toBe(`${SITE_URL}${route}`)
     expect(withoutQuery(getMeta(html, 'og:url'))).toBe(`${SITE_URL}${route}`)
@@ -50,20 +58,18 @@ for (const route of ROUTES) {
   test(`${route} expõe og:image e twitter:image que respondem 200 com imagem`, async ({
     request,
   }) => {
-    const html = await (await request.get(route)).text()
+    const html = await fetchText(request, route)
 
     for (const key of PREVIEW_IMAGES) {
       const url = getMeta(html, key)
       expect(url, `${key} ausente`).toBeTruthy()
 
-      const image = await request.get(toLocalPath(String(url)))
-      expect(image.status(), `${key}: ${url}`).toBe(200)
-      expect(image.headers()['content-type'], `${key}: ${url}`).toMatch(/^image\//)
+      await expectImage(request, String(url), `${key}: ${url}`)
     }
   })
 
   test(`${route} descreve a imagem de prévia como Fullstack`, async ({ request }) => {
-    const html = await (await request.get(route)).text()
+    const html = await fetchText(request, route)
 
     for (const key of PREVIEW_IMAGES) {
       expect(getMeta(html, `${key}:alt`), `${key}:alt`).toContain('Fullstack')
@@ -71,7 +77,7 @@ for (const route of ROUTES) {
   })
 
   test(`${route} tem JSON-LD parseável com imagens que respondem 200`, async ({ request }) => {
-    const html = await (await request.get(route)).text()
+    const html = await fetchText(request, route)
     const scripts = getJsonLdScripts(html)
     expect(scripts, 'JSON-LD ausente').not.toHaveLength(0)
 
@@ -79,15 +85,13 @@ for (const route of ROUTES) {
     expect(imageUrls, 'JSON-LD sem imagem').not.toHaveLength(0)
 
     for (const url of imageUrls) {
-      const image = await request.get(toLocalPath(url))
-      expect(image.status(), url).toBe(200)
-      expect(image.headers()['content-type'], url).toMatch(/^image\//)
+      await expectImage(request, url)
     }
   })
 }
 
 test('cada rota tem título e descrição próprios, também na prévia', async ({ request }) => {
-  const pages = await Promise.all(ROUTES.map(async (route) => (await request.get(route)).text()))
+  const pages = await Promise.all(ROUTES.map((route) => fetchText(request, route)))
   const fields = {
     title: pages.map(getTitle),
     description: pages.map((html) => getMeta(html, 'description')),
@@ -103,7 +107,7 @@ test('cada rota tem título e descrição próprios, também na prévia', async 
 })
 
 test('robots.txt não bloqueia /_next/ nem /api/ e aponta para o sitemap', async ({ request }) => {
-  const robots = await (await request.get('/robots.txt')).text()
+  const robots = await fetchText(request, '/robots.txt')
   const disallowed = robots
     .split('\n')
     .filter((line) => /^disallow:/i.test(line))
@@ -121,7 +125,7 @@ test('robots.txt não bloqueia /_next/ nem /api/ e aponta para o sitemap', async
 })
 
 test('sitemap lista /, /stack e /projects com lastModified fixo', async ({ request }) => {
-  const sitemap = await (await request.get('/sitemap.xml')).text()
+  const sitemap = await fetchText(request, '/sitemap.xml')
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)].map(([, loc]) =>
     withoutQuery(loc),
   )
@@ -129,11 +133,11 @@ test('sitemap lista /, /stack e /projects com lastModified fixo', async ({ reque
   expect(locations).toEqual(expect.arrayContaining(ROUTES.map((route) => `${SITE_URL}${route}`)))
   expect(sitemap).toContain('<lastmod>')
   // A data é fixada no build: outra requisição devolve o mesmo documento.
-  expect(await (await request.get('/sitemap.xml')).text()).toBe(sitemap)
+  expect(await fetchText(request, '/sitemap.xml')).toBe(sitemap)
 })
 
 test('a descrição de /stack não diz frontend', async ({ request }) => {
-  const html = await (await request.get('/stack')).text()
+  const html = await fetchText(request, '/stack')
 
   expect(getMeta(html, 'description')).toBeTruthy()
   expect(getMeta(html, 'description')).not.toMatch(/front-?end/i)
