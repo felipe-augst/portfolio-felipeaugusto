@@ -37,7 +37,8 @@ export function SplashScreen() {
       aria-hidden="true"
       className={cn(
         'fixed inset-0 z-100',
-        'bg-bg flex flex-col items-center justify-center gap-8',
+        // Oculta no HTML estático; só aparece com o atributo do <html>.
+        'bg-bg hidden splash:flex flex-col items-center justify-center gap-8',
         'transition-opacity duration-700',
         faded ? 'opacity-0 pointer-events-none' : 'opacity-100',
       )}
