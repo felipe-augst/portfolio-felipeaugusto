@@ -54,6 +54,7 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 - **Sem JS.** O conteúdo fica visível sem JS: o estado inicial oculto só vale com o marcador de "JS disponível" no elemento raiz (atributo `data-js` no `<html>`, `JS_ATTRIBUTE` em `src/lib/head-script.ts`).
 - **Movimento reduzido.** Com movimento reduzido, a página fica estática: nenhuma animação infinita, nenhum deslocamento, nenhuma troca automática de texto. O reset global cobre o CSS. Ilhas de cliente com timers consultam `prefers-reduced-motion`.
 - **5 segundos.** Conteúdo que muda sozinho para em menos de 5 s (WCAG 2.2.2).
+- **Texto que troca.** A palavra fora da vez fica escondida por recorte (`overflow-hidden` + deslocamento), com opacidade total. No meio de um fade, o texto fica sem contraste e o axe acusa violação.
 
 ## Acessibilidade
 
