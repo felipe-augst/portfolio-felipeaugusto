@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Fraunces, DM_Sans, Cinzel } from 'next/font/google'
 import './globals.css'
 import { cookies } from 'next/headers'
-import { Skeleton } from '@/components/layout/Skeleton'
+import { SplashScreen } from '@/components/layout/SplashScreen'
 import { Nav } from '@/components/layout/Nav'
 
 const fraunces = Fraunces({
@@ -133,7 +133,7 @@ export default async function RootLayout({
             }),
           }}
         />
-        <Skeleton initialShown={skeletonShown} />
+        <SplashScreen initialShown={skeletonShown} />
         <Nav />
         {children}
       </body>

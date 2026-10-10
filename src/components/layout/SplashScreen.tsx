@@ -10,11 +10,11 @@ const GREETINGS = [
   { welcome: 'Willkommen in', highlight: 'meinem Portfolio' },
 ]
 
-type SkeletonProps = {
+type SplashScreenProps = {
   initialShown: boolean
 }
 
-export function Skeleton({ initialShown }: SkeletonProps) {
+export function SplashScreen({ initialShown }: SplashScreenProps) {
   const [faded, setFaded] = useState(false)
   const [index, setIndex] = useState(0)
 
