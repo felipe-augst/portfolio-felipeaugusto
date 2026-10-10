@@ -41,14 +41,14 @@ test('em nova página do mesmo contexto, a tela de boas-vindas nunca fica visív
   await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_TOTAL_MS })
 
   // A flag fica no sessionStorage, que é da aba: a nova página é uma nova navegação na mesma aba.
-  // Confere antes da hidratação, depois do load e depois do tempo que a tela duraria.
-  await page.goto('/stack', { waitUntil: 'commit' })
-  await page.waitForLoadState('domcontentloaded')
-  await expect(splashScreen(page)).toBeHidden({ timeout: 0 })
+  // Confere na hora (isVisible não espera), antes da hidratação, depois do load e depois do tempo
+  // que a tela duraria.
+  await page.goto('/stack', { waitUntil: 'domcontentloaded' })
+  expect(await splashScreen(page).isVisible()).toBe(false)
   await page.waitForLoadState('load')
-  await expect(splashScreen(page)).toBeHidden({ timeout: 0 })
+  expect(await splashScreen(page).isVisible()).toBe(false)
   await page.waitForTimeout(SPLASH_TOTAL_MS)
-  await expect(splashScreen(page)).toBeHidden({ timeout: 0 })
+  expect(await splashScreen(page).isVisible()).toBe(false)
 })
 
 test('com storage indisponível, a tela de boas-vindas aparece e a página não quebra', async ({
