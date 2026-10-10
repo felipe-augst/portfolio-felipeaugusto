@@ -5,7 +5,7 @@ Regras que mantêm o site no padrão que ele promete. Cada regra corrige um prob
 - Ao escrever código, aplique as seções da área que você está tocando.
 - Ao revisar, aplique todas.
 
-Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar (suíte E2E, configuração central do site, marcador de JS). Enquanto uma peça não existe, o ticket que a cria é dono dela, e os demais tickets seguem o código atual. O painel em `docs/project-status.md` mostra o que já foi entregue.
+Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar (configuração central do site). Enquanto uma peça não existe, o ticket que a cria é dono dela, e os demais tickets seguem o código atual. O painel em `docs/project-status.md` mostra o que já foi entregue.
 
 ## Metas
 
@@ -20,7 +20,7 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar (su�
 
 ## Renderização
 
-- **Rotas estáticas.** Toda rota é estática: layouts e páginas renderizam sem cookies, headers ou search params. Personalização por visitante acontece no navegador. O que precisa existir antes da primeira pintura vai num script inline no `<head>`.
+- **Rotas estáticas.** Toda rota é estática: layouts e páginas renderizam sem cookies, headers ou search params. Personalização por visitante acontece no navegador. O que precisa existir antes da primeira pintura vai no script inline do `<head>` (`HEAD_SCRIPT` em `src/lib/head-script.ts`), que marca o `<html>` com atributos.
 - **Conferência no build.** Ao tocar em layout ou página, confira que o `next build` lista a rota como `○ (Static)`.
 - **Ilhas de cliente.** Server Component é o padrão. `'use client'` vai só nas **ilhas de cliente**: a menor folha que precisa de estado, efeito ou API do navegador. A seção ou o card que contém a ilha continua no servidor e passa dados por props ou children.
 - **Conteúdo no HTML.** Conteúdo indexável (projetos, textos, links) sai no HTML do servidor.
@@ -49,7 +49,7 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar (su�
 ## Movimento
 
 - **CSS.** Animação é CSS (transições ou keyframes nos tokens) sob `motion-safe:`. JS serve só para disparar a animação, por exemplo com `IntersectionObserver`.
-- **Sem JS.** O conteúdo fica visível sem JS: o estado inicial oculto só vale com o marcador de "JS disponível" no elemento raiz.
+- **Sem JS.** O conteúdo fica visível sem JS: o estado inicial oculto só vale com o marcador de "JS disponível" no elemento raiz (atributo `data-js` no `<html>`, `JS_ATTRIBUTE` em `src/lib/head-script.ts`).
 - **Movimento reduzido.** Com movimento reduzido, a página fica estática: nenhuma animação infinita, nenhum deslocamento, nenhuma troca automática de texto. O reset global cobre o CSS. Ilhas de cliente com timers consultam `prefers-reduced-motion`.
 - **5 segundos.** Conteúdo que muda sozinho para em menos de 5 s (WCAG 2.2.2).
 
