@@ -23,7 +23,7 @@ Status:
 | ----- | -------------------------------------------------------- | ------------------ | ------------ | ------------------------------ | --- |
 | #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue     | `chore/34-update-next-deps`    | #49 |
 | #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue     | `chore/35-e2e-infra-ci`        | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | em andamento | `feat/36-static-routes-splash` | —   |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | em revisão   | `feat/36-static-routes-splash` | #52 |
 | #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
 | #38   | Shell de página, landmarks e página 404                  | #35                | em andamento | `feat/38-page-shell-404`       | —   |
 | #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | livre        | —                              | —   |
@@ -35,7 +35,7 @@ Status:
 | #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
 | #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** #39. Também estão livres #41 e #42. O #36 e o #38 estão em andamento em paralelo, cada um no seu worktree.
+**Frontier:** #39. Também estão livres #41 e #42. O #36 está em revisão (#52), e o #38 está em andamento em outro worktree.
 
 ## Handoff
 
@@ -43,8 +43,8 @@ Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida qu
 
 ### #36 — feat/36-static-routes-splash
 
-- **Estado:** os 13 critérios estão atendidos, em sete ciclos red → green em `e2e/static-rendering.http.spec.ts` e `e2e/splash-screen.spec.ts`, mais axe com e sem a tela. A branch tem um merge da `develop` com o #37 (#51).
-- **Próximo passo:** abrir o PR para a `develop` (passo 6).
+- **Estado:** PR #52 aberto para a `develop`, com os 13 critérios atendidos e verificados. Foram sete ciclos red → green em `e2e/static-rendering.http.spec.ts` (3 testes de request) e `e2e/splash-screen.spec.ts` (9 testes por perfil, incluindo axe com e sem a tela). Os timers só com a tela habilitada foram verificados à mão, com `setTimeout`/`setInterval` instrumentados. A branch tem um merge da `develop` com o #37 (#51). Localmente passam `format:check`, `lint`, `typecheck`, `build` (todas as rotas `○ (Static)`) e a suíte E2E (44 testes).
+- **Próximo passo:** o dono revisa e faz o merge do #52 com squash. Depois, execute o passo 7: fechar o #36, o que libera o #40 e o #44.
 - **Atenção:** o #44 precisa pôr o hash de `HEAD_SCRIPT` (`src/lib/head-script.ts`) na CSP, e qualquer mudança no script muda o hash. O #40 usa o atributo `data-js` (`JS_ATTRIBUTE`), que ainda não tem variante no Tailwind. O README ainda descreve o `Skeleton` com `dynamic`/`ssr: false` e `useSyncExternalStore`, o que não bate com o código; atualizar é do #46. O reset global de movimento reduzido ainda faz cintilar as animações infinitas fora da tela de boas-vindas (#40).
 
 <!--
@@ -94,6 +94,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-10 — #36 em revisão no PR #52: rotas estáticas, tela de boas-vindas decidida no `<head>` uma vez por sessão, marcador `data-js` e site sem Server Action.
 - 2026-10-10 — #37 em revisão no PR #51: configuração central do site, metadados e imagens de prévia por rota, robots, sitemap e JSON-LD.
 - 2026-10-10 — Suíte E2E com Playwright, CI endurecido (permissões de leitura, audit de produção, job E2E com artefato e cache dos navegadores), Dependabot, `.gitattributes` e Node 24 mergeados na `develop` (#50), e o #35 foi fechado. Ficam livres #36, #37, #38, #39, #41 e #42.
 - 2026-10-10 — Next.js e `eslint-config-next` 16.4.0 + `npm audit fix` mergeados na `develop` (#49), e o #34 foi fechado. O audit de produção dá 0 vulnerabilidades, e o #35 está livre.
