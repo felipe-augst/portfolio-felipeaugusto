@@ -38,7 +38,7 @@ Fonte de verdade das convenções, para humanos e agentes de IA.
 - `src/app/` — rotas e arquivos de metadados (App Router)
 - `src/components/ui/` — primitivos reutilizáveis
 - `src/components/sections/` — seções da home
-- `src/components/layout/` — Nav, MenuOverlay, Footer, tela de boas-vindas
+- `src/components/layout/` — Nav, MenuOverlay, Footer, tela de boas-vindas, `PageShell` (páginas fora da home)
 - `src/data/` — fonte única de dados (constantes em UPPER_SNAKE_CASE)
 - `src/types/` — tipagens compartilhadas
 - `src/lib/` — utilities puras
