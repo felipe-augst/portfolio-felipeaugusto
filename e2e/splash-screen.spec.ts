@@ -1,8 +1,10 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 
-// Tempo para a tela de boas-vindas alternar o texto, sumir e terminar o fade (3,5 s + 0,7 s), com folga.
-const SPLASH_TOTAL_MS = 5_000
+// A tela de boas-vindas dura 3,5 s mais 0,7 s de fade, contados da hidratação.
+const SPLASH_DURATION_MS = 5_000
+// Limite para a tela sumir: a duração mais a hidratação, com folga para máquina lenta (CI).
+const SPLASH_HIDE_TIMEOUT_MS = 10_000
 
 // A tela é decorativa (aria-hidden), sem papel nem nome acessível: o locator usa as saudações.
 function splashScreen(page: Page) {
@@ -17,12 +19,12 @@ test('nenhuma requisição além de GET acontece durante ou depois do carregamen
     if (request.method() !== 'GET') nonGetRequests.push(`${request.method()} ${request.url()}`)
   })
 
-  // A primeira página da sessão mostra a tela de boas-vindas; a segunda, não. Espera em tempo real:
-  // com relógio falso, o tempo pode avançar antes de a hidratação registrar os timers.
-  for (const route of ['/', '/stack']) {
-    await page.goto(route)
-    await page.waitForTimeout(SPLASH_TOTAL_MS)
-  }
+  // A primeira página da sessão mostra a tela de boas-vindas; a segunda, não. Espera em tempo real
+  // o tempo da tela: com relógio falso, o tempo pode avançar antes de a hidratação registrar os timers.
+  await page.goto('/')
+  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_HIDE_TIMEOUT_MS })
+  await page.goto('/stack')
+  await page.waitForTimeout(SPLASH_DURATION_MS)
 
   expect(nonGetRequests).toEqual([])
 })
@@ -31,14 +33,14 @@ test('em contexto novo, a tela de boas-vindas aparece e some', async ({ page }) 
   await page.goto('/')
 
   await expect(splashScreen(page)).toBeVisible()
-  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_TOTAL_MS })
+  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_HIDE_TIMEOUT_MS })
 })
 
 test('em nova página do mesmo contexto, a tela de boas-vindas nunca fica visível', async ({
   page,
 }) => {
   await page.goto('/')
-  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_TOTAL_MS })
+  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_HIDE_TIMEOUT_MS })
 
   // A flag fica no sessionStorage, que é da aba: a nova página é uma nova navegação na mesma aba.
   // Confere na hora (isVisible não espera), antes da hidratação, depois do load e depois do tempo
@@ -47,7 +49,7 @@ test('em nova página do mesmo contexto, a tela de boas-vindas nunca fica visív
   expect(await splashScreen(page).isVisible()).toBe(false)
   await page.waitForLoadState('load')
   expect(await splashScreen(page).isVisible()).toBe(false)
-  await page.waitForTimeout(SPLASH_TOTAL_MS)
+  await page.waitForTimeout(SPLASH_DURATION_MS)
   expect(await splashScreen(page).isVisible()).toBe(false)
 })
 
@@ -68,7 +70,7 @@ test('com storage indisponível, a tela de boas-vindas aparece e a página não 
   await page.goto('/')
 
   await expect(splashScreen(page)).toBeVisible()
-  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_TOTAL_MS })
+  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_HIDE_TIMEOUT_MS })
   expect(pageErrors).toEqual([])
 })
 
@@ -104,6 +106,21 @@ test('com movimento reduzido, a tela de boas-vindas não alterna o texto nem ani
     await page.waitForTimeout(200)
   }
   expect([...greetings]).toEqual(['Bem-vindo ao meu portfólio'])
+})
+
+test('as rotas não têm violações de acessibilidade, com e sem a tela de boas-vindas', async ({
+  page,
+  makeAxeBuilder,
+}) => {
+  await page.goto('/')
+  await expect(splashScreen(page)).toBeVisible()
+  expect((await makeAxeBuilder().analyze()).violations).toEqual([])
+  await expect(splashScreen(page)).toBeHidden({ timeout: SPLASH_HIDE_TIMEOUT_MS })
+
+  for (const route of ['/', '/stack', '/projects']) {
+    await page.goto(route)
+    expect((await makeAxeBuilder().analyze()).violations).toEqual([])
+  }
 })
 
 test.describe('sem JavaScript', () => {
