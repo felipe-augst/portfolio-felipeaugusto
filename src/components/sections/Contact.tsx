@@ -95,7 +95,7 @@ export function Contact() {
                 >
                   <Image
                     src={SOCIAL_ICONS[platform]}
-                    alt={`${platform} icon`}
+                    alt=""
                     width={50}
                     height={50}
                     className="opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
