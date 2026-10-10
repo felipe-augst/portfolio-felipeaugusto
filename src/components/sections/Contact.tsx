@@ -1,77 +1,29 @@
-'use client'
-import { useState, useEffect, useRef } from 'react'
-import { Button } from '../ui/Button'
-import { MapPin, ArrowRight } from 'lucide-react'
-import { CONTACT } from '@/data/contact'
-import { SOCIAL_LINKS, SOCIAL_ICONS } from '@/data/social'
 import Image from 'next/image'
+import { ArrowRight, MapPin } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { Icon } from '@/components/ui/Icon'
+import { RotatingWord } from '@/components/ui/RotatingWord'
 import { Section } from '@/components/ui/Section'
 import { SectionEyebrow } from '@/components/ui/SectionEyebrow'
+import { CONTACT } from '@/data/contact'
+import { SITE } from '@/data/site'
+import { SOCIAL_LINKS } from '@/data/social'
 
 export function Contact() {
   const { prefix, animatedWords, suffix } = CONTACT.hero
-  const [index, setIndex] = useState(0)
-  const wordsRef = useRef<HTMLSpanElement>(null)
-
-  useEffect(() => {
-    const element = wordsRef.current
-    if (!element) return
-    // Com movimento reduzido, o título fica estático na primeira palavra.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    // Um único ciclo, que começa quando o título aparece e para na última palavra.
-    const timers: number[] = []
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry?.isIntersecting) return
-      observer.disconnect()
-      for (let i = 1; i < animatedWords.length; i++) {
-        timers.push(window.setTimeout(() => setIndex(i), i * 1500))
-      }
-    })
-    observer.observe(element)
-
-    return () => {
-      observer.disconnect()
-      timers.forEach((timer) => window.clearTimeout(timer))
-    }
-  }, [animatedWords.length])
-
-  // Encontra a palavra mais longa para definir a largura do contêiner invisível
-  const longestWord = animatedWords.reduce((a, b) => (a.length > b.length ? a : b))
+  // O leitor de tela ouve a frase com a primeira palavra, e não a animação.
+  const phrase = [prefix, ...animatedWords.slice(0, 1), suffix].join(' ')
 
   return (
     <Section id="contact">
       <SectionEyebrow className="mb-14">Contato</SectionEyebrow>
       <div className="grid xl:grid-cols-[1.1fr_1fr] gap-16 md:gap-18 items-center lg:items-start">
         <h2 className="font-display text-center md:text-start text-5xl md:text-7xl lg:text-[90px] font-light leading-tight tracking-[-0.03em]">
-          <span className="sr-only">{[prefix, animatedWords[0], suffix].join(' ')}</span>
+          <span className="sr-only">{phrase}</span>
+          {/* Com a lista de palavras vazia, os espaços separam prefixo e sufixo. */}
           <span aria-hidden="true">
-            <span>{prefix}</span>
-            <span
-              ref={wordsRef}
-              className="relative flex flex-col justify-center overflow-hidden px-1 py-1"
-            >
-              <span className="invisible pointer-events-none font-medium">{longestWord}</span>
-              {animatedWords.map((word, i) => {
-                // As palavras fora da vez ficam recortadas pelo overflow, com opacidade total: no
-                // meio de um fade, o texto ficaria sem contraste.
-                let positionClass = 'translate-y-full'
-                if (i === index) {
-                  positionClass = 'translate-y-0'
-                } else if (i < index) {
-                  positionClass = '-translate-y-full'
-                }
-                return (
-                  <span
-                    key={word}
-                    className={`absolute inset-0 flex justify-center md:justify-start items-center md:items-start text-accent font-medium motion-safe:transition-transform motion-safe:duration-500 motion-safe:ease-in-out ${positionClass}`}
-                  >
-                    {word}
-                  </span>
-                )
-              })}
-            </span>
-            <span>{suffix}</span>
+            {prefix} <RotatingWord words={animatedWords} className="font-medium text-accent" />{' '}
+            {suffix}
           </span>
         </h2>
 
@@ -80,11 +32,9 @@ export function Contact() {
             Entre em contato:
           </h3>
 
-          {/* O Card Principal */}
           <div className="w-full flex flex-col p-4 border border-border-strong bg-sand/60 backdrop-blur-md mb-8">
-            {/* Grupo 1: Ícones Sociais */}
             <div className="grid grid-cols-4 gap-2 mb-2">
-              {SOCIAL_LINKS.map(({ platform, href, label }) => {
+              {SOCIAL_LINKS.map(({ platform, href, label, icon }) => {
                 // Links mailto: abrem na mesma aba.
                 const opensNewTab = !href.startsWith('mailto:')
                 return (
@@ -96,10 +46,10 @@ export function Contact() {
                     }
                     target={opensNewTab ? '_blank' : undefined}
                     rel={opensNewTab ? 'noopener noreferrer' : undefined}
-                    className="flex items-center justify-center p-2 rounded-md hover:scale-110 transition-all duration-300 group"
+                    className="flex items-center justify-center p-2 rounded-md hover:scale-110 transition-all duration-300 group focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
                   >
                     <Image
-                      src={SOCIAL_ICONS[platform]}
+                      src={icon}
                       alt=""
                       width={50}
                       height={50}
@@ -110,25 +60,22 @@ export function Contact() {
               })}
             </div>
 
-            {/* Divisor Isolado */}
             <div className="h-px w-full bg-border-strong/60 my-3" />
 
-            {/* Grupo 2: Localização */}
             <div className="flex items-center justify-center gap-3 p-2">
-              <MapPin className="w-5 h-5 text-bg" strokeWidth={1.5} />
+              <Icon icon={MapPin} className="size-5 stroke-[1.5] text-bg" />
               <span className="font-sans text-base md:text-lg text-bg tracking-wide">
-                Jundiaí / SP
+                {SITE.location.city} / {SITE.location.region}
               </span>
             </div>
           </div>
 
-          {/* Botão de CV */}
           <Button
-            href="/felipe_augusto_fullstack_cv.pdf"
-            download="felipe-augusto-fullstack-cv.pdf"
+            href={SITE.cv.path}
+            download={SITE.cv.downloadName}
             trailingIcon={ArrowRight}
             variant="primary"
-            className="md:w-full justify-center "
+            className="md:w-full justify-center"
           >
             Baixar CV
           </Button>
