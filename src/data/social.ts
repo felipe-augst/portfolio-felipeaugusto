@@ -3,7 +3,7 @@ import type { SocialLink, SocialPlatform } from '@/types/social'
 export const SOCIAL_LINKS = [
   {
     platform: 'github',
-    label: 'Github',
+    label: 'GitHub',
     href: 'https://github.com/felipe-augst',
   },
   {

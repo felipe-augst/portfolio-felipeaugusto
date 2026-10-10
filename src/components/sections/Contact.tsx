@@ -84,24 +84,30 @@ export function Contact() {
           <div className="w-full flex flex-col p-4 border border-border-strong bg-sand/60 backdrop-blur-md mb-8">
             {/* Grupo 1: Ícones Sociais */}
             <div className="grid grid-cols-4 gap-2 mb-2">
-              {SOCIAL_LINKS.map(({ platform, href, label }) => (
-                <a
-                  key={platform}
-                  href={href}
-                  aria-label={`Acessar ${label}`}
-                  target={platform === 'email' ? undefined : '_blank'}
-                  rel={platform === 'email' ? undefined : 'noopener noreferrer'}
-                  className="flex items-center justify-center p-2 rounded-md hover:scale-110 transition-all duration-300 group"
-                >
-                  <Image
-                    src={SOCIAL_ICONS[platform]}
-                    alt=""
-                    width={50}
-                    height={50}
-                    className="opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
-                  />
-                </a>
-              ))}
+              {SOCIAL_LINKS.map(({ platform, href, label }) => {
+                // Links mailto: abrem na mesma aba.
+                const opensNewTab = !href.startsWith('mailto:')
+                return (
+                  <a
+                    key={platform}
+                    href={href}
+                    aria-label={
+                      opensNewTab ? `Acessar ${label} (abre em nova aba)` : `Acessar ${label}`
+                    }
+                    target={opensNewTab ? '_blank' : undefined}
+                    rel={opensNewTab ? 'noopener noreferrer' : undefined}
+                    className="flex items-center justify-center p-2 rounded-md hover:scale-110 transition-all duration-300 group"
+                  >
+                    <Image
+                      src={SOCIAL_ICONS[platform]}
+                      alt=""
+                      width={50}
+                      height={50}
+                      className="opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
+                    />
+                  </a>
+                )
+              })}
             </div>
 
             {/* Divisor Isolado */}
