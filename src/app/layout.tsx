@@ -5,6 +5,7 @@ import { cookies } from 'next/headers'
 import { Skeleton } from '@/components/layout/Skeleton'
 import { Nav } from '@/components/layout/Nav'
 import { PAGES, SITE } from '@/data/site'
+import { PERSON_JSON_LD, serializeJsonLd } from '@/lib/json-ld'
 import { SITE_OPEN_GRAPH } from '@/lib/metadata'
 
 const fraunces = Fraunces({
@@ -94,27 +95,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Person',
-              name: 'Felipe Augusto',
-              url: 'https://devfelipeaugusto.com.br',
-              image: 'https://devfelipeaugusto.com.br/og-image.png',
-              sameAs: [
-                'https://github.com/felipe-augst',
-                'https://www.linkedin.com/in/felipeaugst/',
-              ],
-              jobTitle: 'Fullstack Developer',
-              address: {
-                '@type': 'PostalAddress',
-                addressLocality: 'Jundiaí',
-                addressRegion: 'SP',
-                addressCountry: 'BR',
-              },
-              knowsAbout: ['React', 'Next.js', 'TypeScript', 'Node.js', 'Fullstack Development'],
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(PERSON_JSON_LD) }}
         />
         <Skeleton initialShown={skeletonShown} />
         <Nav />
