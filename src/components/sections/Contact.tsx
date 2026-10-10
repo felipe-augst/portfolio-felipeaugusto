@@ -5,6 +5,8 @@ import { MapPin, ArrowRight } from 'lucide-react'
 import { CONTACT } from '@/data/contact'
 import { SOCIAL_LINKS, SOCIAL_ICONS } from '@/data/social'
 import Image from 'next/image'
+import { Section } from '@/components/ui/Section'
+import { SectionEyebrow } from '@/components/ui/SectionEyebrow'
 
 export function Contact() {
   const { prefix, animatedWords, suffix } = CONTACT.hero
@@ -22,14 +24,8 @@ export function Contact() {
   const longestWord = animatedWords.reduce((a, b) => (a.length > b.length ? a : b))
 
   return (
-    <section
-      id="contact"
-      className="px-6 md:px-12 py-10 md:py-20 lg:py-32 xl:py-40  max-w-350 mx-auto"
-    >
-      <div className="flex font-serif uppercase items-center gap-5 mb-14 text-[18px] tracking-[0.35em] text-sand-muted">
-        <span className="w-8 h-px bg-accent" />
-        Contato
-      </div>
+    <Section id="contact">
+      <SectionEyebrow className="mb-14">Contato</SectionEyebrow>
       <div className="grid xl:grid-cols-[1.1fr_1fr] gap-16 md:gap-18 items-center lg:items-start">
         <h2 className="font-display text-center md:text-start text-5xl md:text-7xl lg:text-[90px] font-light leading-tight tracking-[-0.03em]">
           <span>{prefix}</span>
@@ -110,6 +106,6 @@ export function Contact() {
           </Button>
         </div>
       </div>
-    </section>
+    </Section>
   )
 }

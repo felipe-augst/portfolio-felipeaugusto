@@ -57,7 +57,8 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 
 ## Acessibilidade
 
-- Cada rota tem um `<main>` e um único `<h1>`, e a hierarquia de títulos segue em ordem.
+- Cada rota tem um `<main>` e um único `<h1>`, e a hierarquia de títulos segue em ordem. Nas páginas fora da home, inclusive a 404, os dois vêm do `PageShell`.
+- O rótulo de seção (`SectionEyebrow`, traço + texto) é decorativo e fica com `aria-hidden`. Ele não substitui o título da seção.
 - Overlays modais usam `<dialog>` com `showModal()`. O gatilho expõe `aria-expanded` e `aria-controls`.
 - Todo controle que expande ou recolhe conteúdo expõe `aria-expanded` e `aria-controls`.
 - Informação revelada por hover também aparece com foco dentro (`focus-within`) e em dispositivos sem hover.
@@ -76,6 +77,7 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 - **Fonte única.** Cada informação tem uma única fonte em `src/data/`, e os componentes derivam dela. Por exemplo, a seção Sobre e `/stack` leem o mesmo catálogo de tecnologias.
 - **Onde fica o texto.** Conteúdo sobre o Felipe (textos, projetos, contato, links) mora em `src/data/`. Rótulos de interface ("Ler mais", "Fechar") ficam no componente.
 - **Reuso.** Antes de escrever markup, procure o componente compartilhado em `src/components/ui/` e `src/components/layout/`. Um padrão que aparece pela segunda vez vira componente.
+- **Seções e páginas.** Seção da home usa `Section` (espaçamento e largura padrão), `SectionEyebrow` e, quando o título tem destaque em accent, `SectionHeading`. Página fora da home usa `PageShell`, que traz rótulo, `<h1>` e "Voltar".
 - **Classes condicionais** usam `cn()`.
 - **Ícones lucide** passam pelo wrapper `Icon`.
 

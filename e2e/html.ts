@@ -22,6 +22,11 @@ function getAttribute(tag: string, name: string) {
   return value === undefined ? undefined : decodeEntities(value)
 }
 
+/** Quantidade de tags de abertura `tagName` (por exemplo, `main`). */
+export function countTags(html: string, tagName: string) {
+  return findTags(html, tagName).length
+}
+
 /** Texto do `<title>`. */
 export function getTitle(html: string) {
   const title = html.match(/<title>([^<]*)<\/title>/)?.[1]

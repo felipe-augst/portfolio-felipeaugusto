@@ -19,23 +19,23 @@ Status:
 - `em revisão` — PR aberto para a `develop`;
 - `entregue` — mergeado na `develop` e issue fechada.
 
-| Issue | Ticket                                                   | Bloqueado por      | Status       | Branch                         | PR  |
-| ----- | -------------------------------------------------------- | ------------------ | ------------ | ------------------------------ | --- |
-| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue     | `chore/34-update-next-deps`    | #49 |
-| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue     | `chore/35-e2e-infra-ci`        | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | em revisão   | `feat/36-static-routes-splash` | #52 |
-| #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
-| #38   | Shell de página, landmarks e página 404                  | #35                | em andamento | `feat/38-page-shell-404`       | —   |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | livre        | —                              | —   |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | bloqueado    | —                              | —   |
-| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | livre        | —                              | —   |
-| #42   | Seção de contato acessível                               | #35                | livre        | —                              | —   |
-| #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado    | —                              | —   |
-| #44   | Headers de segurança + CSP report-only                   | #36                | bloqueado    | —                              | —   |
-| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
-| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
+| Issue | Ticket                                                   | Bloqueado por      | Status     | Branch                         | PR  |
+| ----- | -------------------------------------------------------- | ------------------ | ---------- | ------------------------------ | --- |
+| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue   | `chore/34-update-next-deps`    | #49 |
+| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue   | `chore/35-e2e-infra-ci`        | #50 |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | em revisão | `feat/36-static-routes-splash` | #52 |
+| #37   | SEO e metadados por rota                                 | #35                | entregue   | `fix/37-seo-metadata`          | #51 |
+| #38   | Shell de página, landmarks e página 404                  | #35                | em revisão | `feat/38-page-shell-404`       | #53 |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | livre      | —                              | —   |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | bloqueado  | —                              | —   |
+| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | livre      | —                              | —   |
+| #42   | Seção de contato acessível                               | #35                | livre      | —                              | —   |
+| #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado  | —                              | —   |
+| #44   | Headers de segurança + CSP report-only                   | #36                | bloqueado  | —                              | —   |
+| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado  | —                              | —   |
+| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado  | —                              | —   |
 
-**Frontier:** #39. Também estão livres #41 e #42. O #36 está em revisão (#52), e o #38 está em andamento em outro worktree.
+**Frontier:** #39, #41 e #42.
 
 ## Handoff
 
@@ -46,6 +46,12 @@ Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida qu
 - **Estado:** PR #52 aberto para a `develop`, com os 13 critérios atendidos e verificados. Foram sete ciclos red → green em `e2e/static-rendering.http.spec.ts` (3 testes de request) e `e2e/splash-screen.spec.ts` (9 testes por perfil, incluindo axe com e sem a tela). Os timers só com a tela habilitada foram verificados à mão, com `setTimeout`/`setInterval` instrumentados. A branch tem um merge da `develop` com o #37 (#51). Localmente passam `format:check`, `lint`, `typecheck`, `build` (todas as rotas `○ (Static)`) e a suíte E2E (44 testes).
 - **Próximo passo:** o dono revisa e faz o merge do #52 com squash. Depois, execute o passo 7: fechar o #36, o que libera o #40 e o #44.
 - **Atenção:** o #44 precisa pôr o hash de `HEAD_SCRIPT` (`src/lib/head-script.ts`) na CSP, e qualquer mudança no script muda o hash. O #40 usa o atributo `data-js` (`JS_ATTRIBUTE`), que ainda não tem variante no Tailwind. O README ainda descreve o `Skeleton` com `dynamic`/`ssr: false` e `useSyncExternalStore`, o que não bate com o código; atualizar é do #46. O reset global de movimento reduzido ainda faz cintilar as animações infinitas fora da tela de boas-vindas (#40).
+
+### #38 — feat/38-page-shell-404
+
+- **Estado:** PR #53 aberto para a `develop`. Os 8 critérios estão atendidos e verificados. Foram três ciclos red → green: `e2e/not-found.spec.ts`, `e2e/landmarks.http.spec.ts` (com o helper `countTags` em `e2e/html.ts`) e `e2e/home-sections.spec.ts`. Depois vieram o refactor da home e o `e2e/axe.spec.ts`. Localmente passam `format:check`, `lint`, `typecheck`, `build` e a suíte E2E (41 testes). Conferi capturas em desktop e mobile da 404, da `/stack`, da `/projects` e das seções da home.
+- **Próximo passo:** o dono revisa e faz o merge do #53 com squash. Depois, execute o passo 7: fechar o #38 e remover este handoff. Fechar o #38 não libera nenhum ticket sozinho: o #46 ainda espera #36 e #39–#45.
+- **Atenção:** o #52 (#36) também edita este arquivo. Quem mergear por último resolve o conflito pela regra de "Conflitos no project-status.md". No build, `/`, `/stack`, `/projects` e `/_not-found` saem `ƒ (Dynamic)` por causa do cookie lido no layout, que é escopo do #36. Num build local sem essa leitura, as quatro saíram `○ (Static)`. Depois do merge dos dois PRs, confira o build da `develop`. O "Voltar" do `PageShell` mantém a lógica atual (`history.length`), e a regra de só usar o histórico depois de navegação interna é do #41. O `alt` em inglês dos ícones da `/stack` fica para `TechIcon` (#43) e `StackTile` (#46). Na home, as seções abaixo da dobra ficam com opacidade 0 até entrar na tela (`RevealOnScroll`), então o axe não confere o contraste delas. O teste de contraste do Contato (#42) precisa rolar até a seção ou checar a cor direto.
 
 <!--
 Modelo de entrada:
@@ -74,6 +80,10 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 - **2026-10-10:** o script inline do `<head>` é `HEAD_SCRIPT`, em `src/lib/head-script.ts`, e não no componente da tela: exports de um módulo `'use client'` chegam ao Server Component como referência de cliente, não como string. Ele marca o `<html>` com `data-js` (sempre) e `data-splash` (primeira página da sessão, flag `splash-seen` no `sessionStorage`). A tela usa a variante `splash:` do Tailwind (`@custom-variant` no `globals.css`) e remove o `data-splash` no `transitionend` do fade. O `<html>` tem `suppressHydrationWarning`. O conteúdo do script é fixo, e o #44 coloca o hash dele na CSP.
 - **2026-10-10:** a tela de boas-vindas é decorativa (`aria-hidden`), sem papel nem nome acessível. Por isso os testes dela localizam pelas saudações (`getByText`), exceção à regra de `getByRole`. Os testes de timer esperam em tempo real: com `page.clock`, o tempo pode avançar antes de a hidratação registrar os timers. Para afirmar "nunca visível", o teste confere na hora com `isVisible()`, porque `toBeHidden({ timeout: 0 })` espera sem limite.
 - **2026-10-10:** em `next dev`, os atributos do `<html>` sobrevivem à hidratação (amostrado a cada 0,5 s), e a tela aparece e some como em produção. Não foi preciso reaplicar os atributos no remount do Strict Mode, como o guia `preventing-flash-before-hydration` sugere.
+- **2026-10-10:** o `PageShell` põe o "Voltar" no topo, alinhado à esquerda, seguido do rótulo e do `<h1>` (um `SectionHeading` com `as="h1"`). Cada página tem um único "Voltar": o da `/stack` subiu do fim da página, e o segundo "Voltar" da `/projects`, que só aparecia abaixo de lg, saiu. Os `<h1>` repetem o texto dos links da home: "Stack completa" e "Todos os projetos". A 404 tem o rótulo "Erro 404" e o título "Página não encontrada". O fundo em gradiente, que só a `/stack` tinha, vale para todas as páginas do shell.
+- **2026-10-10:** o `SectionEyebrow` fica com `aria-hidden`: o leitor de tela ouve só o título da seção. O `Section` aplica o mesmo espaçamento em todos os breakpoints, e com isso Sobre ganha 40 px em cima no mobile e deixa de inverter lg/xl.
+- **2026-10-10:** a 404 é o `app/not-found.tsx`. O `global-not-found` é experimental e pularia o layout raiz. O título é "Página não encontrada | Felipe Augusto", sem canonical, e o Next injeta `noindex`. O rodapé da home saiu de dentro do `<main>` e passa a ser o landmark `contentinfo`.
+- **2026-10-10:** o `e2e/axe.spec.ts` roda o axe em `/`, `/stack`, `/projects` e na 404, depois que o `<h1>` fica visível, nos perfis desktop e mobile.
 - **2026-10-10:** a configuração central é `SITE` em `src/data/site.ts`, ao lado de `PAGES`, que guarda caminho, título completo e descrição de cada rota pública e alimenta o sitemap. As páginas exportam `buildPageMetadata(PAGES.<rota>)` (`src/lib/metadata.ts`), que declara título absoluto, descrição, canonical e `openGraph` com os padrões do site repetidos, porque o merge de metadados do Next é raso. O layout fica com os padrões e um `twitter` só com `card`: o Next preenche título, descrição e imagem do Twitter a partir do `openGraph` da página.
 - **2026-10-10:** o merge raso faz o `openGraph` da página descartar a imagem gerada na raiz. Por isso `/stack` e `/projects` têm um `opengraph-image.ts` que reexporta `src/app/opengraph-image.tsx`. A home não precisa: o arquivo da raiz vale para o próprio segmento. O `twitter-image.ts` existe só na raiz e as subrotas o herdam, porque nenhuma página declara `twitter`.
 - **2026-10-10:** no JSON-LD, `image` aponta para a rota `/opengraph-image`, o `sameAs` usa só os perfis (GitHub e LinkedIn) dos links sociais, sem e-mail nem WhatsApp, e o `knowsAbout` vem dos nomes do `CORE_STACK`. Antes eram 4 tecnologias e "Fullstack Development" escritos à mão.
@@ -94,7 +104,9 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-10 — #38 em revisão no PR #53: shell de página com `<main>` e `<h1>`, 404 em pt-BR e componentes de seção compartilhados.
 - 2026-10-10 — #36 em revisão no PR #52: rotas estáticas, tela de boas-vindas decidida no `<head>` uma vez por sessão, marcador `data-js` e site sem Server Action.
+- 2026-10-10 — SEO e metadados por rota mergeados na `develop` (#51), e o #37 foi fechado. Nenhum ticket é liberado: o #46 ainda espera #36 e #38–#45.
 - 2026-10-10 — #37 em revisão no PR #51: configuração central do site, metadados e imagens de prévia por rota, robots, sitemap e JSON-LD.
 - 2026-10-10 — Suíte E2E com Playwright, CI endurecido (permissões de leitura, audit de produção, job E2E com artefato e cache dos navegadores), Dependabot, `.gitattributes` e Node 24 mergeados na `develop` (#50), e o #35 foi fechado. Ficam livres #36, #37, #38, #39, #41 e #42.
 - 2026-10-10 — Next.js e `eslint-config-next` 16.4.0 + `npm audit fix` mergeados na `develop` (#49), e o #34 foi fechado. O audit de produção dá 0 vulnerabilidades, e o #35 está livre.
