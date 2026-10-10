@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures'
-import { getLinkHref, getMeta, getTitle } from './html'
+import { getJsonLdScripts, getLinkHref, getMeta, getTitle } from './html'
 
 // URL de produção: canonical, `og:url` e imagens apontam para ela, e não para o servidor local.
 const SITE_URL = 'https://devfelipeaugusto.com.br'
@@ -21,6 +21,23 @@ function toLocalPath(url: string) {
 }
 
 const PREVIEW_IMAGES = ['og:image', 'twitter:image']
+
+// URLs de todos os campos `image` de um documento JSON-LD, em qualquer nível. O valor pode ser
+// uma URL, um `ImageObject` com `url` ou uma lista deles.
+function findImageUrls(node: unknown): string[] {
+  if (Array.isArray(node)) return node.flatMap(findImageUrls)
+  if (typeof node !== 'object' || node === null) return []
+  return Object.entries(node).flatMap(([key, value]) =>
+    key === 'image' ? toUrls(value) : findImageUrls(value),
+  )
+}
+
+function toUrls(image: unknown): string[] {
+  if (typeof image === 'string') return [image]
+  if (Array.isArray(image)) return image.flatMap(toUrls)
+  if (typeof image === 'object' && image !== null && 'url' in image) return toUrls(image.url)
+  return []
+}
 
 for (const route of ROUTES) {
   test(`${route} declara canonical e og:url da própria rota`, async ({ request }) => {
@@ -50,6 +67,21 @@ for (const route of ROUTES) {
 
     for (const key of PREVIEW_IMAGES) {
       expect(getMeta(html, `${key}:alt`), `${key}:alt`).toContain('Fullstack')
+    }
+  })
+
+  test(`${route} tem JSON-LD parseável com imagens que respondem 200`, async ({ request }) => {
+    const html = await (await request.get(route)).text()
+    const scripts = getJsonLdScripts(html)
+    expect(scripts, 'JSON-LD ausente').not.toHaveLength(0)
+
+    const imageUrls = scripts.map((script) => JSON.parse(script) as unknown).flatMap(findImageUrls)
+    expect(imageUrls, 'JSON-LD sem imagem').not.toHaveLength(0)
+
+    for (const url of imageUrls) {
+      const image = await request.get(toLocalPath(url))
+      expect(image.status(), url).toBe(200)
+      expect(image.headers()['content-type'], url).toMatch(/^image\//)
     }
   })
 }

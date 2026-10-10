@@ -36,6 +36,13 @@ export function getMeta(html: string, key: string) {
   return tag && getAttribute(tag, 'content')
 }
 
+/** Conteúdo bruto de cada `<script type="application/ld+json">`. */
+export function getJsonLdScripts(html: string) {
+  return [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(
+    ([, content]) => content ?? '',
+  )
+}
+
 /** `href` do `<link>` com o `rel` informado (por exemplo, `canonical`). */
 export function getLinkHref(html: string, rel: string) {
   const tag = findTags(html, 'link').find((link) => getAttribute(link, 'rel') === rel)
