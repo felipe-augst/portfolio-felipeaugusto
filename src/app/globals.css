@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @plugin "tailwindcss-animate";
 
+/* Tela de boas-vindas habilitada: atributo que o script inline do <head> põe no <html>. */
+@custom-variant splash (&:where([data-splash] *));
+
 @theme inline {
   /* Cores — paleta noite desértica */
   --color-bg: #0a0f1f;

@@ -31,7 +31,7 @@ Concluído quando a issue está atribuída a você.
 
 ### 3. Prepare a branch
 
-1. `git switch develop && git pull`
+1. `git switch develop && git pull --autostash`. O `--autostash` leva para a branch nova as atualizações do status feitas no passo 7, que ainda não foram commitadas.
 2. `git switch -c <tipo>/<n>-<slug>`
 3. No status, marque o ticket como `em andamento` com o nome da branch e abra uma entrada de handoff para ele.
 

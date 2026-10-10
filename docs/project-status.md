@@ -23,29 +23,31 @@ Status:
 | ----- | -------------------------------------------------------- | ------------------ | ------------ | ------------------------------ | --- |
 | #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue     | `chore/34-update-next-deps`    | #49 |
 | #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue     | `chore/35-e2e-infra-ci`        | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | em revisão   | `feat/36-static-routes-splash` | #52 |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue     | `feat/36-static-routes-splash` | #52 |
 | #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
 | #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`       | #53 |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | livre        | —                              | —   |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | bloqueado    | —                              | —   |
-| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | livre        | —                              | —   |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em andamento | —                              | —   |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | livre        | —                              | —   |
+| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em andamento | —                              | —   |
 | #42   | Seção de contato acessível                               | #35                | em andamento | `fix/42-accessible-contact`    | —   |
 | #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado    | —                              | —   |
-| #44   | Headers de segurança + CSP report-only                   | #36                | bloqueado    | —                              | —   |
+| #44   | Headers de segurança + CSP report-only                   | #36                | livre        | —                              | —   |
 | #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
 | #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** vazia. Os tickets livres (#39, #41 e #42) já têm assignee: o #42 está em andamento neste terminal, e o #39 e o #41 foram atribuídos em outros terminais.
+**Frontier:** #40. Também está livre o #44. O #39 e o #41 estão em andamento em outros terminais, e o #42 neste.
 
 ## Handoff
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
+_O #39 e o #41 estão em andamento, com o handoff nas próprias branches._
+
 ### #42 — fix/42-accessible-contact
 
-- **Estado:** branch criada a partir da `develop` em `8c2d277`. Trabalho ainda sem commits de código.
-- **Próximo passo:** ciclos red → green, um por critério de aceite da issue.
-- **Atenção:** na home, as seções abaixo da dobra ficam com opacidade 0 até entrar na tela (`RevealOnScroll`, que é do #40), então o teste de contraste e o axe do Contato precisam rolar até a seção antes de analisar. O #39 e o #41 rodam em paralelo em outros terminais e também editam este arquivo; quem mergear por último resolve o conflito pela regra de "Conflitos no project-status.md".
+- **Estado:** os 9 critérios estão atendidos e verificados. Foram seis ciclos red → green em `e2e/contact.spec.ts`: nome acessível do título, título parado com movimento reduzido, um único ciclo depois de o título aparecer, axe na seção, ícones sociais decorativos e aviso de nova aba nos links sociais externos (esse último vem de `docs/agents/standards.md`). Depois veio o refactor: `RotatingWord` (ilha de cliente) e `Contact` como Server Component. A lista de palavras vazia foi conferida à mão (dados trocados por `[]`, build, página sem erro, título "Vamos algo juntos?"), e os dados voltaram.
+- **Próximo passo:** abrir o PR para a `develop`.
+- **Atenção:** o `e2e/axe.spec.ts` (#38) falha às vezes na home e nas subpáginas por contraste da saudação da tela de boas-vindas no meio do fade-in (`animate-in fade-in` do `tailwindcss-animate`, a 72 px), fora da seção de contato. Aconteceu em 3 de ~8 rodadas locais da suíte antes do merge do #36; o CI tem 2 retries. A animação é do #40, que remove o `tailwindcss-animate`. O `Hero` ainda escreve o caminho do CV à mão (fica para quem mexer no Hero, #40 ou #46). Os links sociais do menu (`MenuOverlay`) abrem o `mailto:` em nova aba e não avisam a nova aba; isso é do #41. Os testes de animação leem o "texto pintado" (helpers `paintedText` e `watchChanges` em `e2e/contact.spec.ts`), porque o Playwright considera visível um elemento com opacidade 0; o #40 pode reaproveitar esses helpers.
 
 <!--
 Modelo de entrada:
@@ -61,6 +63,8 @@ Modelo de entrada:
 
 Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 
+- **Enquanto houver tickets em paralelo:** a suíte E2E sobe o servidor na porta fixa 3100 com `reuseExistingServer: false`. Duas suítes ao mesmo tempo, em worktrees diferentes, falham com `http://localhost:3100 is already used`. Rode uma de cada vez, ou use uma config local, fora do repo, que importe a `playwright.config.ts` e troque só a porta (`baseURL`, `webServer.command`, `webServer.url`) e os caminhos (`testDir`, `outputDir`, `webServer.cwd`).
+- **Até o #46:** depois de um `next dev`, o `typecheck` e o `next build` falham com `TS6133` em `.next/dev/types/validator.ts`, um arquivo gerado pelo dev que o `tsconfig` inclui (`.next/dev/types/**/*.ts`). Apague `.next/dev` antes de verificar. Tirar esse include do `tsconfig` é decisão de limpeza do #46.
 - **Até o dono configurar:** a `main` não tem branch protection (conferido em 2026-10-10, depois da entrega do #35), apesar de a documentação antiga dizer que tinha. Configurar a proteção é decisão do dono do repo.
 - **Até o release v2.0.0:** o CI avisa que `actions/checkout`, `actions/setup-node` e `actions/cache` v4 rodam em Node 20, que está deprecated. A troca de major dessas actions fica para o Dependabot, que só começa a valer quando o `dependabot.yml` chegar à `main`, ou para um ticket próprio.
 - **Até o #46:** o `AGENTS.md` abre com o bloco gerenciado do Next (`<!-- BEGIN:nextjs-agent-rules -->` … `<!-- END:nextjs-agent-rules -->`), que veio do create-next-app. Desde o Next 16.3, o `next dev` reescreve o conteúdo entre esses marcadores com o texto da versão instalada quando detecta um agente de IA (opção `agentRules`, ligada por padrão), e isso gera diff no `AGENTS.md`. Não commite essa mudança junto com um ticket. Manter o bloco ou desligar com `agentRules: false` é decisão de documentação do #46. No Next 16.4, o `next build` também pode parar com um lembrete de upgrade (`experimental.agentUpgrade`) quando houver advisory para a versão instalada. Repetir o comando continua o build.
@@ -69,6 +73,15 @@ Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 
 Decisões que não estão na spec #33. A mais recente fica no topo.
 
+- **2026-10-10:** o título do Contato tem a frase completa em `sr-only` ("Vamos construir algo juntos?", com a primeira palavra) e a parte visual com `aria-hidden`. A troca de palavras é a ilha `RotatingWord` (`src/components/ui/RotatingWord.tsx`). Ela começa quando a palavra entra na tela (`IntersectionObserver`), distribui as trocas em 3 s e para na última palavra, e a transição final termina em 3,5 s. Com movimento reduzido, fica a primeira palavra. O `Contact` virou Server Component.
+- **2026-10-10:** as palavras fora da vez ficam recortadas pelo `overflow-hidden`, só com deslocamento, sem o fade de opacidade de antes. No meio do fade, o axe media contraste de 1,06 no título e derrubava o `e2e/axe.spec.ts` da home. A regra entrou em `docs/agents/standards.md` ("Texto que troca").
+- **2026-10-10:** o card de contato passou de `bg-sand/40` para `bg-sand/60`, e a localização e o ícone de mapa usam `text-bg` no lugar de `text-black/70`. O contraste da localização sobe de 2,73:1 para cerca de 5,6:1, calculado sobre o fundo composto. O `text-md`, que não existe no Tailwind, virou `text-base`, o tamanho que já era renderizado.
+- **2026-10-10:** os links sociais externos do Contato têm `aria-label` "Acessar <rede> (abre em nova aba)", e o `mailto:` abre na mesma aba, decidido pelo `href`. O rótulo do GitHub virou "GitHub". Cada link social carrega o próprio `icon` em `SOCIAL_LINKS`, e o `SOCIAL_ICONS` saiu. A localização e o CV do Contato vêm do `SITE`, e os links sociais ganharam o foco visível do `Button`.
+- **2026-10-10:** os testes de animação do Contato leem o texto pintado: trechos sem `display: none`, `visibility: hidden` ou opacidade 0 e não recortados por um ancestral com overflow. O `toBeVisible` do Playwright trata opacidade 0 como visível, e uma captura de tela pegaria a tela de boas-vindas por cima. Antes de ler, o teste espera a opacidade total do título, por causa da animação de entrada das seções. O axe da seção espera a tela de boas-vindas deixar de ser pintada, porque o axe não confere o contraste do que está coberto.
+- **2026-10-10:** o script inline do `<head>` é `HEAD_SCRIPT`, em `src/lib/head-script.ts`, e não no componente da tela: exports de um módulo `'use client'` chegam ao Server Component como referência de cliente, não como string. Ele marca o `<html>` com `data-js` (sempre) e `data-splash` (primeira página da sessão, flag `splash-seen` no `sessionStorage`). A tela usa a variante `splash:` do Tailwind (`@custom-variant` no `globals.css`) e remove o `data-splash` no `transitionend` do fade. O `<html>` tem `suppressHydrationWarning`. O conteúdo do script é fixo, e o #44 coloca o hash dele na CSP.
+- **2026-10-10:** a tela de boas-vindas é decorativa (`aria-hidden`), sem papel nem nome acessível. Por isso os testes dela localizam pelas saudações (`getByText`), exceção à regra de `getByRole`. Os testes de timer esperam em tempo real: com `page.clock`, o tempo pode avançar antes de a hidratação registrar os timers. Para afirmar "nunca visível", o teste confere na hora com `isVisible()`, porque `toBeHidden({ timeout: 0 })` espera sem limite.
+- **2026-10-10:** a primeira saudação da tela de boas-vindas aparece sem fade-in, e o fade-in fica só na troca de idioma. Com o `e2e/axe.spec.ts` do #38, o axe às vezes pegava o texto a cerca de 10% de opacidade logo no carregamento (contraste 1,18) e falhava sob carga. As trocas de idioma (1,5 s e 3 s) e o fade final ainda baixam o contraste por 300–700 ms, mas o axe roda logo depois do load, antes delas.
+- **2026-10-10:** em `next dev`, os atributos do `<html>` sobrevivem à hidratação (amostrado a cada 0,5 s), e a tela aparece e some como em produção. Não foi preciso reaplicar os atributos no remount do Strict Mode, como o guia `preventing-flash-before-hydration` sugere.
 - **2026-10-10:** o `PageShell` põe o "Voltar" no topo, alinhado à esquerda, seguido do rótulo e do `<h1>` (um `SectionHeading` com `as="h1"`). Cada página tem um único "Voltar": o da `/stack` subiu do fim da página, e o segundo "Voltar" da `/projects`, que só aparecia abaixo de lg, saiu. Os `<h1>` repetem o texto dos links da home: "Stack completa" e "Todos os projetos". A 404 tem o rótulo "Erro 404" e o título "Página não encontrada". O fundo em gradiente, que só a `/stack` tinha, vale para todas as páginas do shell.
 - **2026-10-10:** o `SectionEyebrow` fica com `aria-hidden`: o leitor de tela ouve só o título da seção. O `Section` aplica o mesmo espaçamento em todos os breakpoints, e com isso Sobre ganha 40 px em cima no mobile e deixa de inverter lg/xl.
 - **2026-10-10:** a 404 é o `app/not-found.tsx`. O `global-not-found` é experimental e pularia o layout raiz. O título é "Página não encontrada | Felipe Augusto", sem canonical, e o Next injeta `noindex`. O rodapé da home saiu de dentro do `<main>` e passa a ser o landmark `contentinfo`.
@@ -93,9 +106,11 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-10 — Rotas estáticas, tela de boas-vindas decidida no `<head>` uma vez por sessão, marcador `data-js` e site sem Server Action mergeados na `develop` (#52), e o #36 foi fechado. Ficam livres #40 e #44.
 - 2026-10-10 — #42 em andamento na branch `fix/42-accessible-contact`.
 - 2026-10-10 — Shell de página, landmarks e 404 em pt-BR mergeados na `develop` (#53), e o #38 foi fechado. Nenhum ticket é liberado: o #46 ainda espera #36 e #39–#45.
 - 2026-10-10 — #38 em revisão no PR #53: shell de página com `<main>` e `<h1>`, 404 em pt-BR e componentes de seção compartilhados.
+- 2026-10-10 — #36 em revisão no PR #52: rotas estáticas, tela de boas-vindas decidida no `<head>` uma vez por sessão, marcador `data-js` e site sem Server Action.
 - 2026-10-10 — SEO e metadados por rota mergeados na `develop` (#51), e o #37 foi fechado. Nenhum ticket é liberado: o #46 ainda espera #36 e #38–#45.
 - 2026-10-10 — #37 em revisão no PR #51: configuração central do site, metadados e imagens de prévia por rota, robots, sitemap e JSON-LD.
 - 2026-10-10 — Suíte E2E com Playwright, CI endurecido (permissões de leitura, audit de produção, job E2E com artefato e cache dos navegadores), Dependabot, `.gitattributes` e Node 24 mergeados na `develop` (#50), e o #35 foi fechado. Ficam livres #36, #37, #38, #39, #41 e #42.
