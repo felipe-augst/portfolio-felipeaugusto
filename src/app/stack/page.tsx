@@ -2,8 +2,11 @@ import { STACKS_PAGE_DATA } from '@/data/stack'
 import { BackButton } from '@/components/ui/BackButton'
 import Image from 'next/image'
 import type { Metadata } from 'next'
+import { PAGES } from '@/data/site'
+import { buildPageMetadata } from '@/lib/metadata'
 
 export const metadata: Metadata = {
+  ...buildPageMetadata(PAGES.stack),
   title: 'Tecnologias',
   description: 'Tecnologias e ferramentas que utilizo no dia a dia como desenvolvedor frontend.',
 }

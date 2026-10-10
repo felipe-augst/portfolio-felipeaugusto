@@ -4,6 +4,8 @@ import './globals.css'
 import { cookies } from 'next/headers'
 import { Skeleton } from '@/components/layout/Skeleton'
 import { Nav } from '@/components/layout/Nav'
+import { SITE } from '@/data/site'
+import { SITE_OPEN_GRAPH } from '@/lib/metadata'
 
 const fraunces = Fraunces({
   variable: '--font-fraunces',
@@ -28,7 +30,7 @@ const cinzel = Cinzel({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://devfelipeaugusto.com.br'),
+  metadataBase: new URL(SITE.url),
   title: {
     default: 'Felipe Augusto | Fullstack Developer',
     template: '%s | Felipe Augusto',
@@ -49,10 +51,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Felipe Augusto', url: 'https://devfelipeaugusto.com.br' }],
   creator: 'Felipe Augusto',
   openGraph: {
-    type: 'website',
-    locale: 'pt_BR',
-    url: 'https://devfelipeaugusto.com.br',
-    siteName: 'Felipe Augusto',
+    ...SITE_OPEN_GRAPH,
     title: 'Felipe Augusto — Fullstack Developer',
     description:
       'Fullstack Developer construindo produtos digitais com React, Next.js, TypeScript e Node.js.',
@@ -81,9 +80,6 @@ export const metadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
-  },
-  alternates: {
-    canonical: 'https://devfelipeaugusto.com.br',
   },
 }
 

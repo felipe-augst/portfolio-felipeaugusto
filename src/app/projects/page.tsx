@@ -2,8 +2,11 @@ import { BackButton } from '@/components/ui/BackButton'
 import { PROJECTS } from '@/data/projects'
 import { FeaturedProjectsGrid } from '@/components/sections/FeaturedProjectsGrid'
 import type { Metadata } from 'next'
+import { PAGES } from '@/data/site'
+import { buildPageMetadata } from '@/lib/metadata'
 
 export const metadata: Metadata = {
+  ...buildPageMetadata(PAGES.projects),
   title: 'Tecnologias',
   description: 'Tecnologias e ferramentas que utilizo no dia a dia como desenvolvedor frontend.',
 }
