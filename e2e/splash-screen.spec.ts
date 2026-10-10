@@ -82,6 +82,30 @@ test('toda página marca o elemento raiz como "JS disponível" antes da hidrata�
   }
 })
 
+test('com movimento reduzido, a tela de boas-vindas não alterna o texto nem anima a varredura', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  const splash = splashScreen(page)
+  await expect(splash).toBeVisible()
+
+  const runningAnimations = await splash.evaluate((greeting) =>
+    (greeting.closest('[aria-hidden="true"]')?.getAnimations({ subtree: true }) ?? [])
+      .filter((animation) => animation.playState === 'running')
+      .map((animation) => (animation as CSSAnimation).animationName),
+  )
+  expect(runningAnimations).toEqual([])
+
+  // Coleta as saudações exibidas até a tela sumir: sem movimento, fica sempre a primeira.
+  const greetings = new Set<string | null>()
+  while (await splash.isVisible()) {
+    greetings.add(await splash.textContent())
+    await page.waitForTimeout(200)
+  }
+  expect([...greetings]).toEqual(['Bem-vindo ao meu portfólio'])
+})
+
 test.describe('sem JavaScript', () => {
   test.use({ javaScriptEnabled: false })
 
