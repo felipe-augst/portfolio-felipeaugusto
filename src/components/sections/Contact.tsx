@@ -53,16 +53,18 @@ export function Contact() {
             >
               <span className="invisible pointer-events-none font-medium">{longestWord}</span>
               {animatedWords.map((word, i) => {
-                let positionClass = 'translate-y-full opacity-0'
+                // As palavras fora da vez ficam recortadas pelo overflow, com opacidade total: no
+                // meio de um fade, o texto ficaria sem contraste.
+                let positionClass = 'translate-y-full'
                 if (i === index) {
-                  positionClass = 'translate-y-0 opacity-100'
+                  positionClass = 'translate-y-0'
                 } else if (i < index) {
-                  positionClass = '-translate-y-full opacity-0'
+                  positionClass = '-translate-y-full'
                 }
                 return (
                   <span
                     key={word}
-                    className={`absolute inset-0 flex justify-center md:justify-start items-center md:items-start text-accent font-medium transition-all duration-500 ease-in-out ${positionClass}`}
+                    className={`absolute inset-0 flex justify-center md:justify-start items-center md:items-start text-accent font-medium motion-safe:transition-transform motion-safe:duration-500 motion-safe:ease-in-out ${positionClass}`}
                   >
                     {word}
                   </span>
@@ -79,7 +81,7 @@ export function Contact() {
           </h3>
 
           {/* O Card Principal */}
-          <div className="w-full flex flex-col p-4 border border-border-strong bg-sand/40 backdrop-blur-md mb-8">
+          <div className="w-full flex flex-col p-4 border border-border-strong bg-sand/60 backdrop-blur-md mb-8">
             {/* Grupo 1: Ícones Sociais */}
             <div className="grid grid-cols-4 gap-2 mb-2">
               {SOCIAL_LINKS.map(({ platform, href, label }) => (
@@ -107,8 +109,8 @@ export function Contact() {
 
             {/* Grupo 2: Localização */}
             <div className="flex items-center justify-center gap-3 p-2">
-              <MapPin className="w-5 h-5 text-black/70" strokeWidth={1.5} />
-              <span className="font-sans text-md md:text-lg text-black/70 tracking-wide">
+              <MapPin className="w-5 h-5 text-bg" strokeWidth={1.5} />
+              <span className="font-sans text-base md:text-lg text-bg tracking-wide">
                 Jundiaí / SP
               </span>
             </div>
