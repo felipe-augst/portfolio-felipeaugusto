@@ -1,9 +1,10 @@
 'use client'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { MenuOverlay } from './MenuOverlay'
 
 export function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuId = useId()
 
   return (
     <>
@@ -16,13 +17,16 @@ export function Nav() {
         </a>
         <button
           onClick={() => setMenuOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={menuOpen}
+          aria-controls={menuId}
           className="border border-border-strong text-sand text-xs uppercase tracking-[0.2em] font-medium px-5 py-2.5 hover:bg-sand hover:text-bg transition-colors"
         >
           Menu
         </button>
       </header>
 
-      <MenuOverlay open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MenuOverlay id={menuId} open={menuOpen} onClose={() => setMenuOpen(false)} />
     </>
   )
 }

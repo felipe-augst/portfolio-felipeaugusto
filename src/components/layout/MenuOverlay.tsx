@@ -6,11 +6,12 @@ import { NAV_ITEMS } from '@/data/nav'
 import { SOCIAL_LINKS } from '@/data/social'
 
 type MenuOverlayProps = {
+  id: string
   open: boolean
   onClose: () => void
 }
 
-export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
+export function MenuOverlay({ id, open, onClose }: MenuOverlayProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   // O diálogo modal nativo traz a camada superior, o fundo inerte e o Escape.
@@ -24,6 +25,7 @@ export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
   return (
     <dialog
       ref={dialogRef}
+      id={id}
       aria-label="Menu"
       onClose={onClose}
       className={cn(
