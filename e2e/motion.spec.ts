@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { effectiveOpacity } from './paint'
+import { effectiveOpacity, isDisplaced } from './paint'
 
 // Seções da home: o hero, que traz o <h1>, e as seções com âncora.
 function homeSections(page: Page) {
@@ -37,6 +37,21 @@ test('as seções abaixo da dobra começam ocultas e ficam visíveis ao rolar at
     await locator.scrollIntoViewIfNeeded()
     await expect.poll(() => effectiveOpacity(locator), { message: name }).toBe(1)
   }
+})
+
+test.describe('com movimento reduzido', () => {
+  test.use({ reducedMotion: 'reduce' })
+
+  test('todas as seções da home ficam visíveis e sem deslocamento, sem precisar rolar', async ({
+    page,
+  }) => {
+    await page.goto('/')
+
+    for (const { name, locator } of homeSections(page)) {
+      expect(await effectiveOpacity(locator), name).toBe(1)
+      expect(await isDisplaced(locator), name).toBe(false)
+    }
+  })
 })
 
 test.describe('sem JavaScript', () => {
