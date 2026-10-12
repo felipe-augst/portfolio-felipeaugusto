@@ -125,6 +125,30 @@ function overflows(locator: Locator) {
   return locator.evaluate((element) => element.scrollHeight - element.clientHeight > 1)
 }
 
+// Clica no botão do card sem deixar a rolagem para o clique. Na fileira com snap, a rolagem que o
+// Playwright faz a cada tentativa de clique pode encaixar outro card no centro, e o card ativo
+// muda, com a transição de escala, a cada tentativa: no CI, o botão nunca ficava estável. Aqui o
+// card fica no centro da fileira, o botão no meio da tela, e o clique só acontece com o card no
+// tamanho cheio.
+async function clickInCard(item: Locator, button: Locator) {
+  await item.evaluate((element) =>
+    element.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' }),
+  )
+  await button.evaluate((element) =>
+    element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
+  )
+  await expect
+    .poll(() =>
+      item.evaluate(
+        (element) =>
+          Math.abs(element.getBoundingClientRect().width - (element as HTMLElement).offsetWidth) <
+          0.5,
+      ),
+    )
+    .toBe(true)
+  await button.click()
+}
+
 // Confere o "Ler mais" de cada card: ele só existe quando a descrição transborda e, nesse caso,
 // controla a descrição e alterna `aria-expanded`. Devolve quantos cards transbordam.
 async function checkReadMore(page: Page, list: Locator, projects: readonly Project[]) {
@@ -148,11 +172,11 @@ async function checkReadMore(page: Page, list: Locator, projects: readonly Proje
     await expect(button).toHaveAttribute('aria-controls', id ?? '')
     await expect(button).toHaveAttribute('aria-expanded', 'false')
 
-    await button.click()
+    await clickInCard(item, button)
     await expect(button).toHaveAttribute('aria-expanded', 'true')
     expect(await overflows(description), `${project.title} expandida`).toBe(false)
 
-    await button.click()
+    await clickInCard(item, button)
     await expect(button).toHaveAttribute('aria-expanded', 'false')
     expect(await overflows(description), `${project.title} recolhida`).toBe(true)
   }
