@@ -48,6 +48,15 @@ export function getJsonLdScripts(html: string) {
   )
 }
 
+/** Texto de cada título (`<h1>` a `<h6>`), sem as tags internas. */
+export function getHeadings(html: string) {
+  return [...html.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/g)].map(([, , content]) =>
+    decodeEntities((content ?? '').replace(/<[^>]*>/g, ''))
+      .replace(/\s+/g, ' ')
+      .trim(),
+  )
+}
+
 /** `href` do `<link>` com o `rel` informado (por exemplo, `canonical`). */
 export function getLinkHref(html: string, rel: string) {
   const tag = findTags(html, 'link').find((link) => getAttribute(link, 'rel') === rel)
