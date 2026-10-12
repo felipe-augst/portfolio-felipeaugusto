@@ -11,11 +11,11 @@ import { motion } from 'motion/react'
 export function Hero() {
   return (
     <section className="relative min-h-200 md:min-h-225 lg:min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 md:px-12 pb-15">
-      {/* Background Image */}
+      {/* Background Image (decorativa) */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/images/hero/hero_background2.webp"
-          alt="Duna solitária sob céu estrelado"
+          alt=""
           fill
           preload
           sizes="100vw"
