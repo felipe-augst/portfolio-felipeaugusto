@@ -26,7 +26,7 @@ Status:
 | #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue     | `feat/36-static-routes-splash` | #52 |
 | #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
 | #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`       | #53 |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em andamento | `feat/39-projects-list-images` | —   |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em revisão   | `feat/39-projects-list-images` | #59 |
 | #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue     | `fix/40-reduced-motion`        | #57 |
 | #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em andamento | —                              | —   |
 | #42   | Seção de contato acessível                               | #35                | entregue     | `fix/42-accessible-contact`    | #55 |
@@ -35,7 +35,7 @@ Status:
 | #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
 | #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** #44. O #39 e o #41 estão em andamento em outros terminais.
+**Frontier:** #44. O #39 está em revisão no PR #59, e o #41 está em andamento em outro terminal. O merge do #39 libera o #43.
 
 ## Handoff
 
@@ -45,8 +45,8 @@ _O #41 está em andamento em outro terminal, com o handoff na própria branch._
 
 ### #39 — feat/39-projects-list-images
 
-- **Estado:** os 8 ciclos red → green estão feitos e todos os critérios de aceite têm teste verde: `e2e/projects.http.spec.ts`, `e2e/projects.spec.ts`, `e2e/layout-shift.spec.ts`, `e2e/images.http.spec.ts`, `e2e/images.spec.ts` e `e2e/fonts.spec.ts`.
-- **Próximo passo:** abrir o PR para a `develop`.
+- **Estado:** em revisão no PR #59. Todos os critérios de aceite têm teste verde em `e2e/projects.http.spec.ts`, `e2e/projects.spec.ts`, `e2e/layout-shift.spec.ts`, `e2e/images.http.spec.ts`, `e2e/images.spec.ts` e `e2e/fonts.spec.ts`. Passam `format:check`, `lint`, `typecheck` e `build` (tudo `○ (Static)`), e a suíte E2E (138 testes) também passa com a `develop` do #40 mesclada.
+- **Próximo passo:** depois do merge, passo 7 do workflow: fechar a issue e marcar o #43 como `livre`.
 - **Atenção:**
   - #43: o `ProjectCard` continua `'use client'` por causa do "Ler mais". A gaveta abre no card ativo da fileira (`max-md:in-data-[active=true]:translate-y-0`). O teste do card ativo só confere que a gaveta do card ativo é pintada, e isso continua valendo com a gaveta sempre visível sem hover. O teste acha o ícone pelo `alt` com o nome da tecnologia. Em `/projects`, o título do card é `<h3>` logo depois do `<h1>`, então a hierarquia pula o `<h2>`.
   - #41: os links do `MenuOverlay` trocaram `font-light` por `font-normal` (uma linha). É provável que dê conflito no merge.
@@ -124,6 +124,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-12 — #39 em revisão no PR #59: lista única de projetos no HTML do servidor (fileira com scroll-snap e card ativo no mobile, grid a partir de `md`), sem Embla nem `useMediaQuery`; `sizes` nos cards; preload só do fundo do hero, que ganhou `alt=""`; Fraunces sem itálico e pesos da Cinzel corrigidos; CLS da home em 0, com a caixa da saudação de tamanho fixo.
 - 2026-10-12 — Remoção do `motion`, entrada das seções em CSS e movimento reduzido respeitado mergeados na `develop` (#57), e o #40 foi fechado. Nenhum ticket é liberado: o #45 ainda espera #39 e #43. O #39 também mexe no `Hero.tsx`: na resolução, o `Hero` fica sem `'use client'` e com o stagger em CSS do #40. Ficam para outros tickets: o caminho do CV escrito à mão e os imports relativos `../ui/*` do `Hero` (#46) e o JS da home, ainda em 168,0 KB transferidos, acima dos 150 KB (#45). Se o #46 mudar a estrutura do hero ou o `alt` dos ícones, confira `heroStackIcons` em `e2e/motion.spec.ts`.
 - 2026-10-12 — #39 em andamento na branch `feat/39-projects-list-images`.
 - 2026-10-12 — #40 em revisão no PR #57: entrada das seções com `IntersectionObserver` e CSS, visível sem JS e parada com movimento reduzido; stagger do hero em CSS e `Hero` no servidor; reset de movimento reduzido com uma iteração e rolagem sem suavidade; `motion` e `tailwindcss-animate` removidos (JS da home de 206,7 KB para 168,0 KB transferidos).
