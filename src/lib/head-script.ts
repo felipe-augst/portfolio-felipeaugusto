@@ -4,7 +4,8 @@ export const SPLASH_ATTRIBUTE = 'data-splash'
 // Atributo do <html> que marca "JS disponível", para estados iniciais que só valem com JS.
 export const JS_ATTRIBUTE = 'data-js'
 
-const SPLASH_SEEN_KEY = 'splash-seen'
+// Flag do sessionStorage que marca a tela como vista nesta sessão.
+export const SPLASH_SEEN_KEY = 'splash-seen'
 
 // Script inline e bloqueante do <head>, que roda antes da primeira pintura: marca "JS disponível"
 // e, na primeira página da sessão, habilita a tela de boas-vindas e grava a flag. Storage
