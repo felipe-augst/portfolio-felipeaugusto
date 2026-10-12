@@ -55,11 +55,13 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 - **Movimento reduzido.** Com movimento reduzido, a página fica estática: nenhuma animação infinita, nenhum deslocamento, nenhuma troca automática de texto. O reset global cobre o CSS. Ilhas de cliente com timers consultam `prefers-reduced-motion`.
 - **5 segundos.** Conteúdo que muda sozinho para em menos de 5 s (WCAG 2.2.2).
 - **Texto que troca.** A palavra fora da vez fica escondida por recorte (`overflow-hidden` + deslocamento), com opacidade total. No meio de um fade, o texto fica sem contraste e o axe acusa violação.
+- **Troca sem deslocamento.** Texto que troca sozinho fica numa caixa de tamanho fixo, que não depende do texto (por exemplo, largura total e altura de duas linhas). Uma caixa centralizada que encolhe ou cresce com o texto muda de posição, e isso conta no CLS.
 
 ## Acessibilidade
 
 - Cada rota tem um `<main>` e um único `<h1>`, e a hierarquia de títulos segue em ordem. Nas páginas fora da home, inclusive a 404, os dois vêm do `PageShell`.
 - O rótulo de seção (`SectionEyebrow`, traço + texto) é decorativo e fica com `aria-hidden`. Ele não substitui o título da seção.
+- Conjuntos de itens, como os cards de projeto, são uma lista (`<ul>`/`<li>`) com nome acessível. O `<ul>` declara `role="list"`, porque o Safari tira a semântica de lista de um `<ul>` sem marcadores, e o reset do Tailwind remove os marcadores.
 - Overlays modais usam `<dialog>` com `showModal()`. O gatilho expõe `aria-expanded` e `aria-controls`.
 - Todo controle que expande ou recolhe conteúdo expõe `aria-expanded` e `aria-controls`.
 - Informação revelada por hover também aparece com foco dentro (`focus-within`) e em dispositivos sem hover.

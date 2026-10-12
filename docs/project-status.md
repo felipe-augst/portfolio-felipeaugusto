@@ -45,9 +45,13 @@ _O #41 está em andamento em outro terminal, com o handoff na própria branch._
 
 ### #39 — feat/39-projects-list-images
 
-- **Estado:** branch criada a partir da `develop` (`1a5a000`). Nenhum ciclo red → green feito ainda.
-- **Próximo passo:** primeiro ciclo: teste de request com os títulos dos projetos no HTML da home e de `/projects`.
-- **Atenção:** o #41 roda em paralelo em outra worktree. Rode a suíte E2E numa porta própria (ver "Avisos de ambiente").
+- **Estado:** os 8 ciclos red → green estão feitos e todos os critérios de aceite têm teste verde: `e2e/projects.http.spec.ts`, `e2e/projects.spec.ts`, `e2e/layout-shift.spec.ts`, `e2e/images.http.spec.ts`, `e2e/images.spec.ts` e `e2e/fonts.spec.ts`.
+- **Próximo passo:** abrir o PR para a `develop`.
+- **Atenção:**
+  - #43: o `ProjectCard` continua `'use client'` por causa do "Ler mais". A gaveta abre no card ativo da fileira (`max-md:in-data-[active=true]:translate-y-0`). O teste do card ativo só confere que a gaveta do card ativo é pintada, e isso continua valendo com a gaveta sempre visível sem hover. O teste acha o ícone pelo `alt` com o nome da tecnologia. Em `/projects`, o título do card é `<h3>` logo depois do `<h1>`, então a hierarquia pula o `<h2>`.
+  - #40: a caixa da saudação da tela de boas-vindas mudou (`h-[2em] w-full`), no mesmo componente em que o #40 vai mexer no fade-in. O `e2e/layout-shift.spec.ts` cobre a tela.
+  - #41: os links do `MenuOverlay` trocaram `font-light` por `font-normal` (uma linha). É provável que dê conflito no merge.
+  - #46: o README ainda descreve o carrossel Embla e o `useMediaQuery`, e `src/hooks/` ficou vazio, embora o `AGENTS.md` ainda liste essa pasta.
 
 <!--
 Modelo de entrada:
@@ -72,6 +76,13 @@ Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 ## Registro de decisões
 
 Decisões que não estão na spec #33. A mais recente fica no topo.
+
+- **2026-10-12:** a lista de projetos é o `ProjectList` (`src/components/ui/ProjectList.tsx`, Server Component). Ele renderiza a ilha `ActiveItemList` (`src/components/ui/ActiveItemList.tsx`), que desenha o `<ul role="list">` com nome acessível e recebe os `<li>` do servidor como `children`. O nome é o título da seção ou da página: "Projetos em destaque" e "Todos os projetos". A ilha marca com `data-active` o item que aparece em pelo menos 75% da área de rolagem da lista (`IntersectionObserver` com a lista como `root`). Abaixo de `md`, os outros itens ficam em `scale-95` e a gaveta do card ativo abre. O destaque não reduz opacidade, como fazia o carrossel (`opacity-50`), porque isso baixaria o contraste do texto.
+- **2026-10-12:** o teste de CLS percorre a primeira visita inteira, com a tela de boas-vindas. A troca de idioma da saudação deslocava a caixa centralizada (CLS de cerca de 0,017 no desktop). Agora a caixa tem tamanho fixo (largura total, duas linhas), e onde as saudações cabem numa linha a linha de varredura fica cerca de 36 px mais abaixo. A regra entrou em `docs/agents/standards.md` ("Troca sem deslocamento").
+- **2026-10-12:** o CLS não registrava a troca de altura da seção de projetos, porque ela acontecia na hidratação, com a seção em opacidade 0 pelo `RevealOnScroll`. Por isso há um teste próprio, que compara a altura da seção no HTML servido (com os scripts do Next bloqueados) e depois da hidratação.
+- **2026-10-12:** o teste de largura das imagens dos cards roda nos dois perfis. No mobile, a imagem já não passava de 2× antes do ticket: os originais têm pelo menos 1440 px, e o otimizador entrega 1200 px para um card de cerca de 860 px de dispositivo. O red veio do desktop (3,9× na home e 4,6× em `/projects`). O limite é 2,2× ("~2×" com 10% de folga para o degrau do srcset). Em `/projects`, no desktop, a razão fica em cerca de 2,04×, porque o `33vw` superestima o container do `PageShell` (`max-w-5xl`).
+- **2026-10-12:** a Fraunces carrega só o estilo normal, e os preloads de fonte caíram de 4 para 3. A Cinzel não tem peso 300: o `<h1>` do hero, o título do contato e os links do menu trocaram `font-light` por `font-normal`. O navegador já usava a face 400, então a aparência não muda. O `e2e/fonts.spec.ts` confere, em cada rota, que o peso e o estilo de todo texto existem entre as faces da fonte principal dele.
+- **2026-10-12:** os testes de projetos leem títulos, destaques e tecnologias de `PROJECTS` (`@/data/projects`), sem escrever os valores à mão, para que uma mudança de conteúdo não quebre a suíte.
 
 - **2026-10-10:** o título do Contato tem a frase completa em `sr-only` ("Vamos construir algo juntos?", com a primeira palavra) e a parte visual com `aria-hidden`. A troca de palavras é a ilha `RotatingWord` (`src/components/ui/RotatingWord.tsx`). Ela começa quando a palavra entra na tela (`IntersectionObserver`), distribui as trocas em 3 s e para na última palavra, e a transição final termina em 3,5 s. Com movimento reduzido, fica a primeira palavra. O `Contact` virou Server Component.
 - **2026-10-10:** as palavras fora da vez ficam recortadas pelo `overflow-hidden`, só com deslocamento, sem o fade de opacidade de antes. No meio do fade, o axe media contraste de 1,06 no título e derrubava o `e2e/axe.spec.ts` da home. A regra entrou em `docs/agents/standards.md` ("Texto que troca").
@@ -106,6 +117,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-12 — #39 em andamento na branch `feat/39-projects-list-images`.
 - 2026-10-10 — Seção de contato acessível mergeada na `develop` (#55), e o #42 foi fechado. Nenhum ticket é liberado: o #45 ainda espera #39, #40 e #43. Ficam para outros tickets: o caminho do CV escrito à mão no `Hero` (#40 ou #46), o `mailto:` em nova aba e sem aviso de nova aba no menu (#41) e o fade-in das trocas de idioma da tela de boas-vindas (#40). Os helpers de "texto pintado" de `e2e/contact.spec.ts` servem para os testes de movimento do #40.
 - 2026-10-10 — #42 em revisão no PR #55: título do contato legível por leitor de tela e com um único ciclo, contraste do card, links sociais com ícone nos dados e seção como Server Component.
 - 2026-10-10 — Rotas estáticas, tela de boas-vindas decidida no `<head>` uma vez por sessão, marcador `data-js` e site sem Server Action mergeados na `develop` (#52), e o #36 foi fechado. Ficam livres #40 e #44.
