@@ -36,7 +36,7 @@ export function Hero() {
         {HERO.availability && (
           <div className="inline-flex items-center gap-3 mb-6 text-[11px] uppercase tracking-[0.25em] text-sand-muted">
             <span className="relative w-2 h-2 bg-green rounded-full">
-              <span className="absolute inset-1.25 rounded-full bg-green/80 animate-pulse" />
+              <span className="absolute inset-1.25 rounded-full bg-green/80 motion-safe:animate-pulse" />
             </span>
             Disponível para novos projetos
           </div>

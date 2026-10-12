@@ -30,9 +30,21 @@
   --font-serif: var(--font-fraunces);
   --font-display: var(--font-cinzel);
 
-  /* Animações */
+  /* Animações. Os componentes usam cada uma sob `motion-safe:`. */
+
+  /* Varredura da linha de destaque */
   --animate-scan: scan 1.4s ease-in-out infinite;
 
+  @keyframes scan {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Entrada só por opacidade */
   --animate-fade-in: fade-in 0.3s ease-out;
 
   @keyframes fade-in {
@@ -104,15 +116,5 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-}
-
-/* Animação de varredura para efeito de destaque */
-@keyframes scan {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
   }
 }
