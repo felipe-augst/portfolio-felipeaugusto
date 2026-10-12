@@ -39,7 +39,7 @@ export function Hero() {
             Disponível para novos projetos
           </div>
         )}
-        <h1 className="font-display text-center font-light text-[clamp(80px,13vw,120px)] leading-[0.88] tracking-[-0.045em] text-sand mb-8 ">
+        <h1 className="font-display text-center font-normal text-[clamp(80px,13vw,120px)] leading-[0.88] tracking-[-0.045em] text-sand mb-8 ">
           <ShimmerText variant="night">
             {HERO.firstName} {HERO.lastName}
           </ShimmerText>
