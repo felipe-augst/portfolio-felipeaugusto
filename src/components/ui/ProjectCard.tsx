@@ -27,7 +27,7 @@ export function ProjectCard({
   return (
     <div
       className={cn(
-        'group relative flex flex-col w-[80vw] sm:w-80 md:w-full shrink-0 overflow-hidden',
+        'group relative flex flex-col w-full overflow-hidden',
         'rounded-md border border-border bg-bg-2 transition-all duration-500',
         variant === 'carousel'
           ? isActive
