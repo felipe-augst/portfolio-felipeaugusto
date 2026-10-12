@@ -19,29 +19,33 @@ Status:
 - `em revisão` — PR aberto para a `develop`;
 - `entregue` — mergeado na `develop` e issue fechada.
 
-| Issue | Ticket                                                   | Bloqueado por      | Status    | Branch                            | PR  |
-| ----- | -------------------------------------------------------- | ------------------ | --------- | --------------------------------- | --- |
-| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue  | `chore/34-update-next-deps`       | #49 |
-| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue  | `chore/35-e2e-infra-ci`           | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue  | `feat/36-static-routes-splash`    | #52 |
-| #37   | SEO e metadados por rota                                 | #35                | entregue  | `fix/37-seo-metadata`             | #51 |
-| #38   | Shell de página, landmarks e página 404                  | #35                | entregue  | `feat/38-page-shell-404`          | #53 |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue  | `feat/39-projects-list-images`    | #59 |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue  | `fix/40-reduced-motion`           | #57 |
-| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | entregue  | `feat/41-modal-menu-navigation`   | #61 |
-| #42   | Seção de contato acessível                               | #35                | entregue  | `fix/42-accessible-contact`       | #55 |
-| #43   | Card de projeto acessível + correção dos dados           | #39                | entregue  | `feat/43-accessible-project-card` | #63 |
-| #44   | Headers de segurança + CSP report-only                   | #36                | livre     | —                                 | —   |
-| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | livre     | —                                 | —   |
-| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado | —                                 | —   |
+| Issue | Ticket                                                   | Bloqueado por      | Status       | Branch                            | PR  |
+| ----- | -------------------------------------------------------- | ------------------ | ------------ | --------------------------------- | --- |
+| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue     | `chore/34-update-next-deps`       | #49 |
+| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue     | `chore/35-e2e-infra-ci`           | #50 |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue     | `feat/36-static-routes-splash`    | #52 |
+| #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`             | #51 |
+| #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`          | #53 |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue     | `feat/39-projects-list-images`    | #59 |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue     | `fix/40-reduced-motion`           | #57 |
+| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | entregue     | `feat/41-modal-menu-navigation`   | #61 |
+| #42   | Seção de contato acessível                               | #35                | entregue     | `fix/42-accessible-contact`       | #55 |
+| #43   | Card de projeto acessível + correção dos dados           | #39                | entregue     | `feat/43-accessible-project-card` | #63 |
+| #44   | Headers de segurança + CSP report-only                   | #36                | em andamento | `feat/44-security-headers-csp`    | —   |
+| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | livre        | —                                 | —   |
+| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                                 | —   |
 
-**Frontier:** #44. Também está livre o #45.
+**Frontier:** #45.
 
 ## Handoff
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
-_Nenhum ticket em andamento ou em revisão._
+### #44 — feat/44-security-headers-csp
+
+- **Estado:** branch criada a partir da `develop` em `fe7f84b`. Decidido com o dono: a CSP usa `script-src 'self' 'unsafe-inline'`, sem hash (ver registro de decisões).
+- **Próximo passo:** ciclos red → green dos critérios, começando pelo `X-Powered-By`.
+- **Atenção:** o Analytics e o Speed Insights ainda não estão montados (#45).
 
 <!--
 Modelo de entrada:
@@ -130,6 +134,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-12 — #44 em andamento na branch `feat/44-security-headers-csp`.
 - 2026-10-12 — Card de projeto acessível mergeado na `develop` (#63), e o #43 foi fechado: gaveta de tecnologias aberta sem hover e com foco dentro do card, "Ler mais" que mede o transbordo, `ProjectCard` no servidor, `ProjectLinks`, `TechIcon` e dados dos projetos corrigidos. Fica livre o #45. Ficam para outros tickets: no #45, o teste de CLS da home (troca de fonte do hero e do botão Menu) falhou algumas vezes sob carga e passou 8 de 8 vezes no desktop, tanto na branch do #43 quanto na `develop` anterior a ele. O axe de `/stack` estourou os 30 s enquanto outro processo pesado rodava na máquina. O axe da home pegou a saudação da tela de boas-vindas no meio do fade-in da troca de idioma (decisão do #40). No #46, o nome do tile de `/stack` só aparece com hover a partir de `md`, inclusive em tablet sem hover, e o `StackTile` pode usar a variante `no-hover:`. Para o dono: preencher o `apiDocs` da DevStore API quando houver a URL da documentação e, se quiser, trocar o `homepage` do repositório `devstore-api` no GitHub, que aponta para o front da DevStore.
 - 2026-10-12 — #43 em revisão no PR #63: gaveta de tecnologias aberta sem hover e com foco dentro do card; "Ler mais" como ilha que mede o transbordo, com `aria-expanded` e `aria-controls`; `ProjectCard` no servidor; `ProjectLinks` com o título do projeto e aviso de nova aba; `TechIcon` com texto alternativo em pt-BR; título do card em `<h2>` em `/projects`; links do GitHub sem `.git` (o do KinoGarten agora aponta para `kinogarten`), sem o deploy errado da DevStore API e sem o espaço duplo da Cidade Viva API.
 - 2026-10-12 — #43 em andamento na branch `feat/43-accessible-project-card`.
