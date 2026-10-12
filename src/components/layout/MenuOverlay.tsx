@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Link from 'next/link'
 import { Button, focusRing } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
 import { NAV_ITEMS } from '@/data/nav'
@@ -43,7 +44,7 @@ export function MenuOverlay({ id, open, onClose }: MenuOverlayProps) {
 
       <nav className="flex flex-col items-center gap-2">
         {NAV_ITEMS.map((item) => (
-          <a
+          <Link
             key={item.href}
             href={item.href}
             onClick={onClose}
@@ -53,7 +54,7 @@ export function MenuOverlay({ id, open, onClose }: MenuOverlayProps) {
             )}
           >
             {item.label}
-          </a>
+          </Link>
         ))}
       </nav>
 

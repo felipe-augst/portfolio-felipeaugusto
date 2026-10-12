@@ -11,6 +11,6 @@ export const NAV_ITEMS: readonly CTA[] = [
   },
   {
     label: 'Contato',
-    href: '#contact',
+    href: '/#contact',
   },
 ]
