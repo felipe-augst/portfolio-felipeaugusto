@@ -88,6 +88,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Com um diálogo modal aberto (o menu), a página atrás não rola. */
+html:has(dialog:modal) {
+  overflow: hidden;
+}
+
 ::selection {
   background: var(--color-accent);
   color: var(--color-bg);

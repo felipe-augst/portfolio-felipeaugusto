@@ -3,6 +3,7 @@ import { Fraunces, DM_Sans, Cinzel } from 'next/font/google'
 import './globals.css'
 import { SplashScreen } from '@/components/layout/SplashScreen'
 import { Nav } from '@/components/layout/Nav'
+import { NavigationTracker } from '@/components/layout/NavigationTracker'
 import { PAGES, SITE } from '@/data/site'
 import { HEAD_SCRIPT } from '@/lib/head-script'
 import { PERSON_JSON_LD, serializeJsonLd } from '@/lib/json-ld'
@@ -91,6 +92,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(PERSON_JSON_LD) }}
         />
         <SplashScreen />
+        <NavigationTracker />
         <Nav />
         {children}
       </body>

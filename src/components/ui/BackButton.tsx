@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
-import { cn } from '@/lib/cn'
+import { Button } from '@/components/ui/Button'
+import { hasClientNavigation } from '@/hooks/use-client-navigation'
 
 type BackButtonProps = {
   fallbackHref?: string
@@ -13,8 +14,10 @@ type BackButtonProps = {
 export function BackButton({ fallbackHref = '/', label = 'Voltar', className }: BackButtonProps) {
   const router = useRouter()
 
+  // O histórico só serve quando a entrada anterior é do site. Na entrada direta (buscador, link
+  // compartilhado), ela é de outro site, e "Voltar" vai para o fallback.
   const handleClick = () => {
-    if (window.history.length > 1) {
+    if (hasClientNavigation()) {
       router.back()
     } else {
       router.push(fallbackHref)
@@ -22,19 +25,8 @@ export function BackButton({ fallbackHref = '/', label = 'Voltar', className }: 
   }
 
   return (
-    <button
-      onClick={handleClick}
-      className={cn(
-        'inline-flex items-center gap-2',
-        'text-sand-muted text-xs uppercase tracking-[0.2em]',
-        'transition-colors duration-300',
-        'hover:text-accent',
-        'focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2',
-        className,
-      )}
-    >
-      <ArrowLeft className="size-4" aria-hidden="true" />
+    <Button variant="ghost" leadingIcon={ArrowLeft} onClick={handleClick} className={className}>
       {label}
-    </button>
+    </Button>
   )
 }

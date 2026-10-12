@@ -19,29 +19,33 @@ Status:
 - `em revisão` — PR aberto para a `develop`;
 - `entregue` — mergeado na `develop` e issue fechada.
 
-| Issue | Ticket                                                   | Bloqueado por      | Status       | Branch                         | PR  |
-| ----- | -------------------------------------------------------- | ------------------ | ------------ | ------------------------------ | --- |
-| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue     | `chore/34-update-next-deps`    | #49 |
-| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue     | `chore/35-e2e-infra-ci`        | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue     | `feat/36-static-routes-splash` | #52 |
-| #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
-| #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`       | #53 |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue     | `feat/39-projects-list-images` | #59 |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue     | `fix/40-reduced-motion`        | #57 |
-| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em andamento | —                              | —   |
-| #42   | Seção de contato acessível                               | #35                | entregue     | `fix/42-accessible-contact`    | #55 |
-| #43   | Card de projeto acessível + correção dos dados           | #39                | livre        | —                              | —   |
-| #44   | Headers de segurança + CSP report-only                   | #36                | livre        | —                              | —   |
-| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
-| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
+| Issue | Ticket                                                   | Bloqueado por      | Status     | Branch                          | PR  |
+| ----- | -------------------------------------------------------- | ------------------ | ---------- | ------------------------------- | --- |
+| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue   | `chore/34-update-next-deps`     | #49 |
+| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue   | `chore/35-e2e-infra-ci`         | #50 |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue   | `feat/36-static-routes-splash`  | #52 |
+| #37   | SEO e metadados por rota                                 | #35                | entregue   | `fix/37-seo-metadata`           | #51 |
+| #38   | Shell de página, landmarks e página 404                  | #35                | entregue   | `feat/38-page-shell-404`        | #53 |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue   | `feat/39-projects-list-images`  | #59 |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue   | `fix/40-reduced-motion`         | #57 |
+| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em revisão | `feat/41-modal-menu-navigation` | #61 |
+| #42   | Seção de contato acessível                               | #35                | entregue   | `fix/42-accessible-contact`     | #55 |
+| #43   | Card de projeto acessível + correção dos dados           | #39                | livre      | —                               | —   |
+| #44   | Headers de segurança + CSP report-only                   | #36                | livre      | —                               | —   |
+| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado  | —                               | —   |
+| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado  | —                               | —   |
 
-**Frontier:** #43. Também está livre o #44. O #41 está em andamento em outro terminal.
+**Frontier:** #43. Também está livre o #44.
 
 ## Handoff
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
-_O #41 está em andamento em outro terminal, com o handoff na própria branch._
+### #41 — feat/41-modal-menu-navigation
+
+- **Estado:** PR #61 aberto para a `develop`, com os 12 critérios cobertos por `e2e/menu.spec.ts`, `e2e/navigation.spec.ts` e o caso com o menu aberto do `e2e/axe.spec.ts`. `format:check`, `lint`, `typecheck`, `build` (todas as rotas `○ (Static)`) e `npm run test:e2e` (176 passando, 8 pulados) verificados. A branch saiu da `develop` em `a75ae4a`. O claim do #41 era de 2026-10-10, mas não havia branch, worktree nem PR dele.
+- **Próximo passo:** revisão e merge do PR #61 pelo dono. Depois, o passo 7: fechar o #41. Ele não bloqueia nenhum ticket, só o #46.
+- **Atenção:** o teste de CLS da home (`e2e/layout-shift.spec.ts`) falhou uma vez em suíte cheia no desktop e passou na repetição. O nó deslocado é o botão Menu, pela troca de fonte (`display: swap`) que muda a largura do botão alinhado à direita. Com as fontes atrasadas em 1,5 s, a `develop` desloca o mesmo valor (0,0049), então isso fica para o #45 (Web Vitals). O teste de largura dos cards em `e2e/projects.spec.ts` e o de entrada das seções em `e2e/motion.spec.ts` também falharam uma vez sob carga e passaram em 3 repetições. Para o #46: o "Voltar" usa um registro por documento, e não por entrada do histórico (limitação no registro de decisões), e o `src/hooks/` deixou de estar vazio. Para o #43: o `NEW_TAB_NOTICE` e o `focusRing` servem para os links "Código" e "Deploy" do card.
 
 <!--
 Modelo de entrada:
@@ -66,6 +70,14 @@ Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 ## Registro de decisões
 
 Decisões que não estão na spec #33. A mais recente fica no topo.
+
+- **2026-10-12:** o `Nav` virou Server Component, com o logo e o conteúdo do menu. A ilha `MenuOverlay` renderiza o botão Menu e o `<dialog>`, que recebe o conteúdo do servidor como `children` e fica dentro do `<header>`. Aberto com `showModal()`, ele vai para a camada superior, e o `mix-blend-difference` e o `backdrop-blur` do cabeçalho não chegam a ele (conferido em captura de tela). Seguir um link do menu fecha o diálogo por delegação de clique no `<dialog>`, e links que abrem em nova aba deixam o menu aberto. O estado `open` só alimenta o `aria-expanded` e é sincronizado pelo evento `close`, que também cobre o Escape.
+- **2026-10-12:** o Tab do menu é o do diálogo modal nativo, sem trap de foco em JS. Depois do último item, o foco passa pela interface do navegador (no headless, o documento perde o foco e o `activeElement` vira o `body`) e volta ao "Fechar" no Tab seguinte. O teste "Tab não sai do diálogo" confere que nenhum elemento da página fora do diálogo recebe foco e que o foco volta ao diálogo.
+- **2026-10-12:** a rolagem fica travada pelo CSS `html:has(dialog:modal) { overflow: hidden }`, sem JS. O fade do menu (500 ms) usa `starting:open:opacity-0` e `transition-[opacity,display,overlay] transition-discrete`, com o `::backdrop` transparente. O teste registra os eventos `transitionrun` de opacidade do diálogo num script de init.
+- **2026-10-12:** o "Voltar" usa `router.back()` só quando o `NavigationTracker` (layout raiz, `src/hooks/use-client-navigation.ts`) registrou uma mudança de `pathname` neste documento. Uma carga completa zera o registro. O registro vale para o documento, e não para cada entrada do histórico: quem entra direto em `/stack`, vai à home pelo menu e volta a `/stack` com o botão do navegador sai do site se clicar em "Voltar". O "Voltar" continua `<button>`, agora o `Button` `ghost`, e sem JS não faz nada, como antes.
+- **2026-10-12:** o `Button` com `href` é link e, sem `href`, é `<button type="button">` com as props nativas. As variantes `primary`, `outline` e `ghost` partem de uma base comum, e o foco visível é o `focusRing`, exportado para logo, itens do menu e links sociais. O `transition-colors` também anima a cor do contorno (300 ms), então o teste de foco espera as transições do elemento antes de ler o estilo.
+- **2026-10-12:** a regra de nova aba ficou em `src/lib/links.ts` (`isExternalUrl`, `opensInNewTab`, `NEW_TAB_NOTICE`), usada pelo `Button`, pelo Contato e pelo menu. No menu, os links sociais externos mostram o nome e avisam "(abre em nova aba)" em `sr-only`, e o e-mail abre na mesma aba.
+- **2026-10-12:** os testes que não são da tela de boas-vindas podem abrir a página com `markSplashSeen` (`e2e/session.ts`), que grava a flag `SPLASH_SEEN_KEY` (agora exportada de `src/lib/head-script.ts`) num script de init. A entrada direta vinda de outro site é simulada com uma página falsa servida por `page.route` (`https://busca.example/`), e "sem full reload" é uma marca no `window` que sobrevive à navegação.
 
 - **2026-10-12:** a lista de projetos é o `ProjectList` (`src/components/ui/ProjectList.tsx`, Server Component). Ele renderiza a ilha `ActiveItemList` (`src/components/ui/ActiveItemList.tsx`), que desenha o `<ul role="list">` com nome acessível e recebe os `<li>` do servidor como `children`. O nome é o título da seção ou da página: "Projetos em destaque" e "Todos os projetos". A ilha marca com `data-active` o item que aparece em pelo menos 75% da área de rolagem da lista (`IntersectionObserver` com a lista como `root`). Abaixo de `md`, os outros itens ficam em `scale-95` e a gaveta do card ativo abre. O destaque não reduz opacidade, como fazia o carrossel (`opacity-50`), porque isso baixaria o contraste do texto.
 - **2026-10-12:** o teste de CLS percorre a primeira visita inteira, com a tela de boas-vindas. A troca de idioma da saudação deslocava a caixa centralizada (CLS de cerca de 0,017 no desktop). Agora a caixa tem tamanho fixo (largura total, duas linhas), e onde as saudações cabem numa linha a linha de varredura fica cerca de 36 px mais abaixo. A regra entrou em `docs/agents/standards.md` ("Troca sem deslocamento").
@@ -113,6 +125,8 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-12 — #41 em revisão no PR #61: menu como `<dialog>` modal nativo, com rolagem travada e fade em CSS; botão Menu com `aria-haspopup`, `aria-expanded` e `aria-controls`; `Button` com base comum, variante `outline` e `<button>` nativo; logo e itens do menu com `next/link` e âncoras absolutas; `mailto:` na mesma aba; "Voltar" que só usa o histórico depois de navegação client-side; `Nav` no servidor com o menu como ilha.
+- 2026-10-12 — #41 em andamento na branch `feat/41-modal-menu-navigation`.
 - 2026-10-12 — Lista única de projetos no HTML do servidor, `sizes` nos cards, preload só do hero, fontes sem itálico e CLS da home em 0 mergeados na `develop` (#59), e o #39 foi fechado. Fica livre o #43. Ficam para outros tickets: no #43, o `ProjectCard` continua `'use client'` por causa do "Ler mais", o título do card em `/projects` é `<h3>` logo depois do `<h1>`, e o teste do card ativo (`e2e/projects.spec.ts`) acha o ícone da gaveta pelo `alt` com o nome da tecnologia; no #41, os links do `MenuOverlay` trocaram `font-light` por `font-normal`; no #46, o README ainda descreve o carrossel Embla e o `useMediaQuery`, e `src/hooks/` ficou vazio, embora o `AGENTS.md` ainda liste essa pasta. Numa suíte com build novo, o axe de `/projects` no desktop estourou os 30 s uma vez, sob carga, e não repetiu.
 - 2026-10-12 — #39 em revisão no PR #59: lista única de projetos no HTML do servidor (fileira com scroll-snap e card ativo no mobile, grid a partir de `md`), sem Embla nem `useMediaQuery`; `sizes` nos cards; preload só do fundo do hero, que ganhou `alt=""`; Fraunces sem itálico e pesos da Cinzel corrigidos; CLS da home em 0, com a caixa da saudação de tamanho fixo.
 - 2026-10-12 — Remoção do `motion`, entrada das seções em CSS e movimento reduzido respeitado mergeados na `develop` (#57), e o #40 foi fechado. Nenhum ticket é liberado: o #45 ainda espera #39 e #43. O #39 também mexe no `Hero.tsx`: na resolução, o `Hero` fica sem `'use client'` e com o stagger em CSS do #40. Ficam para outros tickets: o caminho do CV escrito à mão e os imports relativos `../ui/*` do `Hero` (#46) e o JS da home, ainda em 168,0 KB transferidos, acima dos 150 KB (#45). Se o #46 mudar a estrutura do hero ou o `alt` dos ícones, confira `heroStackIcons` em `e2e/motion.spec.ts`.
