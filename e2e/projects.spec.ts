@@ -81,6 +81,46 @@ async function revealList(list: Locator) {
   await expect.poll(() => effectiveOpacity(list)).toBe(1)
 }
 
+// Se o texto do elemento passa da altura dele, como numa descrição cortada pelo clamp.
+function overflows(locator: Locator) {
+  return locator.evaluate((element) => element.scrollHeight - element.clientHeight > 1)
+}
+
+// Confere o "Ler mais" de cada card: ele só existe quando a descrição transborda e, nesse caso,
+// controla a descrição e alterna `aria-expanded`. Devolve quantos cards transbordam.
+async function checkReadMore(page: Page, list: Locator, projects: readonly Project[]) {
+  // Com a rede ociosa, a página já hidratou e mediu as descrições.
+  await page.waitForLoadState('networkidle')
+  const items = list.getByRole('listitem')
+  let overflowing = 0
+
+  for (const [index, project] of projects.entries()) {
+    const item = items.nth(index)
+    const description = item.getByText(project.description, { exact: true })
+    const button = item.getByRole('button', { name: 'Ler mais' })
+
+    if (!(await overflows(description))) {
+      await expect(button, `${project.title} sem transbordo`).toHaveCount(0)
+      continue
+    }
+    overflowing++
+    const id = await description.getAttribute('id')
+    expect(id, `id da descrição de ${project.title}`).toBeTruthy()
+    await expect(button).toHaveAttribute('aria-controls', id ?? '')
+    await expect(button).toHaveAttribute('aria-expanded', 'false')
+
+    await button.click()
+    await expect(button).toHaveAttribute('aria-expanded', 'true')
+    expect(await overflows(description), `${project.title} expandida`).toBe(false)
+
+    await button.click()
+    await expect(button).toHaveAttribute('aria-expanded', 'false')
+    expect(await overflows(description), `${project.title} recolhida`).toBe(true)
+  }
+
+  return overflowing
+}
+
 // Aperta Tab até o foco chegar ao elemento.
 async function tabTo(page: Page, target: Locator) {
   for (let tab = 0; tab < MAX_TABS; tab++) {
@@ -109,7 +149,41 @@ for (const { route, name, projects } of LISTS) {
       ).toBeAttached()
     }
   })
+
+  test(`${route}: "Ler mais" só existe nos cards cuja descrição transborda e alterna aria-expanded`, async ({
+    page,
+  }) => {
+    await markSplashSeen(page)
+    await page.goto(route)
+
+    const overflowing = await checkReadMore(page, projectList(page, name), projects)
+
+    test.info().annotations.push({
+      type: 'transbordo',
+      description: `${overflowing} de ${projects.length} cards`,
+    })
+  })
 }
+
+// Com cards largos, parte das descrições cabe no clamp e parte não.
+test.describe('com cards largos', () => {
+  test.skip(({ isMobile }) => isMobile, 'viewport do perfil desktop')
+  test.use({ viewport: { width: 1200, height: 900 } })
+
+  for (const { route, name, projects } of LISTS) {
+    test(`${route}: "Ler mais" só existe nos cards cuja descrição transborda`, async ({ page }) => {
+      await markSplashSeen(page)
+      await page.goto(route)
+
+      const overflowing = await checkReadMore(page, projectList(page, name), projects)
+
+      test.info().annotations.push({
+        type: 'transbordo',
+        description: `${overflowing} de ${projects.length} cards`,
+      })
+    })
+  }
+})
 
 test.describe('em telas estreitas', () => {
   test.skip(({ isMobile }) => !isMobile, 'layout do perfil mobile')
