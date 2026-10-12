@@ -34,6 +34,17 @@
   /* Animações */
   --animate-scan: scan 1.4s ease-in-out infinite;
 
+  /* Entrada que sobe e cresce; `both` mantém o item oculto durante o atraso. */
+  --animate-rise-in: rise-in 0.5s ease-out both;
+
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      translate: 0 20px;
+      scale: 0.8;
+    }
+  }
+
   /* Shimmer para texto */
   --animate-shimmer: shimmer-text 15s linear infinite;
 
