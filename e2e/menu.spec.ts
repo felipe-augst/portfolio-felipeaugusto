@@ -1,14 +1,7 @@
-import type { Locator, Page } from '@playwright/test'
+import type { Locator } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { menuButton, menuDialog } from './menu'
 import { markSplashSeen } from './session'
-
-function menuButton(page: Page) {
-  return page.getByRole('button', { name: 'Menu' })
-}
-
-function menuDialog(page: Page) {
-  return page.getByRole('dialog', { name: 'Menu' })
-}
 
 // Contorno que o elemento pinta com foco de teclado (`:focus-visible`). Sem mouse antes, o foco
 // programático conta como foco de teclado. A leitura espera as transições do elemento, porque a
