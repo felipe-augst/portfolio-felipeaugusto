@@ -2,6 +2,7 @@ import type { Locator, Page } from '@playwright/test'
 import { PROJECTS } from '@/data/projects'
 import type { Project } from '@/types/projects'
 import { expect, test } from './fixtures'
+import { isPainted } from './paint'
 
 // Listas de projetos: os destaques da home e a página com todos os projetos.
 const LISTS = [
@@ -55,25 +56,6 @@ function fullSizeItems(list: Locator) {
           : [],
       ),
     )
-}
-
-// Se o elemento é pintado: visível e não recortado por inteiro por um ancestral com overflow.
-function isPainted(locator: Locator) {
-  return locator.evaluate((element) => {
-    if (!element.checkVisibility({ opacityProperty: true, visibilityProperty: true })) return false
-    const rect = element.getBoundingClientRect()
-    for (let node = element.parentElement; node; node = node.parentElement) {
-      if (getComputedStyle(node).overflow === 'visible') continue
-      const clip = node.getBoundingClientRect()
-      const overlaps =
-        rect.top < clip.bottom &&
-        rect.bottom > clip.top &&
-        rect.left < clip.right &&
-        rect.right > clip.left
-      if (!overlaps) return false
-    }
-    return true
-  })
 }
 
 // A gaveta de tecnologias do card está aberta: o ícone da primeira tecnologia é pintado.
