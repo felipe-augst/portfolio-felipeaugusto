@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test'
+import type { Locator, Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { effectiveOpacity, isDisplaced } from './paint'
 
@@ -14,6 +14,31 @@ function homeSections(page: Page) {
       locator: page.locator(`#${id}`),
     })),
   ]
+}
+
+// Ícones de stack do hero: as imagens do bloco de conteúdo do <h1>. O fundo do hero fica fora dele.
+function heroStackIcons(page: Page) {
+  return page.getByRole('heading', { level: 1 }).locator('..').getByRole('img')
+}
+
+// Atraso, em ms, da animação CSS de entrada (finita) de cada elemento, nele ou num ancestral.
+// `null` quando não há animação CSS.
+function cssEntranceDelays(locator: Locator) {
+  return locator.evaluateAll((elements) =>
+    elements.map((element) => {
+      for (let node: Element | null = element; node; node = node.parentElement) {
+        const entrance = node
+          .getAnimations()
+          .find(
+            (animation) =>
+              animation instanceof CSSAnimation &&
+              animation.effect?.getTiming().iterations !== Infinity,
+          )
+        if (entrance) return Number(entrance.effect?.getTiming().delay)
+      }
+      return null
+    }),
+  )
 }
 
 // Animações da página em execução com iterações infinitas, identificadas pelo nome.
@@ -55,6 +80,25 @@ test('as seções abaixo da dobra começam ocultas e ficam visíveis ao rolar at
   }
 })
 
+test('os ícones de stack do hero entram em sequência por CSS e ficam visíveis', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const icons = heroStackIcons(page)
+
+  const delays = await cssEntranceDelays(icons)
+  expect(delays.length, 'ícones de stack no hero').toBeGreaterThan(1)
+  expect(delays, 'cada ícone tem animação CSS de entrada').not.toContain(null)
+  const increasing = delays.every(
+    (delay, index) => index === 0 || (delay ?? 0) > (delays[index - 1] ?? Infinity),
+  )
+  expect(increasing, `atrasos: ${delays.join(', ')}`).toBe(true)
+
+  for (const icon of await icons.all()) {
+    await expect.poll(() => effectiveOpacity(icon)).toBe(1)
+  }
+})
+
 test.describe('com movimento reduzido', () => {
   test.use({ reducedMotion: 'reduce' })
 
@@ -66,6 +110,19 @@ test.describe('com movimento reduzido', () => {
     for (const { name, locator } of homeSections(page)) {
       expect(await effectiveOpacity(locator), name).toBe(1)
       expect(await isDisplaced(locator), name).toBe(false)
+    }
+  })
+
+  test('os ícones de stack do hero aparecem visíveis e sem deslocamento desde o início', async ({
+    page,
+  }) => {
+    await page.goto('/')
+    const icons = heroStackIcons(page)
+
+    await expect(icons).not.toHaveCount(0)
+    for (const icon of await icons.all()) {
+      expect(await effectiveOpacity(icon)).toBe(1)
+      expect(await isDisplaced(icon)).toBe(false)
     }
   })
 
@@ -116,6 +173,16 @@ test.describe('sem JavaScript', () => {
 
     for (const { name, locator } of homeSections(page)) {
       expect(await effectiveOpacity(locator), name).toBe(1)
+    }
+  })
+
+  test('os ícones de stack do hero ficam visíveis', async ({ page }) => {
+    await page.goto('/')
+    const icons = heroStackIcons(page)
+
+    await expect(icons).not.toHaveCount(0)
+    for (const icon of await icons.all()) {
+      expect(await effectiveOpacity(icon)).toBe(1)
     }
   })
 })
