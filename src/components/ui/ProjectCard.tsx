@@ -35,13 +35,15 @@ export function ProjectCard({ project }: ProjectCardProps) {
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
 
-        {/* Gaveta de Techs: aberta no card ativo da lista deslizável (`data-active` do item) */}
+        {/* Gaveta de Techs: sempre aberta sem hover; com hover, abre com hover ou foco dentro do
+            card, e também no card ativo da lista deslizável (`data-active` do item). */}
         <div
           className={cn(
             'absolute bottom-0 left-0 w-full flex items-center justify-center gap-3',
             'bg-bg-3/95 backdrop-blur-md px-4 py-3 border-t border-border-strong',
-            'transition-transform duration-500 ease-out',
-            'translate-y-full lg:group-hover:translate-y-0 max-md:in-data-[active=true]:translate-y-0',
+            'motion-safe:transition-transform motion-safe:duration-500 motion-safe:ease-out',
+            'translate-y-full group-hover:translate-y-0 group-focus-within:translate-y-0',
+            'no-hover:translate-y-0 max-md:in-data-[active=true]:translate-y-0',
           )}
         >
           {project.technologies.map((tech) => (
