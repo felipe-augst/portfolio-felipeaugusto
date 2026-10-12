@@ -22,7 +22,7 @@ export function FeaturedProjects() {
         </div>
       </div>
 
-      <ProjectList projects={featuredProjects} label="Projetos em destaque" />
+      <ProjectList projects={featuredProjects} label="Projetos em destaque" cardHeadingLevel="h3" />
 
       <div className="mt-16 w-full flex justify-center lg:justify-start">
         <Button href="/projects" variant="ghost" trailingIcon={ArrowRight}>

@@ -9,7 +9,7 @@ export const metadata = buildPageMetadata(PAGES.projects)
 export default function ProjectsPage() {
   return (
     <PageShell eyebrow="Meus projetos" title="Todos os" titleHighlight="projetos">
-      <ProjectList projects={PROJECTS} label="Todos os projetos" />
+      <ProjectList projects={PROJECTS} label="Todos os projetos" cardHeadingLevel="h2" />
     </PageShell>
   )
 }

@@ -7,9 +7,12 @@ import type { Project } from '@/types/projects'
 
 type ProjectCardProps = {
   project: Project
+  // Nível do título do card: um abaixo do título da seção ou da página que contém a lista.
+  headingLevel: 'h2' | 'h3'
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+// Card de projeto, renderizado no servidor. A descrição expansível é a única ilha de cliente.
+export function ProjectCard({ project, headingLevel: Heading }: ProjectCardProps) {
   return (
     <div
       className={cn(
@@ -54,9 +57,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {project.category}
         </span>
 
-        <h3 className="font-display text-2xl font-semibold text-sand mb-3 leading-none">
+        <Heading className="font-display text-2xl font-semibold text-sand mb-3 leading-none">
           {project.title}
-        </h3>
+        </Heading>
 
         <ExpandableDescription text={project.description} className="mb-6" />
 
