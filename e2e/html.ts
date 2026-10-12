@@ -58,6 +58,14 @@ export function getHeadings(html: string) {
   )
 }
 
+/** `src` (decodificado) e `alt` de cada `<img>`. O `alt` fica `undefined` quando falta. */
+export function getImages(html: string) {
+  return findTags(html, 'img').map((img) => ({
+    src: decodeURIComponent(getAttribute(img, 'src') ?? ''),
+    alt: getAttribute(img, 'alt'),
+  }))
+}
+
 /** Destino de cada `<link rel="preload" as="image">`: o `href` ou o `imagesrcset`. */
 export function getImagePreloads(html: string) {
   return findTags(html, 'link')
