@@ -93,8 +93,9 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 
 - As dependências de produção ficam sem vulnerabilidade `high` ou `critical` (`npm audit --omit=dev`).
 - Correções de audit usam `npm audit fix` sem `--force`. Upgrade major acontece num ticket próprio.
-- Os headers de segurança ficam na config do Next e valem para todas as rotas.
-- Todo script inline novo entra no hash da CSP.
+- Os headers de segurança ficam na config do Next (`next.config.ts`) e valem para todas as rotas. O HSTS fica a cargo da Vercel.
+- A CSP vai só em `Content-Security-Policy-Report-Only`, montada a partir de `CSP_DIRECTIVES`. O `script-src` usa `'unsafe-inline'`, sem hash: os scripts inline do Next mudam a cada build, e com um hash na diretiva o navegador ignora o `'unsafe-inline'`.
+- Recurso de outra origem (script, imagem, fonte, conexão) entra na diretiva certa da CSP no mesmo PR. Se ficar de fora e carregar com a página, o `e2e/csp.spec.ts` acusa a violação.
 - Segredos ficam em `.env*`, que já está no `.gitignore`.
 
 ## Testes
