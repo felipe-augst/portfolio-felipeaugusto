@@ -4,4 +4,6 @@ export type ContactContent = {
     animatedWords: readonly string[]
     suffix: string
   }
+  // Título do card com as redes sociais e a localização.
+  linksTitle: string
 }

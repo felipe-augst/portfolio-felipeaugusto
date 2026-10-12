@@ -1,6 +1,4 @@
+// O nome, o CV e a disponibilidade vêm do `SITE`.
 export type HeroContent = {
-  firstName: string
-  lastName: string
   tagline: string
-  availability: boolean
 }

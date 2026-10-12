@@ -48,6 +48,7 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 - Imagem informativa tem `alt` em pt-BR que descreve o conteúdo.
 - Ícone ao lado de um nome visível, ou dentro de link com `aria-label`, usa `alt=""`.
 - Ícone de tecnologia usa o `TechIcon` (`src/components/ui/TechIcon.tsx`). O texto alternativo é o nome da tecnologia, sem "ícone" nem "logo". Ao lado do nome visível, o ícone recebe `decorative`.
+- O ícone de tecnologia é opcional no catálogo. Onde só o ícone aparece (hero e gaveta do card), entra só tecnologia com ícone (tipo `IconTechnology`). Em `/stack`, o `StackTile` mostra o ícone e o nome, ou só o nome.
 - Fontes vêm do `next/font`, carregando só os pesos e estilos que existem na fonte e que o site usa.
 - Todo asset em `public/` tem referência no código. O que perdeu a referência sai no mesmo PR.
 
@@ -66,11 +67,11 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 
 - Cada rota tem um `<main>` e um único `<h1>`, e a hierarquia de títulos segue em ordem, sem pular nível. Nas páginas fora da home, inclusive a 404, os dois vêm do `PageShell`. O título de cada card fica um nível abaixo do título da seção ou da página que contém a lista (`cardHeadingLevel` do `ProjectList`).
 - O rótulo de seção (`SectionEyebrow`, traço + texto) é decorativo e fica com `aria-hidden`. Ele não substitui o título da seção.
-- Conjuntos de itens, como os cards de projeto, são uma lista (`<ul>`/`<li>`) com nome acessível. O `<ul>` declara `role="list"`, porque o Safari tira a semântica de lista de um `<ul>` sem marcadores, e o reset do Tailwind remove os marcadores.
+- Conjuntos de itens, como os cards de projeto e as tecnologias de cada categoria, são uma lista (`<ul>`/`<li>`) com nome acessível. O `<ul>` declara `role="list"`, porque o Safari tira a semântica de lista de um `<ul>` sem marcadores, e o reset do Tailwind remove os marcadores.
 - Overlays modais usam `<dialog>` com `showModal()` e nome acessível. O gatilho expõe `aria-haspopup="dialog"`, `aria-expanded` e `aria-controls`. Escape, fundo inerte e devolução do foco ao gatilho são os do diálogo nativo, sem trap de foco em JS. Com um diálogo modal aberto, a página atrás não rola (`html:has(dialog:modal)` no `globals.css`).
 - Todo controle que expande ou recolhe conteúdo expõe `aria-expanded` e `aria-controls`. O rótulo fica o mesmo nos dois estados, e o estado vem do `aria-expanded`.
 - Texto cortado por `line-clamp` usa a ilha `ExpandableDescription` (`src/components/ui/ExpandableDescription.tsx`). O "Ler mais" só aparece quando o texto transborda o corte, medido no navegador, e não por contagem de caracteres. O corte só vale com `js:`, e a linha do botão tem altura fixa, para o botão aparecer depois da hidratação sem deslocar o layout.
-- Informação revelada por hover também aparece com foco dentro (`group-focus-within:`) e em dispositivos sem hover (variante `no-hover:`, `@media (hover: none)`, no `globals.css`). O `hover:` do Tailwind já só vale em dispositivos com hover. Exemplo: a gaveta de tecnologias do `ProjectCard`.
+- Informação revelada por hover também aparece com foco dentro (`group-focus-within:`) e em dispositivos sem hover (variante `no-hover:`, `@media (hover: none)`, no `globals.css`). O `hover:` do Tailwind já só vale em dispositivos com hover. Exemplos: a gaveta de tecnologias do `ProjectCard` e o nome da tecnologia no `StackTile`.
 - Link externo tem nome acessível que identifica o destino, com contexto (por exemplo, o título do projeto), e avisa em `sr-only` que abre em nova aba. Links `mailto:` e `tel:` abrem na mesma aba. A decisão é `opensInNewTab` e o aviso é `NEW_TAB_NOTICE`, os dois em `src/lib/links.ts`. O nome começa pelo texto visível, e o contexto vem depois, em `sr-only` (exemplo: `ProjectLinks`, "Código do projeto DevStore (abre em nova aba)").
 - Texto animado deixa a parte visual com `aria-hidden` e oferece a frase completa em `sr-only`.
 - Todo elemento interativo tem foco visível, com o estilo compartilhado do `Button`: as classes `focusRing`, exportadas de `src/components/ui/Button.tsx`.
@@ -83,8 +84,8 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 
 ## Dados e componentes
 
-- **Fonte única.** Cada informação tem uma única fonte em `src/data/`, e os componentes derivam dela. Por exemplo, a seção Sobre e `/stack` leem o mesmo catálogo de tecnologias.
-- **Onde fica o texto.** Conteúdo sobre o Felipe (textos, projetos, contato, links) mora em `src/data/`. Rótulos de interface ("Ler mais", "Fechar") ficam no componente.
+- **Fonte única.** Cada informação tem uma única fonte em `src/data/`, e os componentes derivam dela. Por exemplo, a seção Sobre e `/stack` leem as mesmas categorias (`TECH_CATEGORIES`), que referenciam o catálogo único de tecnologias (`TECHNOLOGIES`, em `src/data/technologies.ts`). Hero, projetos e JSON-LD usam o mesmo catálogo.
+- **Onde fica o texto.** Conteúdo sobre o Felipe (textos, projetos, contato, links) mora em `src/data/`. Nome, CV, localização e disponibilidade vêm do `SITE`. Rótulos de interface ("Ler mais", "Fechar", "Baixar CV") ficam no componente.
 - **Reuso.** Antes de escrever markup, procure o componente compartilhado em `src/components/ui/` e `src/components/layout/`. Um padrão que aparece pela segunda vez vira componente.
 - **Seções e páginas.** Seção da home usa `Section` (espaçamento e largura padrão), `SectionEyebrow` e, quando o título tem destaque em accent, `SectionHeading`. Página fora da home usa `PageShell`, que traz rótulo, `<h1>` e "Voltar".
 - **Botões.** Controle com aparência de botão usa o `Button`. Com `href`, ele é um link (`next/link` nas rotas internas); sem `href`, é um `<button type="button">`. As variantes são `primary`, `outline` (Menu e Fechar) e `ghost` ("Voltar" e links discretos).

@@ -101,7 +101,7 @@ function projectLinks(project: Project) {
   })
 }
 
-function projectById(id: string) {
+function projectById(id: string): Project {
   const project = PROJECTS.find((candidate) => candidate.id === id)
   if (!project) throw new Error(`projeto ${id} não existe nos dados`)
   return project

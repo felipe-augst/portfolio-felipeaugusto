@@ -1,6 +1,6 @@
 import { ABOUT } from '@/data/about'
-import { SKILL_CATEGORIES } from '@/data/skills'
-import { Button } from '../ui/Button'
+import { TECH_CATEGORIES } from '@/data/technologies'
+import { Button } from '@/components/ui/Button'
 import { ArrowRight } from 'lucide-react'
 import { Section } from '@/components/ui/Section'
 import { SectionEyebrow } from '@/components/ui/SectionEyebrow'
@@ -22,21 +22,21 @@ export function About() {
         </div>
 
         <div className="flex flex-col gap-11 pt-2">
-          {SKILL_CATEGORIES.map((category) => (
+          {TECH_CATEGORIES.map((category) => (
             <div key={category.title}>
               <h3 className="font-display text-[16px] uppercase tracking-[0.3em] text-accent font-medium mb-5">
                 {category.title}
               </h3>
-              <div className="flex flex-wrap gap-2">
-                {category.items.map((item) => (
-                  <span
-                    key={item}
+              <ul role="list" aria-label={category.title} className="flex flex-wrap gap-2">
+                {category.technologies.map((technology) => (
+                  <li
+                    key={technology.name}
                     className="font-sans text-sm py-1.5 px-4 border border-border-strong text-sand hover:border-accent hover:text-accent transition-colors"
                   >
-                    {item}
-                  </span>
+                    {technology.name}
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           ))}
         </div>
