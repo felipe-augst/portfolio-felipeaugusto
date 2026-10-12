@@ -1,8 +1,6 @@
-'use client'
-
-import { useState } from 'react'
 import Image from 'next/image'
-import { Link, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react'
+import { Link, ExternalLink } from 'lucide-react'
+import { ExpandableDescription } from '@/components/ui/ExpandableDescription'
 import { cn } from '@/lib/cn'
 import type { Project } from '@/types/projects'
 
@@ -11,11 +9,6 @@ type ProjectCardProps = {
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
-
-  // Define se o texto é longo o suficiente para precisar do botão
-  const isLongDescription = project.description.length > 120
-
   return (
     <div
       className={cn(
@@ -64,33 +57,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {project.title}
         </h3>
 
-        {/* Descrição + Botão Ler Mais */}
-        <div className="mb-6 flex flex-col items-start">
-          <p
-            className={`font-sans text-sm text-sand-muted leading-relaxed transition-all duration-300 ${
-              isExpanded ? 'line-clamp-none' : 'line-clamp-3'
-            }`}
-          >
-            {project.description}
-          </p>
-
-          {isLongDescription && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-2 flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-medium text-accent hover:text-accent-warm transition-colors"
-            >
-              {isExpanded ? (
-                <>
-                  Menos detalhes <ChevronUp className="w-3.5 h-3.5" />
-                </>
-              ) : (
-                <>
-                  Ler mais <ChevronDown className="w-3.5 h-3.5" />
-                </>
-              )}
-            </button>
-          )}
-        </div>
+        <ExpandableDescription text={project.description} className="mb-6" />
 
         {/* Links */}
         <div className="mt-auto flex items-center justify-between pt-4 border-t border-border-strong/50">
