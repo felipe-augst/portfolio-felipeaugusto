@@ -19,33 +19,29 @@ Status:
 - `em revisão` — PR aberto para a `develop`;
 - `entregue` — mergeado na `develop` e issue fechada.
 
-| Issue | Ticket                                                   | Bloqueado por      | Status     | Branch                                | PR  |
-| ----- | -------------------------------------------------------- | ------------------ | ---------- | ------------------------------------- | --- |
-| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue   | `chore/34-update-next-deps`           | #49 |
-| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue   | `chore/35-e2e-infra-ci`               | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue   | `feat/36-static-routes-splash`        | #52 |
-| #37   | SEO e metadados por rota                                 | #35                | entregue   | `fix/37-seo-metadata`                 | #51 |
-| #38   | Shell de página, landmarks e página 404                  | #35                | entregue   | `feat/38-page-shell-404`              | #53 |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue   | `feat/39-projects-list-images`        | #59 |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue   | `fix/40-reduced-motion`               | #57 |
-| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | entregue   | `feat/41-modal-menu-navigation`       | #61 |
-| #42   | Seção de contato acessível                               | #35                | entregue   | `fix/42-accessible-contact`           | #55 |
-| #43   | Card de projeto acessível + correção dos dados           | #39                | entregue   | `feat/43-accessible-project-card`     | #63 |
-| #44   | Headers de segurança + CSP report-only                   | #36                | entregue   | `feat/44-security-headers-csp`        | #65 |
-| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | entregue   | `feat/45-web-vitals-js-budget`        | #67 |
-| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | em revisão | `chore/46-single-source-cleanup-docs` | #69 |
+| Issue | Ticket                                                   | Bloqueado por      | Status   | Branch                                | PR  |
+| ----- | -------------------------------------------------------- | ------------------ | -------- | ------------------------------------- | --- |
+| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue | `chore/34-update-next-deps`           | #49 |
+| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue | `chore/35-e2e-infra-ci`               | #50 |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue | `feat/36-static-routes-splash`        | #52 |
+| #37   | SEO e metadados por rota                                 | #35                | entregue | `fix/37-seo-metadata`                 | #51 |
+| #38   | Shell de página, landmarks e página 404                  | #35                | entregue | `feat/38-page-shell-404`              | #53 |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue | `feat/39-projects-list-images`        | #59 |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue | `fix/40-reduced-motion`               | #57 |
+| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | entregue | `feat/41-modal-menu-navigation`       | #61 |
+| #42   | Seção de contato acessível                               | #35                | entregue | `fix/42-accessible-contact`           | #55 |
+| #43   | Card de projeto acessível + correção dos dados           | #39                | entregue | `feat/43-accessible-project-card`     | #63 |
+| #44   | Headers de segurança + CSP report-only                   | #36                | entregue | `feat/44-security-headers-csp`        | #65 |
+| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | entregue | `feat/45-web-vitals-js-budget`        | #67 |
+| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | entregue | `chore/46-single-source-cleanup-docs` | #69 |
 
-**Frontier:** nenhum ticket livre. O #46, o último do milestone, está em revisão. Depois do merge dele, vem o release v2.0.0.
+**Frontier:** nenhum ticket aberto. Os tickets #34–#46 foram entregues, e no milestone só a spec #33 continua aberta, o que atende a condição de entrada do release. O próximo passo é o release v2.0.0 (`/ticket release`), quando o dono pedir.
 
 ## Handoff
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
-### #46 — chore/46-single-source-cleanup-docs
-
-- **Estado:** todos os critérios atendidos e verificados, PR #69 aberto para a `develop`. `format:check` (fora o `.vscode/` local), `lint`, `typecheck` e `build` passam, com todas as rotas `○ (Static)`, e a suíte E2E passa (252 passaram, 16 pulados).
-- **Próximo passo:** revisão e merge do PR #69 pelo dono. Depois, o passo 7 (fechar o #46) e o release v2.0.0 (`/ticket release`).
-- **Atenção:** o conteúdo das categorias (a união das duas listas antigas) e o nome "Qualidade, Ferramentas & Métodos" foram escolhidos neste ticket (registro de decisões). Enxugar a lista é decisão do dono, em `src/data/technologies.ts`. Com outros projetos compilando na máquina (CPU em 50–60% fora da suíte), a suíte inteira levou 5,6 min, contra 2,9 min sem carga, e três testes falharam em rodadas diferentes: "na troca de idioma, a nova saudação entra com fade-in" (`e2e/splash-screen.spec.ts`), o CLS da home (`e2e/layout-shift.spec.ts`, troca de fonte do `<h1>`) e testes de navegação a partir de `/stack` (`e2e/navigation.spec.ts`, URL sem mudar em 5 s). Num A/B, o CLS repetido 10 vezes no desktop falhou 1 vez na `develop` (0,0056) e 0 de 20 na branch, e o `navigation.spec.ts` repetido 4 vezes falhou 2 de 56 execuções na branch com a CPU em 60%, e passou 56 de 56 na `develop` (CPU em 43%) e na branch (CPU em 52%). Sem a carga, a suíte inteira passou. Se o CI acusar algum deles, repita antes de investigar.
+_Nenhum ticket em andamento ou em revisão._
 
 <!--
 Modelo de entrada:
@@ -156,6 +152,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-12 — Catálogo único de tecnologias com o `StackTile`, Hero, Contato e rodapé lendo o `SITE`, `as const satisfies` e alias `@/` em todo o `src/`, limpeza de assets e props sem uso, `.next/dev` fora do typecheck e README e `AGENTS.md` com a arquitetura atual mergeados na `develop` (#69), com o CI verde, e o #46 foi fechado. Todos os tickets do milestone foram entregues, e o próximo passo é o release v2.0.0. Para o dono: a união das duas listas de tecnologias e o nome "Qualidade, Ferramentas & Métodos" foram escolhidos no #46, e enxugar a lista é editar só o `src/data/technologies.ts`. Para o release: com outros processos pesados na máquina, os testes de fade-in da tela de boas-vindas, de CLS da home e de navegação a partir de `/stack` falharam em rodadas locais, e o CLS falha também na `develop` (1 de 10 no desktop). Se a verificação da `develop` acusar algum deles, repita antes de investigar.
 - 2026-10-12 — #46 em revisão no PR #69: catálogo único de tecnologias e categorias unificadas na Sobre e em `/stack`, com o `StackTile` e listas com nome; Hero, Contato e rodapé lendo o `SITE`; `as const satisfies` em todos os dados; imports pelo alias `@/`, travados no ESLint; 7 assets, 4 props e 1 campo de tipo sem uso removidos; `.next/dev` fora do typecheck; bloco do Next no `AGENTS.md` atualizado para o 16.4; README e `AGENTS.md` com a arquitetura, as fontes e a suíte E2E atuais.
 - 2026-10-12 — #46 em andamento na branch `chore/46-single-source-cleanup-docs`.
 - 2026-10-12 — Analytics e Speed Insights no layout raiz, teste de orçamento de JS da home, `tailwind-merge` removido e imagens montadas no servidor pelo `ServerImage` mergeados na `develop` (#67), e o #45 foi fechado. Fica livre o #46, o último ticket antes do release. Ficam para outros tickets: no #46, a documentação deve refletir que o `tailwind-merge` saiu das dependências, que o `cn()` só junta classes e que as imagens usam o `ServerImage` (as regras já estão em `docs/agents/standards.md`; o README não cita nenhum dos três). Para o dono: a Vercel só serve `/_vercel/insights/script.js` e `/_vercel/speed-insights/script.js` com o Web Analytics e o Speed Insights ativados no painel do projeto. Sem isso, os dois respondem 404 também em produção. O preview da `develop` (`ba96704`) está atrás da autenticação da Vercel (302 para o SSO), e os dois caminhos não foram conferidos num deploy. Confira com o navegador logado ou com `curl -I` no smoke do release.
