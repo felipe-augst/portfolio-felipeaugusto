@@ -23,6 +23,7 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 - **Rotas estáticas.** Toda rota é estática: layouts e páginas renderizam sem cookies, headers ou search params. Personalização por visitante acontece no navegador. O que precisa existir antes da primeira pintura vai no script inline do `<head>` (`HEAD_SCRIPT` em `src/lib/head-script.ts`), que marca o `<html>` com atributos.
 - **Conferência no build.** Ao tocar em layout ou página, confira que o `next build` lista a rota como `○ (Static)`.
 - **Ilhas de cliente.** Server Component é o padrão. `'use client'` vai só nas **ilhas de cliente**: a menor folha que precisa de estado, efeito ou API do navegador. A seção ou o card que contém a ilha continua no servidor e passa dados por props ou children.
+- **Orçamento de JS.** O JS da home, comprimido, fica em até 150 kB, e o `e2e/js-budget.spec.ts` trava esse limite. Tudo o que uma ilha importa vai para o navegador, inclusive componentes de biblioteca marcados com `'use client'`. Antes de levar uma dependência para o cliente, meça o custo dela.
 - **Conteúdo no HTML.** Conteúdo indexável (projetos, textos, links) sai no HTML do servidor.
 - **Responsivo em CSS.** Layout responsivo é feito em CSS; o que aparece na página é o mesmo em todos os tamanhos.
 - **Mutações.** Server Actions e Route Handlers existem só para mutações reais. Hoje o site não tem nenhuma.
@@ -40,7 +41,8 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 
 ## Imagens e fontes
 
-- `next/image` com `fill`, ou responsiva, declara `sizes` coerente com a largura exibida em cada breakpoint.
+- Imagem usa o `ServerImage` (`src/components/ui/ServerImage.tsx`), que aceita as props do `next/image` e monta o `<img>` no servidor com `getImageProps`. O `Image` do `next/image` é uma ilha de cliente e custava cerca de 5 kB no JS da home.
+- `ServerImage` com `fill`, ou responsiva, declara `sizes` coerente com a largura exibida em cada breakpoint.
 - Só a imagem LCP da rota recebe a prop `preload` (o `priority` está deprecated no Next 16). Preload de imagem acontece só por essa prop.
 - Imagem decorativa usa `alt=""`.
 - Imagem informativa tem `alt` em pt-BR que descreve o conteúdo.
@@ -86,7 +88,7 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 - **Reuso.** Antes de escrever markup, procure o componente compartilhado em `src/components/ui/` e `src/components/layout/`. Um padrão que aparece pela segunda vez vira componente.
 - **Seções e páginas.** Seção da home usa `Section` (espaçamento e largura padrão), `SectionEyebrow` e, quando o título tem destaque em accent, `SectionHeading`. Página fora da home usa `PageShell`, que traz rótulo, `<h1>` e "Voltar".
 - **Botões.** Controle com aparência de botão usa o `Button`. Com `href`, ele é um link (`next/link` nas rotas internas); sem `href`, é um `<button type="button">`. As variantes são `primary`, `outline` (Menu e Fechar) e `ghost` ("Voltar" e links discretos).
-- **Classes condicionais** usam `cn()`.
+- **Classes condicionais** usam `cn()` (`src/lib/cn.ts`), que só junta as classes, sem resolver conflito entre utilities. O `className` passado a um componente acrescenta classes. Para mudar o que o componente já define, ele expõe uma prop, como o `variant` do `Button`.
 - **Ícones lucide** passam pelo wrapper `Icon`.
 
 ## Segurança e dependências
