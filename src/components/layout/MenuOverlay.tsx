@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Button, focusRing } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
+import { NEW_TAB_NOTICE, opensInNewTab } from '@/lib/links'
 import { NAV_ITEMS } from '@/data/nav'
 import { SOCIAL_LINKS } from '@/data/social'
 
@@ -59,20 +60,24 @@ export function MenuOverlay({ id, open, onClose }: MenuOverlayProps) {
       </nav>
 
       <div className="flex gap-8 mt-10">
-        {SOCIAL_LINKS.map((link) => (
-          <a
-            key={link.platform}
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(
-              'text-sand-muted text-xs uppercase tracking-[0.2em] hover:text-accent transition-colors',
-              focusRing,
-            )}
-          >
-            {link.label}
-          </a>
-        ))}
+        {SOCIAL_LINKS.map(({ platform, href, label }) => {
+          const newTab = opensInNewTab(href)
+          return (
+            <a
+              key={platform}
+              href={href}
+              target={newTab ? '_blank' : undefined}
+              rel={newTab ? 'noopener noreferrer' : undefined}
+              className={cn(
+                'text-sand-muted text-xs uppercase tracking-[0.2em] hover:text-accent transition-colors',
+                focusRing,
+              )}
+            >
+              {label}
+              {newTab && <span className="sr-only"> {NEW_TAB_NOTICE}</span>}
+            </a>
+          )
+        })}
       </div>
     </dialog>
   )

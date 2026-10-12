@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { ArrowRight, MapPin } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button, focusRing } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
 import { RotatingWord } from '@/components/ui/RotatingWord'
 import { Section } from '@/components/ui/Section'
@@ -8,6 +8,8 @@ import { SectionEyebrow } from '@/components/ui/SectionEyebrow'
 import { CONTACT } from '@/data/contact'
 import { SITE } from '@/data/site'
 import { SOCIAL_LINKS } from '@/data/social'
+import { cn } from '@/lib/cn'
+import { NEW_TAB_NOTICE, opensInNewTab } from '@/lib/links'
 
 export function Contact() {
   const { prefix, animatedWords, suffix } = CONTACT.hero
@@ -35,18 +37,18 @@ export function Contact() {
           <div className="w-full flex flex-col p-4 border border-border-strong bg-sand/60 backdrop-blur-md mb-8">
             <div className="grid grid-cols-4 gap-2 mb-2">
               {SOCIAL_LINKS.map(({ platform, href, label, icon }) => {
-                // Links mailto: abrem na mesma aba.
-                const opensNewTab = !href.startsWith('mailto:')
+                const newTab = opensInNewTab(href)
                 return (
                   <a
                     key={platform}
                     href={href}
-                    aria-label={
-                      opensNewTab ? `Acessar ${label} (abre em nova aba)` : `Acessar ${label}`
-                    }
-                    target={opensNewTab ? '_blank' : undefined}
-                    rel={opensNewTab ? 'noopener noreferrer' : undefined}
-                    className="flex items-center justify-center p-2 rounded-md hover:scale-110 transition-all duration-300 group focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                    aria-label={newTab ? `Acessar ${label} ${NEW_TAB_NOTICE}` : `Acessar ${label}`}
+                    target={newTab ? '_blank' : undefined}
+                    rel={newTab ? 'noopener noreferrer' : undefined}
+                    className={cn(
+                      'flex items-center justify-center p-2 rounded-md hover:scale-110 transition-all duration-300 group',
+                      focusRing,
+                    )}
                   >
                     <Image
                       src={icon}

@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { isExternalUrl, opensInNewTab } from '@/lib/links'
 import { Icon } from '@/components/ui/Icon'
 
 type ButtonVariant = 'primary' | 'outline' | 'ghost'
@@ -55,10 +56,6 @@ const variantStyles: Record<ButtonVariant, string> = {
   ghost: cn('gap-2', 'text-sand-muted', 'hover:text-accent'),
 }
 
-function isExternalUrl(href: string): boolean {
-  return /^(https?:|mailto:|tel:)/.test(href)
-}
-
 function isStaticAsset(href: string): boolean {
   return /\.(pdf|zip|doc|docx|xls|xlsx|png|jpg|jpeg|webp|svg)$/i.test(href)
 }
@@ -96,6 +93,7 @@ function LinkButton({
   children,
 }: LinkButtonProps) {
   const isExternal = external ?? isExternalUrl(href)
+  const newTab = isExternal && opensInNewTab(href)
   const useNativeAnchor = isExternal || isStaticAsset(href)
   const classes = buttonClasses(variant, className)
   const content = (
@@ -108,8 +106,8 @@ function LinkButton({
     return (
       <a
         href={href}
-        target={isExternal ? '_blank' : undefined}
-        rel={isExternal ? 'noopener noreferrer' : undefined}
+        target={newTab ? '_blank' : undefined}
+        rel={newTab ? 'noopener noreferrer' : undefined}
         download={download}
         className={classes}
       >
