@@ -108,6 +108,44 @@ test('com movimento reduzido, a tela de boas-vindas não alterna o texto nem ani
   expect([...greetings]).toEqual(['Bem-vindo ao meu portfólio'])
 })
 
+test('na troca de idioma, a nova saudação entra com fade-in', async ({ page }) => {
+  // O fade-in dura 300 ms. Para não depender de ler a página nesse intervalo, um script registra,
+  // no início de cada animação CSS, o texto do elemento animado e as propriedades dos keyframes.
+  await page.addInitScript(() => {
+    const starts: { text: string; properties: string[] }[] = []
+    Object.assign(window, { animationStarts: starts })
+    document.addEventListener('animationstart', (event) => {
+      const target = event.target as Element
+      const animation = target
+        .getAnimations()
+        .find(
+          (candidate) =>
+            candidate instanceof CSSAnimation && candidate.animationName === event.animationName,
+        )
+      const keyframes =
+        animation?.effect instanceof KeyframeEffect ? animation.effect.getKeyframes() : []
+      starts.push({ text: target.textContent ?? '', properties: keyframes.flatMap(Object.keys) })
+    })
+  })
+
+  await page.goto('/')
+  await expect(page.getByText(/^Welcome to /)).toBeVisible()
+
+  // O evento chega no quadro seguinte à troca do texto.
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as unknown as { animationStarts: { text: string; properties: string[] }[] })
+            .animationStarts,
+      ),
+    )
+    .toContainEqual({
+      text: expect.stringMatching(/^Welcome to/),
+      properties: expect.arrayContaining(['opacity']),
+    })
+})
+
 // As rotas sem a tela ficam com o e2e/axe.spec.ts.
 test('com a tela de boas-vindas visível, a home não tem violações de acessibilidade', async ({
   page,
