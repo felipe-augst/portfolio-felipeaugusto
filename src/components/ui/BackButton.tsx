@@ -7,11 +7,10 @@ import { hasClientNavigation } from '@/hooks/use-client-navigation'
 
 type BackButtonProps = {
   fallbackHref?: string
-  label?: string
   className?: string
 }
 
-export function BackButton({ fallbackHref = '/', label = 'Voltar', className }: BackButtonProps) {
+export function BackButton({ fallbackHref = '/', className }: BackButtonProps) {
   const router = useRouter()
 
   // O histórico só serve quando a entrada anterior é do site. Na entrada direta (buscador, link
@@ -26,7 +25,7 @@ export function BackButton({ fallbackHref = '/', label = 'Voltar', className }: 
 
   return (
     <Button variant="ghost" leadingIcon={ArrowLeft} onClick={handleClick} className={className}>
-      {label}
+      Voltar
     </Button>
   )
 }

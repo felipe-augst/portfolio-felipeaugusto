@@ -18,7 +18,6 @@ type BaseProps = {
 // Com `href`, o Button é um link.
 type LinkButtonProps = BaseProps & {
   href: string
-  external?: boolean
   download?: boolean | string
 }
 
@@ -87,12 +86,11 @@ function LinkButton({
   variant,
   leadingIcon,
   trailingIcon,
-  external,
   download,
   className,
   children,
 }: LinkButtonProps) {
-  const isExternal = external ?? isExternalUrl(href)
+  const isExternal = isExternalUrl(href)
   const newTab = isExternal && opensInNewTab(href)
   const useNativeAnchor = isExternal || isStaticAsset(href)
   const classes = buttonClasses(variant, className)
