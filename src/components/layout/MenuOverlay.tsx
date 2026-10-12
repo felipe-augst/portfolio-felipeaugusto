@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { cn } from '@/lib/cn'
 import { NAV_ITEMS } from '@/data/nav'
 import { SOCIAL_LINKS } from '@/data/social'
 
@@ -25,7 +26,13 @@ export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
       ref={dialogRef}
       aria-label="Menu"
       onClose={onClose}
-      className="fixed inset-0 m-0 size-full max-h-none max-w-none border-0 p-0 bg-bg text-sand open:flex flex-col items-center justify-center gap-5"
+      className={cn(
+        'fixed inset-0 m-0 size-full max-h-none max-w-none border-0 p-0 backdrop:bg-transparent',
+        'bg-bg text-sand open:flex flex-col items-center justify-center gap-5',
+        // Fade na abertura e no fechamento: `display` e `overlay` trocam só no fim do fechamento.
+        'opacity-0 open:opacity-100 starting:open:opacity-0',
+        'transition-[opacity,display,overlay] transition-discrete duration-500',
+      )}
     >
       <button
         onClick={onClose}
