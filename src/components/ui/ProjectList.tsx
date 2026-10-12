@@ -1,3 +1,4 @@
+import { ActiveItemList } from '@/components/ui/ActiveItemList'
 import { ProjectCard } from '@/components/ui/ProjectCard'
 import { cn } from '@/lib/cn'
 import type { Project } from '@/types/projects'
@@ -10,23 +11,27 @@ type ProjectListProps = {
 
 // Lista de projetos dos destaques da home e de /projects, com o mesmo markup em todos os tamanhos:
 // uma fileira deslizável com snap em telas estreitas (sangrando até a borda da tela) e grid a
-// partir de md.
+// partir de md. Na fileira, o card ativo fica em destaque e os demais encolhem um pouco.
 export function ProjectList({ projects, label }: ProjectListProps) {
   return (
-    // `role="list"` explícito: o Safari tira a semântica de lista de um <ul> sem marcadores.
-    <ul
-      role="list"
-      aria-label={label}
+    <ActiveItemList
+      label={label}
       className={cn(
         '-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-6',
         'md:mx-0 md:grid md:grid-cols-2 md:gap-10 md:overflow-visible md:px-0 xl:grid-cols-3',
       )}
     >
       {projects.map((project) => (
-        <li key={project.id} className="flex w-[80vw] shrink-0 snap-center sm:w-80 md:w-full">
+        <li
+          key={project.id}
+          className={cn(
+            'flex w-[80vw] shrink-0 snap-center sm:w-80 md:w-full',
+            'max-md:data-[active=false]:scale-95 motion-safe:transition-transform motion-safe:duration-500',
+          )}
+        >
           <ProjectCard project={project} />
         </li>
       ))}
-    </ul>
+    </ActiveItemList>
   )
 }
