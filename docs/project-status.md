@@ -19,29 +19,33 @@ Status:
 - `em revisão` — PR aberto para a `develop`;
 - `entregue` — mergeado na `develop` e issue fechada.
 
-| Issue | Ticket                                                   | Bloqueado por      | Status   | Branch                            | PR  |
-| ----- | -------------------------------------------------------- | ------------------ | -------- | --------------------------------- | --- |
-| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue | `chore/34-update-next-deps`       | #49 |
-| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue | `chore/35-e2e-infra-ci`           | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue | `feat/36-static-routes-splash`    | #52 |
-| #37   | SEO e metadados por rota                                 | #35                | entregue | `fix/37-seo-metadata`             | #51 |
-| #38   | Shell de página, landmarks e página 404                  | #35                | entregue | `feat/38-page-shell-404`          | #53 |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue | `feat/39-projects-list-images`    | #59 |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue | `fix/40-reduced-motion`           | #57 |
-| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | entregue | `feat/41-modal-menu-navigation`   | #61 |
-| #42   | Seção de contato acessível                               | #35                | entregue | `fix/42-accessible-contact`       | #55 |
-| #43   | Card de projeto acessível + correção dos dados           | #39                | entregue | `feat/43-accessible-project-card` | #63 |
-| #44   | Headers de segurança + CSP report-only                   | #36                | entregue | `feat/44-security-headers-csp`    | #65 |
-| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | entregue | `feat/45-web-vitals-js-budget`    | #67 |
-| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | livre    | —                                 | —   |
+| Issue | Ticket                                                   | Bloqueado por      | Status       | Branch                                | PR  |
+| ----- | -------------------------------------------------------- | ------------------ | ------------ | ------------------------------------- | --- |
+| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue     | `chore/34-update-next-deps`           | #49 |
+| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue     | `chore/35-e2e-infra-ci`               | #50 |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue     | `feat/36-static-routes-splash`        | #52 |
+| #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`                 | #51 |
+| #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`              | #53 |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue     | `feat/39-projects-list-images`        | #59 |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue     | `fix/40-reduced-motion`               | #57 |
+| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | entregue     | `feat/41-modal-menu-navigation`       | #61 |
+| #42   | Seção de contato acessível                               | #35                | entregue     | `fix/42-accessible-contact`           | #55 |
+| #43   | Card de projeto acessível + correção dos dados           | #39                | entregue     | `feat/43-accessible-project-card`     | #63 |
+| #44   | Headers de segurança + CSP report-only                   | #36                | entregue     | `feat/44-security-headers-csp`        | #65 |
+| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | entregue     | `feat/45-web-vitals-js-budget`        | #67 |
+| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | em andamento | `chore/46-single-source-cleanup-docs` | —   |
 
-**Frontier:** #46, o último ticket do milestone. Depois dele, vem o release v2.0.0.
+**Frontier:** nenhum ticket livre. O #46, o último do milestone, está em andamento. Depois dele, vem o release v2.0.0.
 
 ## Handoff
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
-_Nenhum ticket em andamento ou em revisão._
+### #46 — chore/46-single-source-cleanup-docs
+
+- **Estado:** branch criada a partir da `develop` (`58c9811`).
+- **Próximo passo:** ciclo red → green do catálogo único de tecnologias (Sobre e `/stack`).
+- **Atenção:** nada ainda.
 
 <!--
 Modelo de entrada:
@@ -142,6 +146,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-12 — #46 em andamento na branch `chore/46-single-source-cleanup-docs`.
 - 2026-10-12 — Analytics e Speed Insights no layout raiz, teste de orçamento de JS da home, `tailwind-merge` removido e imagens montadas no servidor pelo `ServerImage` mergeados na `develop` (#67), e o #45 foi fechado. Fica livre o #46, o último ticket antes do release. Ficam para outros tickets: no #46, a documentação deve refletir que o `tailwind-merge` saiu das dependências, que o `cn()` só junta classes e que as imagens usam o `ServerImage` (as regras já estão em `docs/agents/standards.md`; o README não cita nenhum dos três). Para o dono: a Vercel só serve `/_vercel/insights/script.js` e `/_vercel/speed-insights/script.js` com o Web Analytics e o Speed Insights ativados no painel do projeto. Sem isso, os dois respondem 404 também em produção. O preview da `develop` (`ba96704`) está atrás da autenticação da Vercel (302 para o SSO), e os dois caminhos não foram conferidos num deploy. Confira com o navegador logado ou com `curl -I` no smoke do release.
 - 2026-10-12 — #45 em revisão no PR #67: Analytics e Speed Insights no layout raiz; CSP de produção sem mudança e `va.vercel-scripts.com` só em dev; teste de orçamento de JS da home (≤ 150.000 bytes comprimidos); `tailwind-merge` removido e imagens montadas no servidor pelo `ServerImage`, com o JS da home de 160.169 para 146.548 bytes.
 - 2026-10-12 — #45 em andamento na branch `feat/45-web-vitals-js-budget`.
