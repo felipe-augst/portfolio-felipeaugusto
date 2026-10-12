@@ -14,7 +14,8 @@ type RevealOnScrollProps = {
 }
 
 // Entrada do conteúdo ao rolar até ele. O IntersectionObserver só tira o estado inicial oculto, e a
-// transição é CSS. O estado oculto só vale com JS (variante `js:`): sem JS, o conteúdo fica visível.
+// transição é CSS. O estado oculto só vale com JS (variante `js:`) e sem pedido de movimento
+// reduzido (`motion-safe:`): nos outros casos, o conteúdo fica visível e parado desde o início.
 export function RevealOnScroll({ children, delayMs = 0, className }: RevealOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [revealed, setRevealed] = useState(false)
@@ -41,8 +42,8 @@ export function RevealOnScroll({ children, delayMs = 0, className }: RevealOnScr
       ref={ref}
       style={{ transitionDelay: `${delayMs}ms` }}
       className={cn(
-        'transition-[opacity,translate] duration-600 ease-out',
-        !revealed && 'js:translate-y-7.5 js:opacity-0',
+        'motion-safe:transition-[opacity,translate] motion-safe:duration-600 motion-safe:ease-out',
+        !revealed && 'motion-safe:js:translate-y-7.5 motion-safe:js:opacity-0',
         className,
       )}
     >
