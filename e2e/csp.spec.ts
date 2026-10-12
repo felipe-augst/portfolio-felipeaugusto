@@ -2,6 +2,8 @@ import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { markSplashSeen } from './session'
 
+const ROUTES = ['/', '/stack', '/projects']
+
 // Script de outra origem, servido pelo próprio teste.
 const EXTERNAL_SCRIPT = 'https://scripts.example/rastreador.js'
 
@@ -12,6 +14,18 @@ function collectCspViolations(page: Page) {
     if (message.text().includes('Content Security Policy')) violations.push(message.text())
   })
   return violations
+}
+
+for (const route of ROUTES) {
+  // Primeira visita da sessão, com a tela de boas-vindas, para o teste cobrir tudo o que roda.
+  test(`carregar ${route} não gera violação da CSP no console`, async ({ page }) => {
+    const violations = collectCspViolations(page)
+
+    await page.goto(route)
+    await page.waitForLoadState('networkidle')
+
+    expect(violations).toEqual([])
+  })
 }
 
 test('um script de outra origem aparece como violação da CSP no console e roda mesmo assim', async ({
