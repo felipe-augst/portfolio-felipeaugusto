@@ -57,24 +57,25 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 - **5 segundos.** Conteúdo que muda sozinho para em menos de 5 s (WCAG 2.2.2).
 - **Texto que troca.** A palavra fora da vez fica escondida por recorte (`overflow-hidden` + deslocamento), com opacidade total. No meio de um fade, o texto fica sem contraste e o axe acusa violação.
 - **Troca sem deslocamento.** Texto que troca sozinho fica numa caixa de tamanho fixo, que não depende do texto (por exemplo, largura total e altura de duas linhas). Uma caixa centralizada que encolhe ou cresce com o texto muda de posição, e isso conta no CLS.
+- **Diálogos.** O fade de um `<dialog>` é CSS: `starting:` (`@starting-style`) na abertura e `transition-discrete` com `display` e `overlay` na lista de propriedades, para o fechamento terminar antes de o diálogo sumir (exemplo: `MenuOverlay`).
 
 ## Acessibilidade
 
 - Cada rota tem um `<main>` e um único `<h1>`, e a hierarquia de títulos segue em ordem. Nas páginas fora da home, inclusive a 404, os dois vêm do `PageShell`.
 - O rótulo de seção (`SectionEyebrow`, traço + texto) é decorativo e fica com `aria-hidden`. Ele não substitui o título da seção.
 - Conjuntos de itens, como os cards de projeto, são uma lista (`<ul>`/`<li>`) com nome acessível. O `<ul>` declara `role="list"`, porque o Safari tira a semântica de lista de um `<ul>` sem marcadores, e o reset do Tailwind remove os marcadores.
-- Overlays modais usam `<dialog>` com `showModal()`. O gatilho expõe `aria-expanded` e `aria-controls`.
+- Overlays modais usam `<dialog>` com `showModal()` e nome acessível. O gatilho expõe `aria-haspopup="dialog"`, `aria-expanded` e `aria-controls`. Escape, fundo inerte e devolução do foco ao gatilho são os do diálogo nativo, sem trap de foco em JS. Com um diálogo modal aberto, a página atrás não rola (`html:has(dialog:modal)` no `globals.css`).
 - Todo controle que expande ou recolhe conteúdo expõe `aria-expanded` e `aria-controls`.
 - Informação revelada por hover também aparece com foco dentro (`focus-within`) e em dispositivos sem hover.
-- Link externo tem nome acessível que identifica o destino, com contexto (por exemplo, o título do projeto), e avisa em `sr-only` que abre em nova aba. Links `mailto:` abrem na mesma aba.
+- Link externo tem nome acessível que identifica o destino, com contexto (por exemplo, o título do projeto), e avisa em `sr-only` que abre em nova aba. Links `mailto:` e `tel:` abrem na mesma aba. A decisão é `opensInNewTab` e o aviso é `NEW_TAB_NOTICE`, os dois em `src/lib/links.ts`.
 - Texto animado deixa a parte visual com `aria-hidden` e oferece a frase completa em `sr-only`.
-- Todo elemento interativo tem foco visível, com o estilo compartilhado do `Button`.
+- Todo elemento interativo tem foco visível, com o estilo compartilhado do `Button`: as classes `focusRing`, exportadas de `src/components/ui/Button.tsx`.
 - Toda combinação nova de texto e fundo tem o contraste conferido contra as metas.
 
 ## Navegação
 
 - Navegação interna usa `next/link`. Âncoras da home usam caminho absoluto (`/#contact`).
-- O botão "Voltar" usa o histórico só quando houve navegação interna na sessão. Nos outros casos, vai para a home.
+- O botão "Voltar" usa o histórico só quando houve navegação interna na sessão. Nos outros casos, vai para a home. Quem registra as navegações client-side é o `NavigationTracker`, no layout raiz (`src/hooks/use-client-navigation.ts`).
 
 ## Dados e componentes
 
@@ -82,6 +83,7 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 - **Onde fica o texto.** Conteúdo sobre o Felipe (textos, projetos, contato, links) mora em `src/data/`. Rótulos de interface ("Ler mais", "Fechar") ficam no componente.
 - **Reuso.** Antes de escrever markup, procure o componente compartilhado em `src/components/ui/` e `src/components/layout/`. Um padrão que aparece pela segunda vez vira componente.
 - **Seções e páginas.** Seção da home usa `Section` (espaçamento e largura padrão), `SectionEyebrow` e, quando o título tem destaque em accent, `SectionHeading`. Página fora da home usa `PageShell`, que traz rótulo, `<h1>` e "Voltar".
+- **Botões.** Controle com aparência de botão usa o `Button`. Com `href`, ele é um link (`next/link` nas rotas internas); sem `href`, é um `<button type="button">`. As variantes são `primary`, `outline` (Menu e Fechar) e `ghost` ("Voltar" e links discretos).
 - **Classes condicionais** usam `cn()`.
 - **Ícones lucide** passam pelo wrapper `Icon`.
 
@@ -104,3 +106,4 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 - **Mudança de comportamento.** Um teste existente só é alterado ou removido quando o ticket muda ou elimina o comportamento que ele verifica. O PR declara isso na seção "Testes alterados ou removidos", citando o critério que justifica.
 - **Teste existente falhando.** É regressão: o código é corrigido e o teste fica como está.
 - **Axe.** O axe (tags WCAG 2.0/2.1 A e AA) roda nas rotas tocadas, nos perfis desktop e mobile, pela fixture `makeAxeBuilder`.
+- **Tela de boas-vindas.** Teste que não é da tela abre a página com `markSplashSeen` (`e2e/session.ts`), como numa sessão em que ela já foi vista, para a tela não cobrir a página. Os localizadores do menu ficam em `e2e/menu.ts`.
