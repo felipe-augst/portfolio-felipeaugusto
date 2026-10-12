@@ -6,4 +6,5 @@ export const CONTACT = {
     animatedWords: ['construir', 'criar', 'transformar'],
     suffix: 'algo juntos?',
   },
+  linksTitle: 'Entre em contato:',
 } as const satisfies ContactContent

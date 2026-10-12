@@ -1,6 +1,7 @@
 import { ServerImage } from '@/components/ui/ServerImage'
 import { Button } from '../ui/Button'
 import { HERO } from '@/data/hero'
+import { SITE } from '@/data/site'
 import { Download } from 'lucide-react'
 import { ShimmerText } from '../ui/ShimmerText'
 import { TechIcon } from '@/components/ui/TechIcon'
@@ -34,25 +35,23 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-2 max-w-350 w-full flex flex-col items-center justify-center pt-2  md:pt-60">
-        {HERO.availability && (
+        {SITE.availability.available && (
           <div className="inline-flex items-center gap-3 mb-6 text-[11px] uppercase tracking-[0.25em] text-sand-muted">
             <span className="relative w-2 h-2 bg-green rounded-full">
               <span className="absolute inset-1.25 rounded-full bg-green/80 motion-safe:animate-pulse" />
             </span>
-            Disponível para novos projetos
+            {SITE.availability.label}
           </div>
         )}
         <h1 className="font-display text-center font-normal text-[clamp(80px,13vw,120px)] leading-[0.88] tracking-[-0.045em] text-sand mb-8 ">
-          <ShimmerText variant="night">
-            {HERO.firstName} {HERO.lastName}
-          </ShimmerText>
+          <ShimmerText variant="night">{SITE.name}</ShimmerText>
         </h1>
         <p className="font-serif  text-center font-light text-xl md:text-2xl text-white/70 md:max-w-3xl lg:max-w-5xl leading-relaxed mb-8">
           {HERO.tagline}
         </p>
         <Button
-          href="/felipe_augusto_fullstack_cv.pdf"
-          download="felipe-augusto-fullstack-cv.pdf"
+          href={SITE.cv.path}
+          download={SITE.cv.downloadName}
           trailingIcon={Download}
           variant="primary"
         >

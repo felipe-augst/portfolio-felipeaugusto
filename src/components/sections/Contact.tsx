@@ -31,7 +31,7 @@ export function Contact() {
 
         <div className="flex flex-col w-full max-w-md md:items-center md:mx-auto">
           <h3 className="font-serif uppercase text-lg md:text-2xl font-light mb-6 mt-2 text-center md:text-left">
-            Entre em contato:
+            {CONTACT.linksTitle}
           </h3>
 
           <div className="w-full flex flex-col p-4 border border-border-strong bg-sand/60 backdrop-blur-md mb-8">
