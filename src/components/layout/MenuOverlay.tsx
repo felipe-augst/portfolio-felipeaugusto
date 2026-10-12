@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { Button, focusRing } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
 import { NAV_ITEMS } from '@/data/nav'
 import { SOCIAL_LINKS } from '@/data/social'
@@ -36,12 +37,9 @@ export function MenuOverlay({ id, open, onClose }: MenuOverlayProps) {
         'transition-[opacity,display,overlay] transition-discrete duration-500',
       )}
     >
-      <button
-        onClick={onClose}
-        className="absolute top-7 right-7 md:right-12 border border-border-strong text-sand text-xs uppercase tracking-[0.2em] font-medium px-5 py-2.5 hover:bg-sand hover:text-bg transition-colors"
-      >
+      <Button variant="outline" onClick={onClose} className="absolute top-7 right-7 md:right-12">
         Fechar
-      </button>
+      </Button>
 
       <nav className="flex flex-col items-center gap-2">
         {NAV_ITEMS.map((item) => (
@@ -49,7 +47,10 @@ export function MenuOverlay({ id, open, onClose }: MenuOverlayProps) {
             key={item.href}
             href={item.href}
             onClick={onClose}
-            className="font-display text-[clamp(52px,9vw,104px)] font-normal tracking-[-0.04em] leading-none text-sand hover:text-accent transition-colors"
+            className={cn(
+              'font-display text-[clamp(52px,9vw,104px)] font-normal tracking-[-0.04em] leading-none text-sand hover:text-accent transition-colors',
+              focusRing,
+            )}
           >
             {item.label}
           </a>
@@ -63,7 +64,10 @@ export function MenuOverlay({ id, open, onClose }: MenuOverlayProps) {
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sand-muted text-xs uppercase tracking-[0.2em] hover:text-accent transition-colors"
+            className={cn(
+              'text-sand-muted text-xs uppercase tracking-[0.2em] hover:text-accent transition-colors',
+              focusRing,
+            )}
           >
             {link.label}
           </a>
