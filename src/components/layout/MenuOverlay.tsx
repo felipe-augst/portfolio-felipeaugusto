@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
-import { cn } from '@/lib/cn'
+import { useEffect, useRef } from 'react'
 import { NAV_ITEMS } from '@/data/nav'
 import { SOCIAL_LINKS } from '@/data/social'
 
@@ -11,35 +10,22 @@ type MenuOverlayProps = {
 }
 
 export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
-    document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
-  }, [onClose])
-
+  // O diálogo modal nativo traz a camada superior, o fundo inerte e o Escape.
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
+    const dialog = dialogRef.current
+    if (!dialog) return
+    if (open && !dialog.open) dialog.showModal()
+    if (!open && dialog.open) dialog.close()
   }, [open])
 
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50',
-        'bg-bg flex flex-col items-center justify-center gap-5',
-        'transition-opacity duration-500',
-        open ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none',
-      )}
-      aria-hidden={!open}
+    <dialog
+      ref={dialogRef}
+      aria-label="Menu"
+      onClose={onClose}
+      className="fixed inset-0 m-0 size-full max-h-none max-w-none border-0 p-0 bg-bg text-sand open:flex flex-col items-center justify-center gap-5"
     >
       <button
         onClick={onClose}
@@ -74,6 +60,6 @@ export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
           </a>
         ))}
       </div>
-    </div>
+    </dialog>
   )
 }
