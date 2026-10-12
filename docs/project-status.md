@@ -26,7 +26,7 @@ Status:
 | #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue     | `feat/36-static-routes-splash` | #52 |
 | #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
 | #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`       | #53 |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em andamento | —                              | —   |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em revisão   | `feat/39-projects-list-images` | #59 |
 | #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue     | `fix/40-reduced-motion`        | #57 |
 | #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em andamento | —                              | —   |
 | #42   | Seção de contato acessível                               | #35                | entregue     | `fix/42-accessible-contact`    | #55 |
@@ -35,13 +35,24 @@ Status:
 | #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
 | #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** #44. O #39 e o #41 estão em andamento em outros terminais.
+**Frontier:** #44. O #39 está em revisão no PR #59, e o #41 está em andamento em outro terminal. O merge do #39 libera o #43.
 
 ## Handoff
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
-_O #39 e o #41 estão em andamento, com o handoff nas próprias branches._
+_O #41 está em andamento em outro terminal, com o handoff na própria branch._
+
+### #39 — feat/39-projects-list-images
+
+- **Estado:** em revisão no PR #59. Todos os critérios de aceite têm teste verde em `e2e/projects.http.spec.ts`, `e2e/projects.spec.ts`, `e2e/layout-shift.spec.ts`, `e2e/images.http.spec.ts`, `e2e/images.spec.ts` e `e2e/fonts.spec.ts`. Passam `format:check`, `lint`, `typecheck` e `build` (tudo `○ (Static)`), e a suíte E2E (138 testes) também passa com a `develop` do #40 mesclada.
+- **Próximo passo:** depois do merge, passo 7 do workflow: fechar a issue e marcar o #43 como `livre`.
+- **Atenção:**
+  - #43: o `ProjectCard` continua `'use client'` por causa do "Ler mais". A gaveta abre no card ativo da fileira (`max-md:in-data-[active=true]:translate-y-0`). O teste do card ativo só confere que a gaveta do card ativo é pintada, e isso continua valendo com a gaveta sempre visível sem hover. O teste acha o ícone pelo `alt` com o nome da tecnologia. Em `/projects`, o título do card é `<h3>` logo depois do `<h1>`, então a hierarquia pula o `<h2>`.
+  - #41: os links do `MenuOverlay` trocaram `font-light` por `font-normal` (uma linha). É provável que dê conflito no merge.
+  - #46: o README ainda descreve o carrossel Embla e o `useMediaQuery`, e `src/hooks/` ficou vazio, embora o `AGENTS.md` ainda liste essa pasta.
+  - A `develop` com o #40 (#57) foi mesclada na branch. O `Hero` continua Server Component, com o stagger em CSS do #40, e a saudação da tela de boas-vindas junta a caixa fixa deste ticket ao `animate-fade-in` do #40.
+  - Na primeira suíte completa com build novo, o axe de `/projects` no desktop estourou os 30 s uma vez, sob carga, no começo da execução. Na repetição, também com build novo, passou em 10 s.
 
 <!--
 Modelo de entrada:
@@ -67,6 +78,12 @@ Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 
 Decisões que não estão na spec #33. A mais recente fica no topo.
 
+- **2026-10-12:** a lista de projetos é o `ProjectList` (`src/components/ui/ProjectList.tsx`, Server Component). Ele renderiza a ilha `ActiveItemList` (`src/components/ui/ActiveItemList.tsx`), que desenha o `<ul role="list">` com nome acessível e recebe os `<li>` do servidor como `children`. O nome é o título da seção ou da página: "Projetos em destaque" e "Todos os projetos". A ilha marca com `data-active` o item que aparece em pelo menos 75% da área de rolagem da lista (`IntersectionObserver` com a lista como `root`). Abaixo de `md`, os outros itens ficam em `scale-95` e a gaveta do card ativo abre. O destaque não reduz opacidade, como fazia o carrossel (`opacity-50`), porque isso baixaria o contraste do texto.
+- **2026-10-12:** o teste de CLS percorre a primeira visita inteira, com a tela de boas-vindas. A troca de idioma da saudação deslocava a caixa centralizada (CLS de cerca de 0,017 no desktop). Agora a caixa tem tamanho fixo (largura total, duas linhas), e onde as saudações cabem numa linha a linha de varredura fica cerca de 36 px mais abaixo. A regra entrou em `docs/agents/standards.md` ("Troca sem deslocamento").
+- **2026-10-12:** o CLS não registrava a troca de altura da seção de projetos, porque ela acontecia na hidratação, com a seção em opacidade 0 pelo `RevealOnScroll`. Por isso há um teste próprio, que compara a altura da seção no HTML servido (com os scripts do Next bloqueados) e depois da hidratação.
+- **2026-10-12:** o teste de largura das imagens dos cards roda nos dois perfis. No mobile, a imagem já não passava de 2× antes do ticket: os originais têm pelo menos 1440 px, e o otimizador entrega 1200 px para um card de cerca de 860 px de dispositivo. O red veio do desktop (3,9× na home e 4,6× em `/projects`). O limite é 2,2× ("~2×" com 10% de folga para o degrau do srcset). Em `/projects`, no desktop, a razão fica em cerca de 2,04×, porque o `33vw` superestima o container do `PageShell` (`max-w-5xl`).
+- **2026-10-12:** a Fraunces carrega só o estilo normal, e os preloads de fonte caíram de 4 para 3. A Cinzel não tem peso 300: o `<h1>` do hero, o título do contato e os links do menu trocaram `font-light` por `font-normal`. O navegador já usava a face 400, então a aparência não muda. O `e2e/fonts.spec.ts` confere, em cada rota, que o peso e o estilo de todo texto existem entre as faces da fonte principal dele.
+- **2026-10-12:** os testes de projetos leem títulos, destaques e tecnologias de `PROJECTS` (`@/data/projects`), sem escrever os valores à mão, para que uma mudança de conteúdo não quebre a suíte.
 - **2026-10-12:** a entrada das seções (`RevealOnScroll`) só aplica o estado oculto com `motion-safe:` e com o marcador `data-js`, pela variante `js:` do Tailwind (`@custom-variant js` no `globals.css`). Com movimento reduzido, as seções ficam visíveis e paradas desde o início, sem nem um fade. A seção entra quando passa 80 px da borda de baixo da tela, uma vez, com os mesmos 600 ms, 30 px e atrasos de 100/200/300 ms de antes. A prop virou `delayMs`.
 - **2026-10-12:** o stagger dos ícones do hero usa a animação `rise-in` (`--animate-rise-in`, com `fill-mode: both` para o ícone ficar oculto durante o atraso) e `animation-delay` inline de 100 ms + 150 ms por ícone, os tempos do `motion`. Ela roda também sem JS, porque é só CSS e termina com os ícones visíveis. O ponto de disponibilidade (`animate-pulse`) ficou sob `motion-safe:`.
 - **2026-10-12:** o fade-in da troca de idioma da tela de boas-vindas foi recriado como `--animate-fade-in` (300 ms, `ease-out`), como pede o critério do #40. Ele continua baixando o contraste da saudação por 300 ms a cada troca, o que a regra "Texto que troca" de `docs/agents/standards.md` desaconselha. A tela é decorativa (`aria-hidden`) e o axe roda antes das trocas. Trocar o fade por recorte é decisão do dono. Todos os keyframes ficam no `@theme`, inclusive o do `scan`.
@@ -107,11 +124,11 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-12 — #39 em revisão no PR #59: lista única de projetos no HTML do servidor (fileira com scroll-snap e card ativo no mobile, grid a partir de `md`), sem Embla nem `useMediaQuery`; `sizes` nos cards; preload só do fundo do hero, que ganhou `alt=""`; Fraunces sem itálico e pesos da Cinzel corrigidos; CLS da home em 0, com a caixa da saudação de tamanho fixo.
 - 2026-10-12 — Remoção do `motion`, entrada das seções em CSS e movimento reduzido respeitado mergeados na `develop` (#57), e o #40 foi fechado. Nenhum ticket é liberado: o #45 ainda espera #39 e #43. O #39 também mexe no `Hero.tsx`: na resolução, o `Hero` fica sem `'use client'` e com o stagger em CSS do #40. Ficam para outros tickets: o caminho do CV escrito à mão e os imports relativos `../ui/*` do `Hero` (#46) e o JS da home, ainda em 168,0 KB transferidos, acima dos 150 KB (#45). Se o #46 mudar a estrutura do hero ou o `alt` dos ícones, confira `heroStackIcons` em `e2e/motion.spec.ts`.
-
+- 2026-10-12 — #39 em andamento na branch `feat/39-projects-list-images`.
 - 2026-10-12 — #40 em revisão no PR #57: entrada das seções com `IntersectionObserver` e CSS, visível sem JS e parada com movimento reduzido; stagger do hero em CSS e `Hero` no servidor; reset de movimento reduzido com uma iteração e rolagem sem suavidade; `motion` e `tailwindcss-animate` removidos (JS da home de 206,7 KB para 168,0 KB transferidos).
 - 2026-10-12 — #40 em andamento na branch `fix/40-reduced-motion`.
-
 - 2026-10-10 — Seção de contato acessível mergeada na `develop` (#55), e o #42 foi fechado. Nenhum ticket é liberado: o #45 ainda espera #39, #40 e #43. Ficam para outros tickets: o caminho do CV escrito à mão no `Hero` (#40 ou #46), o `mailto:` em nova aba e sem aviso de nova aba no menu (#41) e o fade-in das trocas de idioma da tela de boas-vindas (#40). Os helpers de "texto pintado" de `e2e/contact.spec.ts` servem para os testes de movimento do #40.
 - 2026-10-10 — #42 em revisão no PR #55: título do contato legível por leitor de tela e com um único ciclo, contraste do card, links sociais com ícone nos dados e seção como Server Component.
 - 2026-10-10 — Rotas estáticas, tela de boas-vindas decidida no `<head>` uma vez por sessão, marcador `data-js` e site sem Server Action mergeados na `develop` (#52), e o #36 foi fechado. Ficam livres #40 e #44.

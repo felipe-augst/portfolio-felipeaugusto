@@ -54,7 +54,7 @@ export function MenuOverlay({ open, onClose }: MenuOverlayProps) {
             key={item.href}
             href={item.href}
             onClick={onClose}
-            className="font-display text-[clamp(52px,9vw,104px)] font-light tracking-[-0.04em] leading-none text-sand hover:text-accent transition-colors"
+            className="font-display text-[clamp(52px,9vw,104px)] font-normal tracking-[-0.04em] leading-none text-sand hover:text-accent transition-colors"
           >
             {item.label}
           </a>

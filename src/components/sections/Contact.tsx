@@ -18,7 +18,7 @@ export function Contact() {
     <Section id="contact">
       <SectionEyebrow className="mb-14">Contato</SectionEyebrow>
       <div className="grid xl:grid-cols-[1.1fr_1fr] gap-16 md:gap-18 items-center lg:items-start">
-        <h2 className="font-display text-center md:text-start text-5xl md:text-7xl lg:text-[90px] font-light leading-tight tracking-[-0.03em]">
+        <h2 className="font-display text-center md:text-start text-5xl md:text-7xl lg:text-[90px] font-normal leading-tight tracking-[-0.03em]">
           <span className="sr-only">{phrase}</span>
           {/* Com a lista de palavras vazia, os espaços separam prefixo e sufixo. */}
           <span aria-hidden="true">

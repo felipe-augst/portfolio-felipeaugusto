@@ -60,9 +60,14 @@ export function SplashScreen() {
         faded ? 'opacity-0 pointer-events-none' : 'opacity-100',
       )}
     >
-      <div className="font-serif text-sand text-5xl md:text-7xl font-light tracking-[0.03em] flex flex-col items-center text-center">
+      {/* Caixa de tamanho fixo (largura total, duas linhas), e saudação na largura total: trocar
+          de idioma não muda o tamanho nem a posição de nenhuma caixa (CLS 0). */}
+      <div className="font-serif text-sand text-5xl md:text-7xl font-light tracking-[0.03em] flex h-[2em] w-full items-center">
         {/* A primeira saudação aparece pronta, junto com a tela: o fade-in fica para a troca de idioma. */}
-        <div key={index} className={cn(index > 0 && 'motion-safe:animate-fade-in')}>
+        <div
+          key={index}
+          className={cn('w-full text-center', index > 0 && 'motion-safe:animate-fade-in')}
+        >
           {currentGreeting.welcome}{' '}
           <em className="text-accent not-italic">{currentGreeting.highlight}</em>
         </div>

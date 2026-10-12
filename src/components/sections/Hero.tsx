@@ -13,13 +13,13 @@ const STACK_STAGGER_MS = 150
 export function Hero() {
   return (
     <section className="relative min-h-200 md:min-h-225 lg:min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 md:px-12 pb-15">
-      {/* Background Image */}
+      {/* Background Image (decorativa) */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/images/hero/hero_background2.webp"
-          alt="Duna solitária sob céu estrelado"
+          alt=""
           fill
-          priority
+          preload
           sizes="100vw"
           className="object-cover object-center opacity-30"
         />
@@ -41,7 +41,7 @@ export function Hero() {
             Disponível para novos projetos
           </div>
         )}
-        <h1 className="font-display text-center font-light text-[clamp(80px,13vw,120px)] leading-[0.88] tracking-[-0.045em] text-sand mb-8 ">
+        <h1 className="font-display text-center font-normal text-[clamp(80px,13vw,120px)] leading-[0.88] tracking-[-0.045em] text-sand mb-8 ">
           <ShimmerText variant="night">
             {HERO.firstName} {HERO.lastName}
           </ShimmerText>

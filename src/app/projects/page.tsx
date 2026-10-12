@@ -1,5 +1,5 @@
 import { PageShell } from '@/components/layout/PageShell'
-import { FeaturedProjectsGrid } from '@/components/sections/FeaturedProjectsGrid'
+import { ProjectList } from '@/components/ui/ProjectList'
 import { PROJECTS } from '@/data/projects'
 import { PAGES } from '@/data/site'
 import { buildPageMetadata } from '@/lib/metadata'
@@ -9,7 +9,7 @@ export const metadata = buildPageMetadata(PAGES.projects)
 export default function ProjectsPage() {
   return (
     <PageShell eyebrow="Meus projetos" title="Todos os" titleHighlight="projetos">
-      <FeaturedProjectsGrid projects={PROJECTS} />
+      <ProjectList projects={PROJECTS} label="Todos os projetos" />
     </PageShell>
   )
 }

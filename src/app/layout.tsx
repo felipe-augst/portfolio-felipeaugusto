@@ -13,7 +13,6 @@ const fraunces = Fraunces({
   subsets: ['latin'],
   display: 'swap',
   weight: ['300', '400'],
-  style: ['normal', 'italic'],
 })
 
 const dmSans = DM_Sans({
@@ -85,12 +84,6 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
-        <link
-          rel="preload"
-          as="image"
-          href="/images/hero/hero_background2.webp"
-          fetchPriority="high"
-        />
       </head>
       <body className="min-h-full flex flex-col">
         <script

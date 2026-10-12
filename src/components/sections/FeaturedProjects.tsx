@@ -1,18 +1,13 @@
-'use client'
-
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { ProjectList } from '@/components/ui/ProjectList'
 import { Section } from '@/components/ui/Section'
 import { SectionEyebrow } from '@/components/ui/SectionEyebrow'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { PROJECTS } from '@/data/projects'
-import { useMediaQuery } from '@/hooks/use-media-query'
-import { FeaturedProjectsCarousel } from './FeaturedProjectsCarousel'
-import { FeaturedProjectsGrid } from './FeaturedProjectsGrid'
 
 export function FeaturedProjects() {
-  const isDesktop = useMediaQuery('(min-width: 768px)')
-  const featuredProjects = PROJECTS.filter((p) => p.featured)
+  const featuredProjects = PROJECTS.filter((project) => project.featured)
 
   return (
     <Section id="projects">
@@ -27,14 +22,7 @@ export function FeaturedProjects() {
         </div>
       </div>
 
-      {/* Decisão de qual renderizar */}
-      {isDesktop === null ? (
-        <div className="min-h-96" />
-      ) : isDesktop ? (
-        <FeaturedProjectsGrid projects={featuredProjects} />
-      ) : (
-        <FeaturedProjectsCarousel projects={featuredProjects} />
-      )}
+      <ProjectList projects={featuredProjects} label="Projetos em destaque" />
 
       <div className="mt-16 w-full flex justify-center lg:justify-start">
         <Button href="/projects" variant="ghost" trailingIcon={ArrowRight}>

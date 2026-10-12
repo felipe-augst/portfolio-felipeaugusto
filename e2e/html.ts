@@ -17,8 +17,9 @@ function findTags(html: string, tagName: string) {
   return html.match(new RegExp(`<${tagName}\\b[^>]*>`, 'g')) ?? []
 }
 
+// Nomes de atributo HTML não diferenciam maiúsculas (o React escreve `imageSrcSet`).
 function getAttribute(tag: string, name: string) {
-  const value = tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1]
+  const value = tag.match(new RegExp(`\\s${name}="([^"]*)"`, 'i'))?.[1]
   return value === undefined ? undefined : decodeEntities(value)
 }
 
@@ -46,6 +47,32 @@ export function getJsonLdScripts(html: string) {
   return [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(
     ([, content]) => content ?? '',
   )
+}
+
+/** Texto de cada título (`<h1>` a `<h6>`), sem as tags internas. */
+export function getHeadings(html: string) {
+  return [...html.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/g)].map(([, , content]) =>
+    decodeEntities((content ?? '').replace(/<[^>]*>/g, ''))
+      .replace(/\s+/g, ' ')
+      .trim(),
+  )
+}
+
+/** `src` (decodificado) e `alt` de cada `<img>`. O `alt` fica `undefined` quando falta. */
+export function getImages(html: string) {
+  return findTags(html, 'img').map((img) => ({
+    src: decodeURIComponent(getAttribute(img, 'src') ?? ''),
+    alt: getAttribute(img, 'alt'),
+  }))
+}
+
+/** Destino de cada `<link rel="preload" as="image">`: o `href` ou o `imagesrcset`. */
+export function getImagePreloads(html: string) {
+  return findTags(html, 'link')
+    .filter(
+      (link) => getAttribute(link, 'rel') === 'preload' && getAttribute(link, 'as') === 'image',
+    )
+    .map((link) => getAttribute(link, 'href') ?? getAttribute(link, 'imagesrcset') ?? '')
 }
 
 /** `href` do `<link>` com o `rel` informado (por exemplo, `canonical`). */

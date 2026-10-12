@@ -8,17 +8,9 @@ import type { Project } from '@/types/projects'
 
 type ProjectCardProps = {
   project: Project
-  isActive?: boolean
-  priority?: boolean
-  variant?: 'carousel' | 'grid'
 }
 
-export function ProjectCard({
-  project,
-  isActive = false,
-  priority = false,
-  variant = 'grid',
-}: ProjectCardProps) {
+export function ProjectCard({ project }: ProjectCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   // Define se o texto é longo o suficiente para precisar do botão
@@ -27,13 +19,8 @@ export function ProjectCard({
   return (
     <div
       className={cn(
-        'group relative flex flex-col w-[80vw] sm:w-80 md:w-full shrink-0 overflow-hidden',
-        'rounded-md border border-border bg-bg-2 transition-all duration-500',
-        variant === 'carousel'
-          ? isActive
-            ? 'opacity-100 scale-100'
-            : 'opacity-50 scale-95 md:opacity-100 md:scale-100'
-          : 'opacity-100 scale-100',
+        'group relative flex flex-col w-full overflow-hidden',
+        'rounded-md border border-border bg-bg-2',
       )}
     >
       {/* Imagem + Gaveta */}
@@ -43,30 +30,23 @@ export function ProjectCard({
           src={project.image}
           alt={project.title}
           fill
-          priority={priority}
+          // Largura do card na lista: ~1/3 da tela em xl, 1/2 a partir de md e 80% na fileira.
+          sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 80vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
 
-        {/* Gaveta de Techs */}
+        {/* Gaveta de Techs: aberta no card ativo da lista deslizável (`data-active` do item) */}
         <div
           className={cn(
             'absolute bottom-0 left-0 w-full flex items-center justify-center gap-3',
             'bg-bg-3/95 backdrop-blur-md px-4 py-3 border-t border-border-strong',
             'transition-transform duration-500 ease-out',
-            variant === 'carousel' && isActive
-              ? 'translate-y-0'
-              : 'translate-y-full lg:group-hover:translate-y-0',
+            'translate-y-full lg:group-hover:translate-y-0 max-md:in-data-[active=true]:translate-y-0',
           )}
         >
-          {project.technologies.map((tech, index) => (
+          {project.technologies.map((tech) => (
             <div key={tech.name} className="relative w-7 h-7" title={tech.name}>
-              <Image
-                src={tech.icon}
-                alt={tech.name}
-                priority={index < 2}
-                fill
-                className="object-contain"
-              />
+              <Image src={tech.icon} alt={tech.name} fill className="object-contain" />
             </div>
           ))}
         </div>
