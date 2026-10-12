@@ -1,12 +1,14 @@
-'use client'
-
 import Image from 'next/image'
 import { Button } from '../ui/Button'
 import { HERO } from '@/data/hero'
 import { Download } from 'lucide-react'
 import { ShimmerText } from '../ui/ShimmerText'
 import { CORE_STACK } from '@/data/stack'
-import { motion } from 'motion/react'
+
+// Entrada dos ícones de stack: o primeiro começa depois de STACK_DELAY_MS, e cada um
+// STACK_STAGGER_MS depois do anterior.
+const STACK_DELAY_MS = 100
+const STACK_STAGGER_MS = 150
 
 export function Hero() {
   return (
@@ -34,7 +36,7 @@ export function Hero() {
         {HERO.availability && (
           <div className="inline-flex items-center gap-3 mb-6 text-[11px] uppercase tracking-[0.25em] text-sand-muted">
             <span className="relative w-2 h-2 bg-green rounded-full">
-              <span className="absolute inset-1.25 rounded-full bg-green/80 animate-pulse" />
+              <span className="absolute inset-1.25 rounded-full bg-green/80 motion-safe:animate-pulse" />
             </span>
             Disponível para novos projetos
           </div>
@@ -58,28 +60,12 @@ export function Hero() {
 
         {/* Stack Icons */}
 
-        <motion.div
-          className="flex gap-6 mt-16 md:mt-20"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: {
-              transition: {
-                delayChildren: 0.1,
-                staggerChildren: 0.15,
-              },
-            },
-          }}
-        >
-          {CORE_STACK.map((stack) => (
-            <motion.div
+        <div className="flex gap-6 mt-16 md:mt-20">
+          {CORE_STACK.map((stack, index) => (
+            <div
               key={stack.name}
-              variants={{
-                hidden: { opacity: 0, y: 20, scale: 0.8 },
-                visible: { opacity: 1, y: 0, scale: 1 },
-              }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              style={{ animationDelay: `${STACK_DELAY_MS + index * STACK_STAGGER_MS}ms` }}
+              className="motion-safe:animate-rise-in"
             >
               <Image
                 src={stack.icon}
@@ -88,9 +74,9 @@ export function Hero() {
                 height={32}
                 className="filter grayscale opacity-90 hover:opacity-100 hover:grayscale-0 transition-opacity"
               />
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   )

@@ -1,8 +1,10 @@
 @import 'tailwindcss';
-@plugin "tailwindcss-animate";
 
 /* Tela de boas-vindas habilitada: atributo que o script inline do <head> põe no <html>. */
 @custom-variant splash (&:where([data-splash] *));
+
+/* JS disponível: atributo que o mesmo script põe no <html>. Estados iniciais ocultos só valem com ele. */
+@custom-variant js (&:where([data-js] *));
 
 @theme inline {
   /* Cores — paleta noite desértica */
@@ -28,8 +30,39 @@
   --font-serif: var(--font-fraunces);
   --font-display: var(--font-cinzel);
 
-  /* Animações */
+  /* Animações. Os componentes usam cada uma sob `motion-safe:`. */
+
+  /* Varredura da linha de destaque */
   --animate-scan: scan 1.4s ease-in-out infinite;
+
+  @keyframes scan {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Entrada só por opacidade */
+  --animate-fade-in: fade-in 0.3s ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Entrada que sobe e cresce; `both` mantém o item oculto durante o atraso. */
+  --animate-rise-in: rise-in 0.5s ease-out both;
+
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      translate: 0 20px;
+      scale: 0.8;
+    }
+  }
 
   /* Shimmer para texto */
   --animate-shimmer: shimmer-text 15s linear infinite;
@@ -73,21 +106,15 @@ body {
   background: var(--color-accent);
 }
 
+/* Movimento reduzido: animações terminam na hora e uma vez só (uma animação infinita de 0,01 ms
+   cintilaria), transições são instantâneas e a rolagem não é suave. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-}
-
-/* Animação de varredura para efeito de destaque */
-@keyframes scan {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
+    scroll-behavior: auto !important;
   }
 }
