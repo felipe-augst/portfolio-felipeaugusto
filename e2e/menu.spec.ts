@@ -55,6 +55,11 @@ test('pelo teclado, o foco entra no menu, fica preso nele e volta ao botão Menu
   const dialog = menuDialog(page)
   const focusIsInDialog = () =>
     dialog.evaluate((element) => element.contains(document.activeElement))
+  // Depois do último item, o Tab do diálogo modal nativo passa pela interface do navegador (o
+  // documento perde o foco) e volta ao primeiro item. O que não pode é um elemento da página fora
+  // do diálogo receber o foco.
+  const focusIsOnPageOutsideDialog = () =>
+    dialog.evaluate((element) => document.hasFocus() && !element.contains(document.activeElement))
 
   await button.focus()
   await page.keyboard.press('Enter')
@@ -63,12 +68,15 @@ test('pelo teclado, o foco entra no menu, fica preso nele e volta ao botão Menu
   await expect(button).toHaveAttribute('aria-expanded', 'true')
   expect(await focusIsInDialog(), 'foco dentro do diálogo ao abrir').toBe(true)
 
-  // Mais Tabs do que elementos focáveis no diálogo: o foco dá a volta sem sair dele.
+  // Mais Tabs do que elementos focáveis no diálogo: o foco dá a volta e continua nele.
   const focusableCount = await dialog.locator('a, button').count()
   for (let press = 1; press <= focusableCount + 2; press++) {
     await page.keyboard.press('Tab')
-    expect(await focusIsInDialog(), `foco dentro do diálogo depois de ${press} Tab`).toBe(true)
+    expect(await focusIsOnPageOutsideDialog(), `foco fora do diálogo depois de ${press} Tab`).toBe(
+      false,
+    )
   }
+  expect(await focusIsInDialog(), 'foco de volta ao diálogo').toBe(true)
 
   await page.keyboard.press('Escape')
 
