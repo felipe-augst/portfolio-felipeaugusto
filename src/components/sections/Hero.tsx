@@ -3,6 +3,7 @@ import { Button } from '../ui/Button'
 import { HERO } from '@/data/hero'
 import { Download } from 'lucide-react'
 import { ShimmerText } from '../ui/ShimmerText'
+import { TechIcon } from '@/components/ui/TechIcon'
 import { CORE_STACK } from '@/data/stack'
 
 // Entrada dos ícones de stack: o primeiro começa depois de STACK_DELAY_MS, e cada um
@@ -67,11 +68,9 @@ export function Hero() {
               style={{ animationDelay: `${STACK_DELAY_MS + index * STACK_STAGGER_MS}ms` }}
               className="motion-safe:animate-rise-in"
             >
-              <Image
-                src={stack.icon}
-                alt={`${stack.name} icon`}
-                width={32}
-                height={32}
+              <TechIcon
+                technology={stack}
+                size={32}
                 className="filter grayscale opacity-90 hover:opacity-100 hover:grayscale-0 transition-opacity"
               />
             </div>

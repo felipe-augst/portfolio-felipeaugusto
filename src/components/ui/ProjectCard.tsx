@@ -1,21 +1,18 @@
-'use client'
-
-import { useState } from 'react'
 import Image from 'next/image'
-import { Link, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react'
+import { ExpandableDescription } from '@/components/ui/ExpandableDescription'
+import { ProjectLinks } from '@/components/ui/ProjectLinks'
+import { TechIcon } from '@/components/ui/TechIcon'
 import { cn } from '@/lib/cn'
 import type { Project } from '@/types/projects'
 
 type ProjectCardProps = {
   project: Project
+  // Nível do título do card: um abaixo do título da seção ou da página que contém a lista.
+  headingLevel: 'h2' | 'h3'
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
-
-  // Define se o texto é longo o suficiente para precisar do botão
-  const isLongDescription = project.description.length > 120
-
+// Card de projeto, renderizado no servidor. A descrição expansível é a única ilha de cliente.
+export function ProjectCard({ project, headingLevel: Heading }: ProjectCardProps) {
   return (
     <div
       className={cn(
@@ -35,19 +32,21 @@ export function ProjectCard({ project }: ProjectCardProps) {
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
 
-        {/* Gaveta de Techs: aberta no card ativo da lista deslizável (`data-active` do item) */}
+        {/* Gaveta de Techs: sempre aberta sem hover; com hover, abre com hover ou foco dentro do
+            card, e também no card ativo da lista deslizável (`data-active` do item). */}
         <div
           className={cn(
             'absolute bottom-0 left-0 w-full flex items-center justify-center gap-3',
             'bg-bg-3/95 backdrop-blur-md px-4 py-3 border-t border-border-strong',
-            'transition-transform duration-500 ease-out',
-            'translate-y-full lg:group-hover:translate-y-0 max-md:in-data-[active=true]:translate-y-0',
+            'motion-safe:transition-transform motion-safe:duration-500 motion-safe:ease-out',
+            'translate-y-full group-hover:translate-y-0 group-focus-within:translate-y-0',
+            'no-hover:translate-y-0 max-md:in-data-[active=true]:translate-y-0',
           )}
         >
           {project.technologies.map((tech) => (
-            <div key={tech.name} className="relative w-7 h-7" title={tech.name}>
-              <Image src={tech.icon} alt={tech.name} fill className="object-contain" />
-            </div>
+            <span key={tech.name} className="flex" title={tech.name}>
+              <TechIcon technology={tech} size={28} className="size-7 object-contain" />
+            </span>
           ))}
         </div>
       </div>
@@ -58,61 +57,13 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {project.category}
         </span>
 
-        <h3 className="font-display text-2xl font-semibold text-sand mb-3 leading-none">
+        <Heading className="font-display text-2xl font-semibold text-sand mb-3 leading-none">
           {project.title}
-        </h3>
+        </Heading>
 
-        {/* Descrição + Botão Ler Mais */}
-        <div className="mb-6 flex flex-col items-start">
-          <p
-            className={`font-sans text-sm text-sand-muted leading-relaxed transition-all duration-300 ${
-              isExpanded ? 'line-clamp-none' : 'line-clamp-3'
-            }`}
-          >
-            {project.description}
-          </p>
+        <ExpandableDescription text={project.description} className="mb-6" />
 
-          {isLongDescription && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-2 flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-medium text-accent hover:text-accent-warm transition-colors"
-            >
-              {isExpanded ? (
-                <>
-                  Menos detalhes <ChevronUp className="w-3.5 h-3.5" />
-                </>
-              ) : (
-                <>
-                  Ler mais <ChevronDown className="w-3.5 h-3.5" />
-                </>
-              )}
-            </button>
-          )}
-        </div>
-
-        {/* Links */}
-        <div className="mt-auto flex items-center justify-between pt-4 border-t border-border-strong/50">
-          {project.links.github && (
-            <a
-              href={project.links.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-sand-muted hover:text-sand transition-colors"
-            >
-              <Link className="w-5 h-5" /> Código
-            </a>
-          )}
-          {project.links.live && (
-            <a
-              href={project.links.live}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-accent hover:text-accent-warm transition-colors"
-            >
-              <ExternalLink className="w-5 h-5" /> Deploy
-            </a>
-          )}
-        </div>
+        <ProjectLinks title={project.title} links={project.links} />
       </div>
     </div>
   )

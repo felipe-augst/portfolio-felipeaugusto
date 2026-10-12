@@ -58,6 +58,16 @@ export function getHeadings(html: string) {
   )
 }
 
+/** Nível (1 a 6) e texto de cada título, na ordem do documento. */
+export function getHeadingOutline(html: string) {
+  return [...html.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/g)].map(([, level, content]) => ({
+    level: Number(level),
+    text: decodeEntities((content ?? '').replace(/<[^>]*>/g, ''))
+      .replace(/\s+/g, ' ')
+      .trim(),
+  }))
+}
+
 /** `src` (decodificado) e `alt` de cada `<img>`. O `alt` fica `undefined` quando falta. */
 export function getImages(html: string) {
   return findTags(html, 'img').map((img) => ({

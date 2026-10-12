@@ -1,5 +1,5 @@
-import Image from 'next/image'
 import { PageShell } from '@/components/layout/PageShell'
+import { TechIcon } from '@/components/ui/TechIcon'
 import { STACKS_PAGE_DATA } from '@/data/stack'
 import { PAGES } from '@/data/site'
 import { buildPageMetadata } from '@/lib/metadata'
@@ -23,12 +23,10 @@ export default function StackPage() {
                   className="group relative flex flex-col items-center justify-center aspect-square bg-sand-muted/20 backdrop-blur-sm border border-white/5 rounded-2xl hover:border-white/20 hover:bg-sand/70 transition-all duration-300 overflow-hidden"
                   title={stack.name}
                 >
-                  <Image
-                    src={stack.icon}
-                    alt={`${stack.name} icon`}
-                    width={48}
-                    height={48}
-                    quality={75}
+                  <TechIcon
+                    technology={stack}
+                    size={48}
+                    decorative
                     className="filter opacity-80 group-hover:opacity-100 transition-transform duration-300 md:group-hover:-translate-y-3"
                   />
 

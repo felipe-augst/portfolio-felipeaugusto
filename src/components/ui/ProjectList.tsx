@@ -1,3 +1,4 @@
+import type { ComponentProps } from 'react'
 import { ActiveItemList } from '@/components/ui/ActiveItemList'
 import { ProjectCard } from '@/components/ui/ProjectCard'
 import { cn } from '@/lib/cn'
@@ -7,12 +8,14 @@ type ProjectListProps = {
   projects: readonly Project[]
   // Nome acessível da lista: o mesmo texto do título da seção ou da página.
   label: string
+  // Nível do título de cada card, um abaixo do título da seção ou da página.
+  cardHeadingLevel: ComponentProps<typeof ProjectCard>['headingLevel']
 }
 
 // Lista de projetos dos destaques da home e de /projects, com o mesmo markup em todos os tamanhos:
 // uma fileira deslizável com snap em telas estreitas (sangrando até a borda da tela) e grid a
 // partir de md. Na fileira, o card ativo fica em destaque e os demais encolhem um pouco.
-export function ProjectList({ projects, label }: ProjectListProps) {
+export function ProjectList({ projects, label, cardHeadingLevel }: ProjectListProps) {
   return (
     <ActiveItemList
       label={label}
@@ -29,7 +32,7 @@ export function ProjectList({ projects, label }: ProjectListProps) {
             'max-md:data-[active=false]:scale-95 motion-safe:transition-transform motion-safe:duration-500',
           )}
         >
-          <ProjectCard project={project} />
+          <ProjectCard project={project} headingLevel={cardHeadingLevel} />
         </li>
       ))}
     </ActiveItemList>

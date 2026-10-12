@@ -1,8 +1,20 @@
 import type { Locator, Page } from '@playwright/test'
 import { PROJECTS } from '@/data/projects'
+import { NEW_TAB_NOTICE } from '@/lib/links'
 import type { Project } from '@/types/projects'
 import { expect, test } from './fixtures'
-import { isPainted } from './paint'
+import { effectiveOpacity, isPainted } from './paint'
+import { markSplashSeen } from './session'
+
+// Limite de Tabs para o foco chegar a um elemento da página.
+const MAX_TABS = 40
+
+// Texto visível do link de cada campo de `links` do projeto.
+const LINK_LABELS: Record<keyof Project['links'], string> = {
+  github: 'Código',
+  live: 'Deploy',
+  apiDocs: 'Documentação',
+}
 
 // Listas de projetos: os destaques da home e a página com todos os projetos.
 const LISTS = [
@@ -58,12 +70,127 @@ function fullSizeItems(list: Locator) {
     )
 }
 
-// A gaveta de tecnologias do card está aberta: o ícone da primeira tecnologia é pintado.
-async function expectTechDrawerOpen(item: Locator, project: Project) {
+// Ícone da primeira tecnologia do projeto, na gaveta de tecnologias do card.
+function techDrawerIcon(item: Locator, project: Project) {
   const technology = project.technologies[0]
   expect(technology, `${project.title} tem tecnologias`).toBeDefined()
-  const icon = item.getByRole('img', { name: technology?.name, exact: true })
+  return item.getByRole('img', { name: technology?.name, exact: true })
+}
+
+// A gaveta de tecnologias do card está aberta: o ícone da primeira tecnologia é pintado.
+async function expectTechDrawerOpen(item: Locator, project: Project) {
+  const icon = techDrawerIcon(item, project)
   await expect.poll(() => isPainted(icon), `gaveta de ${project.title}`).toBe(true)
+}
+
+// Rola até a lista e espera a entrada da seção terminar, para a lista ficar com opacidade total.
+async function revealList(list: Locator) {
+  await list.scrollIntoViewIfNeeded()
+  await expect.poll(() => effectiveOpacity(list)).toBe(1)
+}
+
+function escapeRegExp(text: string) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+// Links do projeto nos dados, com o texto visível que cada um tem no card.
+function projectLinks(project: Project) {
+  return (Object.keys(LINK_LABELS) as (keyof Project['links'])[]).flatMap((key) => {
+    const href = project.links[key]
+    return href ? [{ label: LINK_LABELS[key], href }] : []
+  })
+}
+
+function projectById(id: string) {
+  const project = PROJECTS.find((candidate) => candidate.id === id)
+  if (!project) throw new Error(`projeto ${id} não existe nos dados`)
+  return project
+}
+
+// `href` de cada link dentro do elemento.
+function linkHrefs(locator: Locator) {
+  return locator
+    .getByRole('link')
+    .evaluateAll((links) => links.map((link) => link.getAttribute('href') ?? ''))
+}
+
+// Nome acessível do elemento, como aparece na árvore de acessibilidade.
+async function accessibleName(locator: Locator) {
+  const snapshot = await locator.ariaSnapshot()
+  return snapshot.match(/^- \w+ "((?:[^"\\]|\\.)*)"/)?.[1] ?? ''
+}
+
+// Se o texto do elemento passa da altura dele, como numa descrição cortada pelo clamp.
+function overflows(locator: Locator) {
+  return locator.evaluate((element) => element.scrollHeight - element.clientHeight > 1)
+}
+
+// Clica no botão do card sem deixar a rolagem para o clique. Na fileira com snap, a rolagem que o
+// Playwright faz a cada tentativa de clique pode encaixar outro card no centro, e o card ativo
+// muda, com a transição de escala, a cada tentativa: no CI, o botão nunca ficava estável. Aqui o
+// card fica no centro da fileira, o botão no meio da tela, e o clique só acontece com o card no
+// tamanho cheio.
+async function clickInCard(item: Locator, button: Locator) {
+  await item.evaluate((element) =>
+    element.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' }),
+  )
+  await button.evaluate((element) =>
+    element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
+  )
+  await expect
+    .poll(() =>
+      item.evaluate(
+        (element) =>
+          Math.abs(element.getBoundingClientRect().width - (element as HTMLElement).offsetWidth) <
+          0.5,
+      ),
+    )
+    .toBe(true)
+  await button.click()
+}
+
+// Confere o "Ler mais" de cada card: ele só existe quando a descrição transborda e, nesse caso,
+// controla a descrição e alterna `aria-expanded`. Devolve quantos cards transbordam.
+async function checkReadMore(page: Page, list: Locator, projects: readonly Project[]) {
+  // Com a rede ociosa, a página já hidratou e mediu as descrições.
+  await page.waitForLoadState('networkidle')
+  const items = list.getByRole('listitem')
+  let overflowing = 0
+
+  for (const [index, project] of projects.entries()) {
+    const item = items.nth(index)
+    const description = item.getByText(project.description, { exact: true })
+    const button = item.getByRole('button', { name: 'Ler mais' })
+
+    if (!(await overflows(description))) {
+      await expect(button, `${project.title} sem transbordo`).toHaveCount(0)
+      continue
+    }
+    overflowing++
+    const id = await description.getAttribute('id')
+    expect(id, `id da descrição de ${project.title}`).toBeTruthy()
+    await expect(button).toHaveAttribute('aria-controls', id ?? '')
+    await expect(button).toHaveAttribute('aria-expanded', 'false')
+
+    await clickInCard(item, button)
+    await expect(button).toHaveAttribute('aria-expanded', 'true')
+    expect(await overflows(description), `${project.title} expandida`).toBe(false)
+
+    await clickInCard(item, button)
+    await expect(button).toHaveAttribute('aria-expanded', 'false')
+    expect(await overflows(description), `${project.title} recolhida`).toBe(true)
+  }
+
+  return overflowing
+}
+
+// Aperta Tab até o foco chegar ao elemento.
+async function tabTo(page: Page, target: Locator) {
+  for (let tab = 0; tab < MAX_TABS; tab++) {
+    await page.keyboard.press('Tab')
+    if (await target.evaluate((element) => element === document.activeElement)) return
+  }
+  throw new Error(`o foco não chegou ao elemento em ${MAX_TABS} Tabs`)
 }
 
 // Altura de layout da seção de projetos da home, depois de as fontes carregarem.
@@ -85,7 +212,103 @@ for (const { route, name, projects } of LISTS) {
       ).toBeAttached()
     }
   })
+
+  test(`${route}: os links de cada card levam aos endereços dos dados, com o título do projeto no nome e aviso de nova aba`, async ({
+    page,
+  }) => {
+    await page.goto(route)
+    const items = projectList(page, name).getByRole('listitem')
+
+    for (const [index, project] of projects.entries()) {
+      const item = items.nth(index)
+      const expected = projectLinks(project)
+      await expect(item.getByRole('link'), project.title).toHaveCount(expected.length)
+
+      for (const { label, href } of expected) {
+        const link = item.getByRole('link', { name: label })
+        await expect(link).toHaveAttribute('href', href)
+        await expect(link).toHaveAttribute('target', '_blank')
+        // O nome começa pelo texto visível e traz o título do projeto e o aviso de nova aba.
+        await expect(link).toHaveAccessibleName(
+          new RegExp(
+            `^${escapeRegExp(label)}\\b.*${escapeRegExp(project.title)}.*${escapeRegExp(NEW_TAB_NOTICE)}$`,
+          ),
+        )
+      }
+    }
+  })
+
+  test(`${route}: os links dos cards têm nomes acessíveis únicos`, async ({ page }) => {
+    await page.goto(route)
+    const links = await projectList(page, name).getByRole('link').all()
+
+    const names = await Promise.all(links.map(accessibleName))
+
+    expect(names).not.toContain('')
+    expect(names.filter((linkName, index) => names.indexOf(linkName) !== index)).toEqual([])
+  })
+
+  test(`${route}: os links do GitHub dos cards abrem a página do repositório, sem .git`, async ({
+    page,
+  }) => {
+    await page.goto(route)
+
+    const githubLinks = (await linkHrefs(projectList(page, name))).filter(
+      (href) => new URL(href).hostname === 'github.com',
+    )
+
+    expect(githubLinks).not.toEqual([])
+    expect(githubLinks.filter((href) => href.endsWith('.git'))).toEqual([])
+  })
+
+  test(`${route}: o card da DevStore API não linka o front da DevStore`, async ({ page }) => {
+    const store = projectById('devstore')
+    const api = projectById('devstore-api')
+    expect(store.links.live, 'deploy do front da DevStore').toBeDefined()
+    await page.goto(route)
+
+    const apiCard = projectList(page, name)
+      .getByRole('listitem')
+      .filter({ has: page.getByRole('heading', { name: api.title, exact: true }) })
+
+    await expect(apiCard).toHaveCount(1)
+    expect(await linkHrefs(apiCard)).not.toContain(store.links.live)
+  })
+
+  test(`${route}: "Ler mais" só existe nos cards cuja descrição transborda e alterna aria-expanded`, async ({
+    page,
+  }) => {
+    await markSplashSeen(page)
+    await page.goto(route)
+
+    const overflowing = await checkReadMore(page, projectList(page, name), projects)
+
+    test.info().annotations.push({
+      type: 'transbordo',
+      description: `${overflowing} de ${projects.length} cards`,
+    })
+  })
 }
+
+// Com cards largos, parte das descrições cabe no clamp e parte não.
+test.describe('com cards largos', () => {
+  test.skip(({ isMobile }) => isMobile, 'viewport do perfil desktop')
+  test.use({ viewport: { width: 1200, height: 900 } })
+
+  for (const { route, name, projects } of LISTS) {
+    test(`${route}: "Ler mais" só existe nos cards cuja descrição transborda`, async ({ page }) => {
+      await markSplashSeen(page)
+      await page.goto(route)
+
+      const overflowing = await checkReadMore(page, projectList(page, name), projects)
+
+      test.info().annotations.push({
+        type: 'transbordo',
+        description: `${overflowing} de ${projects.length} cards`,
+      })
+    })
+  }
+})
 
 test.describe('em telas estreitas', () => {
   test.skip(({ isMobile }) => !isMobile, 'layout do perfil mobile')
@@ -136,6 +359,53 @@ test.describe('em telas estreitas', () => {
   }
 })
 
+test.describe('em dispositivos sem hover', () => {
+  test.skip(({ isMobile }) => !isMobile, 'o perfil mobile é touch, sem hover')
+
+  for (const { route, name, projects } of LISTS) {
+    test(`${route}: a gaveta de tecnologias de todos os cards fica visível sem interação com eles`, async ({
+      page,
+    }) => {
+      await page.goto(route)
+      const list = projectList(page, name)
+      const items = list.getByRole('listitem')
+      await revealList(list)
+
+      // Fora da área de rolagem da lista, o card fica recortado: conta só o recorte do próprio card.
+      for (const [index, project] of projects.entries()) {
+        const item = items.nth(index)
+        await expect
+          .poll(() => isPainted(techDrawerIcon(item, project), item), project.title)
+          .toBe(true)
+      }
+    })
+  }
+})
+
+test.describe('em dispositivos com hover', () => {
+  test.skip(({ isMobile }) => isMobile, 'o perfil desktop tem mouse')
+
+  for (const { route, name, projects } of LISTS) {
+    test(`${route}: a gaveta de tecnologias começa fechada e abre quando um link do card recebe foco pelo teclado`, async ({
+      page,
+    }) => {
+      await markSplashSeen(page)
+      await page.goto(route)
+      const list = projectList(page, name)
+      const item = list.getByRole('listitem').first()
+      const project = projects[0]
+      if (!project) throw new Error(`${route} não tem projetos`)
+      const icon = techDrawerIcon(item, project)
+      await revealList(list)
+      expect(await isPainted(icon), 'gaveta antes do foco').toBe(false)
+
+      await tabTo(page, item.getByRole('link').first())
+
+      await expect.poll(() => isPainted(icon), 'gaveta com foco no link').toBe(true)
+    })
+  }
+})
+
 test.describe('a partir de md', () => {
   test.skip(({ isMobile }) => isMobile, 'layout do perfil desktop')
   test.use({ viewport: { width: 800, height: 900 } })
@@ -161,6 +431,22 @@ test.describe('a partir de md', () => {
 
       expect(await fullSizeItems(list)).toHaveLength(projects.length)
     })
+
+    test(`${route}: a gaveta de tecnologias abre com o mouse sobre o card`, async ({ page }) => {
+      await markSplashSeen(page)
+      await page.goto(route)
+      const list = projectList(page, name)
+      const item = list.getByRole('listitem').first()
+      const project = projects[0]
+      if (!project) throw new Error(`${route} não tem projetos`)
+      const icon = techDrawerIcon(item, project)
+      await revealList(list)
+      expect(await isPainted(icon), 'gaveta antes do hover').toBe(false)
+
+      await item.hover()
+
+      await expect.poll(() => isPainted(icon), 'gaveta com hover').toBe(true)
+    })
   }
 })
 
@@ -172,6 +458,18 @@ test.describe('sem JavaScript', () => {
       await page.goto(route)
 
       expect(await fullSizeItems(projectList(page, name))).toHaveLength(projects.length)
+    })
+
+    test(`${route}: as descrições aparecem inteiras, sem "Ler mais"`, async ({ page }) => {
+      await page.goto(route)
+      const list = projectList(page, name)
+      const items = list.getByRole('listitem')
+
+      await expect(list.getByRole('button', { name: 'Ler mais' })).toHaveCount(0)
+      for (const [index, project] of projects.entries()) {
+        const description = items.nth(index).getByText(project.description, { exact: true })
+        expect(await overflows(description), project.title).toBe(false)
+      }
     })
   }
 })

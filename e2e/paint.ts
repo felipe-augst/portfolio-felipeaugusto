@@ -13,12 +13,17 @@ export function effectiveOpacity(locator: Locator) {
   })
 }
 
-/** Se o elemento é pintado: visível e não recortado por inteiro por um ancestral com overflow. */
-export function isPainted(locator: Locator) {
-  return locator.evaluate((element) => {
+/**
+ * Se o elemento é pintado: visível e não recortado por inteiro por um ancestral com overflow.
+ * Com `within`, só contam os recortes dos ancestrais até esse elemento, exclusive. Assim, um card
+ * fora da área de rolagem da lista ainda pode ter o próprio conteúdo à mostra.
+ */
+export async function isPainted(locator: Locator, within?: Locator) {
+  const root = within ? await within.elementHandle() : null
+  return locator.evaluate((element, root) => {
     if (!element.checkVisibility({ opacityProperty: true, visibilityProperty: true })) return false
     const rect = element.getBoundingClientRect()
-    for (let node = element.parentElement; node; node = node.parentElement) {
+    for (let node = element.parentElement; node && node !== root; node = node.parentElement) {
       if (getComputedStyle(node).overflow === 'visible') continue
       const clip = node.getBoundingClientRect()
       const overlaps =
@@ -29,7 +34,7 @@ export function isPainted(locator: Locator) {
       if (!overlaps) return false
     }
     return true
-  })
+  }, root)
 }
 
 /** Se o elemento, ou um ancestral, está deslocado por transformação (translate, scale etc.). */

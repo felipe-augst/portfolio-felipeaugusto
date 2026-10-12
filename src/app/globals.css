@@ -6,6 +6,9 @@
 /* JS disponível: atributo que o mesmo script põe no <html>. Estados iniciais ocultos só valem com ele. */
 @custom-variant js (&:where([data-js] *));
 
+/* Dispositivo sem hover (touch): o que o hover revelaria fica à mostra. */
+@custom-variant no-hover (@media (hover: none));
+
 @theme inline {
   /* Cores — paleta noite desértica */
   --color-bg: #0a0f1f;

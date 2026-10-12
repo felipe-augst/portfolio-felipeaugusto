@@ -21,7 +21,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipe-augst/dev-store.git',
+      github: 'https://github.com/felipe-augst/dev-store',
       live: 'https://dev-store-zeta.vercel.app/',
     },
     featured: true,
@@ -42,8 +42,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.jwt,
     ],
     links: {
-      github: 'https://github.com/felipe-augst/devstore-api.git',
-      live: 'https://dev-store-zeta.vercel.app/',
+      github: 'https://github.com/felipe-augst/devstore-api',
     },
     featured: true,
   },
@@ -69,7 +68,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipe-augst/verzel-elitedev-eventos.git',
+      github: 'https://github.com/felipe-augst/kinogarten',
       live: 'https://verzel-elitedev-eventos.vercel.app/',
     },
     featured: true,
@@ -91,7 +90,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipe-augst/portfolio-felipeaugusto.git',
+      github: 'https://github.com/felipe-augst/portfolio-felipeaugusto',
       live: 'https://devfelipeaugusto.com.br',
     },
     featured: false,
@@ -122,7 +121,7 @@ export const PROJECTS: Project[] = [
     id: 'cidadeviva-api',
     title: 'Cidade Viva-API',
     description:
-      'API REST de blog sobre cultura urbana, ciclismo e lifestyle de Jundiaí. Node.js, Express, TypeScript, MongoDB e Mongoose. Autenticação JWT, validação com Zod e deploy no Render. Frontend em desenvolvimento para integração  Fullstack completa.',
+      'API REST de blog sobre cultura urbana, ciclismo e lifestyle de Jundiaí. Node.js, Express, TypeScript, MongoDB e Mongoose. Autenticação JWT, validação com Zod e deploy no Render. Frontend em desenvolvimento para integração Fullstack completa.',
     image: '/images/projects/cidadeviva-api.webp',
     category: 'backend',
     technologies: [
@@ -136,7 +135,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.githubactions,
     ],
     links: {
-      github: 'https://github.com/felipe-augst/cidadeviva-api.git',
+      github: 'https://github.com/felipe-augst/cidadeviva-api',
     },
     featured: false,
   },
@@ -157,7 +156,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipe-augst/lacrei-saude.git',
+      github: 'https://github.com/felipe-augst/lacrei-saude',
       live: 'https://lacrei-saude-teste-tecnico-felipe-augusto.vercel.app/',
     },
     featured: false,
@@ -179,7 +178,7 @@ export const PROJECTS: Project[] = [
       TECH_DICT.vercel,
     ],
     links: {
-      github: 'https://github.com/felipe-augst/selmabolos.git',
+      github: 'https://github.com/felipe-augst/selmabolos',
       live: 'https://selmabolos.com.br/',
     },
     featured: false,

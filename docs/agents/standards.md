@@ -45,6 +45,7 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 - Imagem decorativa usa `alt=""`.
 - Imagem informativa tem `alt` em pt-BR que descreve o conteúdo.
 - Ícone ao lado de um nome visível, ou dentro de link com `aria-label`, usa `alt=""`.
+- Ícone de tecnologia usa o `TechIcon` (`src/components/ui/TechIcon.tsx`). O texto alternativo é o nome da tecnologia, sem "ícone" nem "logo". Ao lado do nome visível, o ícone recebe `decorative`.
 - Fontes vêm do `next/font`, carregando só os pesos e estilos que existem na fonte e que o site usa.
 - Todo asset em `public/` tem referência no código. O que perdeu a referência sai no mesmo PR.
 
@@ -61,13 +62,14 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 
 ## Acessibilidade
 
-- Cada rota tem um `<main>` e um único `<h1>`, e a hierarquia de títulos segue em ordem. Nas páginas fora da home, inclusive a 404, os dois vêm do `PageShell`.
+- Cada rota tem um `<main>` e um único `<h1>`, e a hierarquia de títulos segue em ordem, sem pular nível. Nas páginas fora da home, inclusive a 404, os dois vêm do `PageShell`. O título de cada card fica um nível abaixo do título da seção ou da página que contém a lista (`cardHeadingLevel` do `ProjectList`).
 - O rótulo de seção (`SectionEyebrow`, traço + texto) é decorativo e fica com `aria-hidden`. Ele não substitui o título da seção.
 - Conjuntos de itens, como os cards de projeto, são uma lista (`<ul>`/`<li>`) com nome acessível. O `<ul>` declara `role="list"`, porque o Safari tira a semântica de lista de um `<ul>` sem marcadores, e o reset do Tailwind remove os marcadores.
 - Overlays modais usam `<dialog>` com `showModal()` e nome acessível. O gatilho expõe `aria-haspopup="dialog"`, `aria-expanded` e `aria-controls`. Escape, fundo inerte e devolução do foco ao gatilho são os do diálogo nativo, sem trap de foco em JS. Com um diálogo modal aberto, a página atrás não rola (`html:has(dialog:modal)` no `globals.css`).
-- Todo controle que expande ou recolhe conteúdo expõe `aria-expanded` e `aria-controls`.
-- Informação revelada por hover também aparece com foco dentro (`focus-within`) e em dispositivos sem hover.
-- Link externo tem nome acessível que identifica o destino, com contexto (por exemplo, o título do projeto), e avisa em `sr-only` que abre em nova aba. Links `mailto:` e `tel:` abrem na mesma aba. A decisão é `opensInNewTab` e o aviso é `NEW_TAB_NOTICE`, os dois em `src/lib/links.ts`.
+- Todo controle que expande ou recolhe conteúdo expõe `aria-expanded` e `aria-controls`. O rótulo fica o mesmo nos dois estados, e o estado vem do `aria-expanded`.
+- Texto cortado por `line-clamp` usa a ilha `ExpandableDescription` (`src/components/ui/ExpandableDescription.tsx`). O "Ler mais" só aparece quando o texto transborda o corte, medido no navegador, e não por contagem de caracteres. O corte só vale com `js:`, e a linha do botão tem altura fixa, para o botão aparecer depois da hidratação sem deslocar o layout.
+- Informação revelada por hover também aparece com foco dentro (`group-focus-within:`) e em dispositivos sem hover (variante `no-hover:`, `@media (hover: none)`, no `globals.css`). O `hover:` do Tailwind já só vale em dispositivos com hover. Exemplo: a gaveta de tecnologias do `ProjectCard`.
+- Link externo tem nome acessível que identifica o destino, com contexto (por exemplo, o título do projeto), e avisa em `sr-only` que abre em nova aba. Links `mailto:` e `tel:` abrem na mesma aba. A decisão é `opensInNewTab` e o aviso é `NEW_TAB_NOTICE`, os dois em `src/lib/links.ts`. O nome começa pelo texto visível, e o contexto vem depois, em `sr-only` (exemplo: `ProjectLinks`, "Código do projeto DevStore (abre em nova aba)").
 - Texto animado deixa a parte visual com `aria-hidden` e oferece a frase completa em `sr-only`.
 - Todo elemento interativo tem foco visível, com o estilo compartilhado do `Button`: as classes `focusRing`, exportadas de `src/components/ui/Button.tsx`.
 - Toda combinação nova de texto e fundo tem o contraste conferido contra as metas.
