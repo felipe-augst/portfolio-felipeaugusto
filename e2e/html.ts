@@ -17,8 +17,9 @@ function findTags(html: string, tagName: string) {
   return html.match(new RegExp(`<${tagName}\\b[^>]*>`, 'g')) ?? []
 }
 
+// Nomes de atributo HTML não diferenciam maiúsculas (o React escreve `imageSrcSet`).
 function getAttribute(tag: string, name: string) {
-  const value = tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1]
+  const value = tag.match(new RegExp(`\\s${name}="([^"]*)"`, 'i'))?.[1]
   return value === undefined ? undefined : decodeEntities(value)
 }
 
@@ -55,6 +56,15 @@ export function getHeadings(html: string) {
       .replace(/\s+/g, ' ')
       .trim(),
   )
+}
+
+/** Destino de cada `<link rel="preload" as="image">`: o `href` ou o `imagesrcset`. */
+export function getImagePreloads(html: string) {
+  return findTags(html, 'link')
+    .filter(
+      (link) => getAttribute(link, 'rel') === 'preload' && getAttribute(link, 'as') === 'image',
+    )
+    .map((link) => getAttribute(link, 'href') ?? getAttribute(link, 'imagesrcset') ?? '')
 }
 
 /** `href` do `<link>` com o `rel` informado (por exemplo, `canonical`). */
