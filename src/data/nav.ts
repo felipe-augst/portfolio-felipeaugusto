@@ -1,6 +1,7 @@
 import type { CTA } from '@/types/cta'
 
-export const NAV_ITEMS: readonly CTA[] = [
+// Itens do menu: seções da home por caminho absoluto, para funcionarem em qualquer página.
+export const NAV_ITEMS = [
   {
     label: 'Sobre',
     href: '/#about',
@@ -13,4 +14,4 @@ export const NAV_ITEMS: readonly CTA[] = [
     label: 'Contato',
     href: '/#contact',
   },
-]
+] as const satisfies readonly CTA[]
