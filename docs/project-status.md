@@ -27,7 +27,7 @@ Status:
 | #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
 | #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`       | #53 |
 | #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em andamento | —                              | —   |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | livre        | —                              | —   |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | em andamento | `fix/40-reduced-motion`        | —   |
 | #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em andamento | —                              | —   |
 | #42   | Seção de contato acessível                               | #35                | entregue     | `fix/42-accessible-contact`    | #55 |
 | #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado    | —                              | —   |
@@ -35,13 +35,19 @@ Status:
 | #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
 | #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** #40. Também está livre o #44. O #39 e o #41 estão em andamento em outros terminais.
+**Frontier:** #44. O #39 e o #41 estão em andamento em outros terminais, e o #40 está em andamento na `fix/40-reduced-motion`.
 
 ## Handoff
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
 _O #39 e o #41 estão em andamento, com o handoff nas próprias branches._
+
+### #40 — fix/40-reduced-motion
+
+- **Estado:** branch criada a partir da `develop` (`1a5a000`), nada implementado.
+- **Próximo passo:** primeiro ciclo red → green, com os testes em `e2e/motion.spec.ts`.
+- **Atenção:** o #39 também mexe no `Hero.tsx` (`preload` e `alt=""` do fundo); conflito provável no merge.
 
 <!--
 Modelo de entrada:
