@@ -5,10 +5,14 @@ const IS_DEV = process.env.NODE_ENV === 'development'
 // CSP só em report-only: o navegador aponta as violações no console, sem bloquear nada. O
 // `'unsafe-inline'` do `script-src` cobre os scripts inline do Next, que mudam a cada build e não
 // cabem num hash; com um hash na diretiva, o navegador ignoraria o `'unsafe-inline'`. Em dev, o
-// React usa `eval` para reconstruir as pilhas de erro do servidor.
+// React usa `eval` para reconstruir as pilhas de erro do servidor, e o Analytics e o Speed Insights
+// da Vercel carregam os scripts de depuração de outra origem. Em produção, os dois carregam de
+// `/_vercel/...` e enviam os dados para lá, na mesma origem.
+const DEV_SCRIPT_SOURCES = ["'unsafe-eval'", 'https://va.vercel-scripts.com']
+
 const CSP_DIRECTIVES = {
   'default-src': ["'self'"],
-  'script-src': ["'self'", "'unsafe-inline'", ...(IS_DEV ? ["'unsafe-eval'"] : [])],
+  'script-src': ["'self'", "'unsafe-inline'", ...(IS_DEV ? DEV_SCRIPT_SOURCES : [])],
   'style-src': ["'self'", "'unsafe-inline'"],
   'object-src': ["'none'"],
   'base-uri': ["'self'"],

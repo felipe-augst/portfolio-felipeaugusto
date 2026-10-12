@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { Fraunces, DM_Sans, Cinzel } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { SplashScreen } from '@/components/layout/SplashScreen'
 import { Nav } from '@/components/layout/Nav'
@@ -95,6 +97,9 @@ export default function RootLayout({
         <NavigationTracker />
         <Nav />
         {children}
+        {/* Web Vitals reais e visitas, medidos pela Vercel em produção. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )

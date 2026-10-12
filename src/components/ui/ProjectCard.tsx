@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { ServerImage } from '@/components/ui/ServerImage'
 import { ExpandableDescription } from '@/components/ui/ExpandableDescription'
 import { ProjectLinks } from '@/components/ui/ProjectLinks'
 import { TechIcon } from '@/components/ui/TechIcon'
@@ -23,7 +23,7 @@ export function ProjectCard({ project, headingLevel: Heading }: ProjectCardProps
       {/* Imagem + Gaveta */}
       {/* Adicionado shrink-0 aqui para a imagem não amassar quando o texto expandir */}
       <div className="relative h-56 w-full shrink-0 overflow-hidden border-b border-border-strong/50">
-        <Image
+        <ServerImage
           src={project.image}
           alt={project.title}
           fill

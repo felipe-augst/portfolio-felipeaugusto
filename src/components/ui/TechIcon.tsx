@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { ServerImage } from '@/components/ui/ServerImage'
 import type { Technology } from '@/types/skills'
 
 type TechIconProps = {
@@ -14,7 +14,7 @@ type TechIconProps = {
 // o nome da tecnologia.
 export function TechIcon({ technology, size, decorative = false, className }: TechIconProps) {
   return (
-    <Image
+    <ServerImage
       src={technology.icon}
       alt={decorative ? '' : technology.name}
       width={size}

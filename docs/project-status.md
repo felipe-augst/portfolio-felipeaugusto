@@ -19,21 +19,21 @@ Status:
 - `em revisão` — PR aberto para a `develop`;
 - `entregue` — mergeado na `develop` e issue fechada.
 
-| Issue | Ticket                                                   | Bloqueado por      | Status    | Branch                            | PR  |
-| ----- | -------------------------------------------------------- | ------------------ | --------- | --------------------------------- | --- |
-| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue  | `chore/34-update-next-deps`       | #49 |
-| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue  | `chore/35-e2e-infra-ci`           | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue  | `feat/36-static-routes-splash`    | #52 |
-| #37   | SEO e metadados por rota                                 | #35                | entregue  | `fix/37-seo-metadata`             | #51 |
-| #38   | Shell de página, landmarks e página 404                  | #35                | entregue  | `feat/38-page-shell-404`          | #53 |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue  | `feat/39-projects-list-images`    | #59 |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue  | `fix/40-reduced-motion`           | #57 |
-| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | entregue  | `feat/41-modal-menu-navigation`   | #61 |
-| #42   | Seção de contato acessível                               | #35                | entregue  | `fix/42-accessible-contact`       | #55 |
-| #43   | Card de projeto acessível + correção dos dados           | #39                | entregue  | `feat/43-accessible-project-card` | #63 |
-| #44   | Headers de segurança + CSP report-only                   | #36                | entregue  | `feat/44-security-headers-csp`    | #65 |
-| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | livre     | —                                 | —   |
-| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado | —                                 | —   |
+| Issue | Ticket                                                   | Bloqueado por      | Status     | Branch                            | PR  |
+| ----- | -------------------------------------------------------- | ------------------ | ---------- | --------------------------------- | --- |
+| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue   | `chore/34-update-next-deps`       | #49 |
+| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue   | `chore/35-e2e-infra-ci`           | #50 |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue   | `feat/36-static-routes-splash`    | #52 |
+| #37   | SEO e metadados por rota                                 | #35                | entregue   | `fix/37-seo-metadata`             | #51 |
+| #38   | Shell de página, landmarks e página 404                  | #35                | entregue   | `feat/38-page-shell-404`          | #53 |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue   | `feat/39-projects-list-images`    | #59 |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue   | `fix/40-reduced-motion`           | #57 |
+| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | entregue   | `feat/41-modal-menu-navigation`   | #61 |
+| #42   | Seção de contato acessível                               | #35                | entregue   | `fix/42-accessible-contact`       | #55 |
+| #43   | Card de projeto acessível + correção dos dados           | #39                | entregue   | `feat/43-accessible-project-card` | #63 |
+| #44   | Headers de segurança + CSP report-only                   | #36                | entregue   | `feat/44-security-headers-csp`    | #65 |
+| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | em revisão | `feat/45-web-vitals-js-budget`    | #67 |
+| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado  | —                                 | —   |
 
 **Frontier:** #45. Depois dele, fica livre o #46.
 
@@ -41,7 +41,11 @@ Status:
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
-_Nenhum ticket em andamento ou em revisão._
+### #45 — feat/45-web-vitals-js-budget
+
+- **Estado:** os 4 critérios atendidos. Analytics e Speed Insights montados no layout raiz (`e2e/web-vitals.spec.ts`). A CSP de produção não mudou: os dois scripts e os envios de dados ficam na mesma origem, e o `e2e/csp.spec.ts` passa com eles carregando. Em dev, o `script-src` ganhou `https://va.vercel-scripts.com` (conferido em `next dev`). O JS da home caiu de 160.169 para 146.548 bytes comprimidos (`e2e/js-budget.spec.ts`), sem o `tailwind-merge` e com as imagens montadas no servidor (`ServerImage`). Format, lint, typecheck, build (todas as rotas `○ (Static)`) e a suíte completa (246 passaram, 16 pulados) verdes.
+- **Próximo passo:** revisão e merge do PR #67 pelo dono. Depois do merge, fechar o #45 (passo 7) e liberar o #46.
+- **Atenção:** para o dono, a Vercel só serve `/_vercel/insights/script.js` e `/_vercel/speed-insights/script.js` com o Web Analytics e o Speed Insights ativados no painel do projeto. Sem isso, os dois scripts respondem 404 também em produção. Isso não foi conferido num deploy. Confira no smoke do release, com `curl -I` nos dois caminhos. Para o #46: o `tailwind-merge` saiu das dependências, e a regra do `cn()` mudou em `docs/agents/standards.md`. O `Image` do `next/image` não é mais usado, e a regra de imagens aponta para o `ServerImage`.
 
 <!--
 Modelo de entrada:
@@ -66,6 +70,12 @@ Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 ## Registro de decisões
 
 Decisões que não estão na spec #33. A mais recente fica no topo.
+
+- **2026-10-12:** o Analytics e o Speed Insights são os componentes de `@vercel/analytics/next` e `@vercel/speed-insights/next`, no fim do `<body>` do layout raiz. Os dois custam 1.832 bytes comprimidos na home. As entradas `/react` economizariam 411 bytes, mas perderiam a rota do Next nos dados. Num `next start` local, como na suíte E2E, o `/_vercel/...` responde 404. Por isso o `e2e/web-vitals.spec.ts` confere o pedido dos dois scripts, e não o carregamento. Em produção, o Analytics faz um POST para `/_vercel/insights/view` a cada visita. O teste "nenhuma requisição além de GET" da tela de boas-vindas não vê esse POST, porque o script não carrega na suíte.
+- **2026-10-12:** a CSP de produção não mudou. Os scripts reais (`/_vercel/insights/script.js` e `/_vercel/speed-insights/script.js`, baixados de nextjs.org, iguais aos de `va.vercel-scripts.com/v1/`) enviam os dados com `fetch` e `sendBeacon` para `/_vercel/insights/*` e `/_vercel/speed-insights/vitals`, na mesma origem. O `default-src 'self'` cobre os envios. O Speed Insights só usa `vitals.vercel-insights.com` com `dsn`, que o site não passa. Em `next dev`, os componentes carregam `script.debug.js` de `https://va.vercel-scripts.com`, que entrou no `script-src` só em dev, ao lado do `'unsafe-eval'`. Em `next dev`, as 3 rotas carregaram os dois scripts sem violação, e os scripts avisam que em dev não enviam nada.
+- **2026-10-12:** o `e2e/js-budget.spec.ts` soma o corpo comprimido (`request.sizes().responseBodySize`) das respostas com `content-type` JavaScript, na primeira visita à home, até a rede ficar ociosa. O limite é 150 KB = 150.000 bytes, como o DevTools conta. Na suíte, o `next start` comprime com gzip, e os scripts `/_vercel/...` respondem 404 em HTML e ficam de fora. Na Vercel, o JS sai em brotli: os mesmos 9 arquivos somam cerca de 125,5 kB, e os dois scripts da Vercel, mais 5,9 kB. Antes do ticket, a home tinha 158.241 bytes, ou 160.169 com o Analytics e o Speed Insights. O framework (React, React DOM, router do Next e runtime do Turbopack) responde por cerca de 136 kB e não tem corte.
+- **2026-10-12:** o excedente saiu com dois cortes, medidos um a um com o analisador do Next (`next analyze --output`) e builds de teste. O `tailwind-merge` custava 8.328 bytes, porque o `cn()` vai para o cliente pelas ilhas e pelo `Button` do menu. Antes de tirá-lo, uma auditoria comparou 112 atributos `class` distintos (4 rotas, 2 perfis, com menu aberto, "Ler mais" expandido, tela de boas-vindas e página rolada) com o resultado do `twMerge`, e nenhum mudou. O `cn()` agora só junta classes. O `Image` do `next/image` custava 5.292 bytes. As imagens passaram para o `ServerImage` (`getImageProps`, no servidor), e o HTML das 4 rotas ficou igual, exceto pelo `data-nimg` e pela ordem do `alt` no `<img>` do hero. Descartados: trocar o `browserslist` (0 byte), tirar o "Voltar" da 404 (1.147 bytes; a 404 raiz entra no payload de toda página, e o chunk do `BackButton` carrega na home), tirar ícones das ilhas (o `Icon` do `lucide-react` 1.x já é `'use client'`, então ícones do servidor já mandam o runtime do lucide) e um `global-error` próprio (o padrão faz parte do bootstrap do router).
+- **2026-10-12:** a imagem com `preload` é desenhada pela ilha `PreloadedImage`, e não pelo servidor. O React Flight transforma todo `<img>` sem `loading="lazy"` de um Server Component numa dica de preload no payload RSC. O prefetch da home, feito a partir de `/stack` e de `/projects`, baixava a imagem do hero, e o teste "não requisita a imagem do hero" do #39 pegou isso. O `ServerImage` não aceita `loading`: sem `preload`, a imagem é sempre preguiçosa e fica no servidor. Com o `Image` do Next, uma imagem quebrada mostrava o `alt`. Com o `ServerImage`, o `alt` continua transparente.
 
 - **2026-10-12:** a CSP report-only do #44 usa `script-src 'self' 'unsafe-inline'`, sem o hash do `HEAD_SCRIPT` que o critério pedia. A decisão foi tomada com o dono. Além do script da tela de boas-vindas, o HTML estático tem 5 scripts inline do próprio Next (`self.__next_f.push`, com o payload RSC, e o bootstrap do Turbopack), e eles mudam a cada build. Com um hash na diretiva, o navegador ignora o `'unsafe-inline'`, e esses scripts apareciam como violação em toda página (conferido no console). Os hashes não cabem no `headers()` do `next.config`, que é avaliado antes de o HTML existir, e o `experimental.sri` do Next só cobre scripts com `src`. Calcular os hashes num segundo build foi descartado por fragilidade. O preço é que um script inline injetado não é reportado. As outras diretivas: `default-src 'self'`, `style-src 'self' 'unsafe-inline'` (atributos `style` do `next/image` e dos atrasos do hero), `object-src 'none'`, `base-uri 'self'`, `form-action 'self'` e `frame-ancestors 'none'`. Em dev, o `script-src` ganha `'unsafe-eval'`, como no guia de CSP do Next.
 - **2026-10-12:** a CSP report-only não tem `report-uri` nem `report-to`, e as violações aparecem só no console de quem visita. Um endpoint de relatório seria um Route Handler para POST, que o site não tem ("Mutações", em `docs/agents/standards.md`), e o teste da tela de boas-vindas não aceita requisição além de GET. O Chromium não avisa da falta de `report-uri` e loga as violações mesmo assim. O `upgrade-insecure-requests` ficou de fora, porque o navegador o ignora em report-only.
@@ -136,6 +146,8 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-12 — #45 em revisão no PR #67: Analytics e Speed Insights no layout raiz; CSP de produção sem mudança e `va.vercel-scripts.com` só em dev; teste de orçamento de JS da home (≤ 150.000 bytes comprimidos); `tailwind-merge` removido e imagens montadas no servidor pelo `ServerImage`, com o JS da home de 160.169 para 146.548 bytes.
+- 2026-10-12 — #45 em andamento na branch `feat/45-web-vitals-js-budget`.
 - 2026-10-12 — Headers de segurança e CSP report-only mergeados na `develop` (#65), e o #44 foi fechado. Nenhum ticket novo é liberado: o #45 já estava livre, e o #46 ainda espera o #45. Ficam para outros tickets: no #45, montar o Analytics e o Speed Insights não exige mudar a CSP em produção, porque o `/_vercel/...` é a mesma origem. Num `next start` local, como na suíte E2E, o `/_vercel/...` não existe e deve responder 404 (não conferido). O preview da Vercel do PR #65 não saiu enquanto a sessão esperava, e os headers não foram conferidos num deploy da Vercel. Confira com `curl -I` no smoke do release. Para o dono: o domínio sem `www` responde 307 para `https://www.devfelipeaugusto.com.br/`, mas o canonical, o `og:url` e o sitemap usam o domínio sem `www` (`SITE.url`). Ou o domínio principal na Vercel passa a ser o sem `www`, ou o `SITE.url` muda.
 - 2026-10-12 — #44 em revisão no PR #65: `X-Powered-By` desligado; `nosniff`, `Referrer-Policy`, `Permissions-Policy` e `X-Frame-Options: DENY` em todas as rotas; CSP em report-only com `frame-ancestors 'none'` e `script-src 'self' 'unsafe-inline'`, sem o hash do script da tela de boas-vindas (decisão do dono); HSTS a cargo da Vercel.
 - 2026-10-12 — #44 em andamento na branch `feat/44-security-headers-csp`.
