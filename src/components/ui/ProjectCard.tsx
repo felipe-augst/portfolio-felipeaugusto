@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import { Link, ExternalLink } from 'lucide-react'
 import { ExpandableDescription } from '@/components/ui/ExpandableDescription'
+import { ProjectLinks } from '@/components/ui/ProjectLinks'
 import { cn } from '@/lib/cn'
 import type { Project } from '@/types/projects'
 
@@ -59,29 +59,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
         <ExpandableDescription text={project.description} className="mb-6" />
 
-        {/* Links */}
-        <div className="mt-auto flex items-center justify-between pt-4 border-t border-border-strong/50">
-          {project.links.github && (
-            <a
-              href={project.links.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-sand-muted hover:text-sand transition-colors"
-            >
-              <Link className="w-5 h-5" /> Código
-            </a>
-          )}
-          {project.links.live && (
-            <a
-              href={project.links.live}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-accent hover:text-accent-warm transition-colors"
-            >
-              <ExternalLink className="w-5 h-5" /> Deploy
-            </a>
-          )}
-        </div>
+        <ProjectLinks title={project.title} links={project.links} />
       </div>
     </div>
   )
