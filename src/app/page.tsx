@@ -14,13 +14,13 @@ export default function Home() {
     <>
       <main>
         <Hero />
-        <RevealOnScroll delay={0.1}>
+        <RevealOnScroll delayMs={100}>
           <About />
         </RevealOnScroll>
-        <RevealOnScroll delay={0.2}>
+        <RevealOnScroll delayMs={200}>
           <FeaturedProjects />
         </RevealOnScroll>
-        <RevealOnScroll delay={0.3}>
+        <RevealOnScroll delayMs={300}>
           <Contact />
         </RevealOnScroll>
       </main>

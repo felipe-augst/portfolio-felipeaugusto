@@ -66,10 +66,7 @@ export function SplashScreen() {
         {/* A primeira saudação aparece pronta, junto com a tela: o fade-in fica para a troca de idioma. */}
         <div
           key={index}
-          className={cn(
-            'w-full text-center',
-            index > 0 && 'motion-safe:animate-in motion-safe:fade-in duration-300',
-          )}
+          className={cn('w-full text-center', index > 0 && 'motion-safe:animate-fade-in')}
         >
           {currentGreeting.welcome}{' '}
           <em className="text-accent not-italic">{currentGreeting.highlight}</em>

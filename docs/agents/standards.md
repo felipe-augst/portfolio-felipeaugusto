@@ -50,9 +50,10 @@ Algumas regras dependem de peças que os tickets da v2.0.0 ainda vão criar. Enq
 
 ## Movimento
 
-- **CSS.** Animação é CSS (transições ou keyframes nos tokens) sob `motion-safe:`. JS serve só para disparar a animação, por exemplo com `IntersectionObserver`.
-- **Sem JS.** O conteúdo fica visível sem JS: o estado inicial oculto só vale com o marcador de "JS disponível" no elemento raiz (atributo `data-js` no `<html>`, `JS_ATTRIBUTE` em `src/lib/head-script.ts`).
-- **Movimento reduzido.** Com movimento reduzido, a página fica estática: nenhuma animação infinita, nenhum deslocamento, nenhuma troca automática de texto. O reset global cobre o CSS. Ilhas de cliente com timers consultam `prefers-reduced-motion`.
+- **CSS.** Animação é CSS (transições ou keyframes nos tokens) sob `motion-safe:`. Os keyframes ficam no `@theme` do `globals.css`, ao lado da variável `--animate-*` que os usa. JS serve só para disparar a animação, por exemplo com `IntersectionObserver`.
+- **Entrada ao rolar.** Conteúdo que entra ao rolar até ele usa a ilha `RevealOnScroll` (`src/components/ui/RevealOnScroll.tsx`). Atraso por item, como no stagger dos ícones do hero, vai em `animation-delay` ou `transition-delay` inline.
+- **Sem JS.** O conteúdo fica visível sem JS: o estado inicial oculto só vale com o marcador de "JS disponível" no elemento raiz (atributo `data-js` no `<html>`, `JS_ATTRIBUTE` em `src/lib/head-script.ts`), pela variante `js:` do Tailwind, junto de `motion-safe:`.
+- **Movimento reduzido.** Com movimento reduzido, a página fica estática: nenhuma animação infinita, nenhum deslocamento, nenhuma troca automática de texto. O reset global cobre o CSS: durações mínimas, uma única iteração e rolagem sem suavidade. Ilhas de cliente com timers consultam `prefers-reduced-motion`.
 - **5 segundos.** Conteúdo que muda sozinho para em menos de 5 s (WCAG 2.2.2).
 - **Texto que troca.** A palavra fora da vez fica escondida por recorte (`overflow-hidden` + deslocamento), com opacidade total. No meio de um fade, o texto fica sem contraste e o axe acusa violação.
 - **Troca sem deslocamento.** Texto que troca sozinho fica numa caixa de tamanho fixo, que não depende do texto (por exemplo, largura total e altura de duas linhas). Uma caixa centralizada que encolhe ou cresce com o texto muda de posição, e isso conta no CLS.

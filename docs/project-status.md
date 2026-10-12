@@ -27,7 +27,7 @@ Status:
 | #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
 | #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`       | #53 |
 | #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em andamento | `feat/39-projects-list-images` | —   |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | livre        | —                              | —   |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue     | `fix/40-reduced-motion`        | #57 |
 | #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em andamento | —                              | —   |
 | #42   | Seção de contato acessível                               | #35                | entregue     | `fix/42-accessible-contact`    | #55 |
 | #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado    | —                              | —   |
@@ -35,7 +35,7 @@ Status:
 | #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
 | #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** #40. Também está livre o #44. O #39 e o #41 estão em andamento em outros terminais.
+**Frontier:** #44. O #39 e o #41 estão em andamento em outros terminais.
 
 ## Handoff
 
@@ -49,9 +49,10 @@ _O #41 está em andamento em outro terminal, com o handoff na própria branch._
 - **Próximo passo:** abrir o PR para a `develop`.
 - **Atenção:**
   - #43: o `ProjectCard` continua `'use client'` por causa do "Ler mais". A gaveta abre no card ativo da fileira (`max-md:in-data-[active=true]:translate-y-0`). O teste do card ativo só confere que a gaveta do card ativo é pintada, e isso continua valendo com a gaveta sempre visível sem hover. O teste acha o ícone pelo `alt` com o nome da tecnologia. Em `/projects`, o título do card é `<h3>` logo depois do `<h1>`, então a hierarquia pula o `<h2>`.
-  - #40: a caixa da saudação da tela de boas-vindas mudou (`h-[2em] w-full`), no mesmo componente em que o #40 vai mexer no fade-in. O `e2e/layout-shift.spec.ts` cobre a tela.
   - #41: os links do `MenuOverlay` trocaram `font-light` por `font-normal` (uma linha). É provável que dê conflito no merge.
   - #46: o README ainda descreve o carrossel Embla e o `useMediaQuery`, e `src/hooks/` ficou vazio, embora o `AGENTS.md` ainda liste essa pasta.
+  - A `develop` com o #40 (#57) foi mesclada na branch. O `Hero` continua Server Component, com o stagger em CSS do #40, e a saudação da tela de boas-vindas junta a caixa fixa deste ticket ao `animate-fade-in` do #40.
+  - Na primeira suíte completa com build novo, o axe de `/projects` no desktop estourou os 30 s uma vez, sob carga, no começo da execução. Na repetição, também com build novo, passou em 10 s.
 
 <!--
 Modelo de entrada:
@@ -83,6 +84,12 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 - **2026-10-12:** o teste de largura das imagens dos cards roda nos dois perfis. No mobile, a imagem já não passava de 2× antes do ticket: os originais têm pelo menos 1440 px, e o otimizador entrega 1200 px para um card de cerca de 860 px de dispositivo. O red veio do desktop (3,9× na home e 4,6× em `/projects`). O limite é 2,2× ("~2×" com 10% de folga para o degrau do srcset). Em `/projects`, no desktop, a razão fica em cerca de 2,04×, porque o `33vw` superestima o container do `PageShell` (`max-w-5xl`).
 - **2026-10-12:** a Fraunces carrega só o estilo normal, e os preloads de fonte caíram de 4 para 3. A Cinzel não tem peso 300: o `<h1>` do hero, o título do contato e os links do menu trocaram `font-light` por `font-normal`. O navegador já usava a face 400, então a aparência não muda. O `e2e/fonts.spec.ts` confere, em cada rota, que o peso e o estilo de todo texto existem entre as faces da fonte principal dele.
 - **2026-10-12:** os testes de projetos leem títulos, destaques e tecnologias de `PROJECTS` (`@/data/projects`), sem escrever os valores à mão, para que uma mudança de conteúdo não quebre a suíte.
+- **2026-10-12:** a entrada das seções (`RevealOnScroll`) só aplica o estado oculto com `motion-safe:` e com o marcador `data-js`, pela variante `js:` do Tailwind (`@custom-variant js` no `globals.css`). Com movimento reduzido, as seções ficam visíveis e paradas desde o início, sem nem um fade. A seção entra quando passa 80 px da borda de baixo da tela, uma vez, com os mesmos 600 ms, 30 px e atrasos de 100/200/300 ms de antes. A prop virou `delayMs`.
+- **2026-10-12:** o stagger dos ícones do hero usa a animação `rise-in` (`--animate-rise-in`, com `fill-mode: both` para o ícone ficar oculto durante o atraso) e `animation-delay` inline de 100 ms + 150 ms por ícone, os tempos do `motion`. Ela roda também sem JS, porque é só CSS e termina com os ícones visíveis. O ponto de disponibilidade (`animate-pulse`) ficou sob `motion-safe:`.
+- **2026-10-12:** o fade-in da troca de idioma da tela de boas-vindas foi recriado como `--animate-fade-in` (300 ms, `ease-out`), como pede o critério do #40. Ele continua baixando o contraste da saudação por 300 ms a cada troca, o que a regra "Texto que troca" de `docs/agents/standards.md` desaconselha. A tela é decorativa (`aria-hidden`) e o axe roda antes das trocas. Trocar o fade por recorte é decisão do dono. Todos os keyframes ficam no `@theme`, inclusive o do `scan`.
+- **2026-10-12:** os testes do reset de movimento reduzido injetam CSS novo na página (uma animação infinita e `scroll-behavior: smooth`), porque hoje nenhum CSS do site tem animação infinita fora de `motion-safe:` nem rolagem suave. A rolagem suave é medida pelo `scrollY` logo depois de `scrollTo`.
+- **2026-10-12:** nos testes dos ícones do hero, "visível" é opacidade efetiva acima de 0,5, porque os ícones têm `opacity-90` de propósito. Os ícones são as imagens do bloco de conteúdo do `<h1>`, que deixa o fundo do hero de fora. Com movimento reduzido, o teste lê os ícones repetidamente desde a chegada do HTML por 2,5 s: uma leitura única depois do `load` passava com o `motion` quando o carregamento era lento. O teste do fade-in registra os `animationstart` num script de init, porque o fade dura 300 ms.
+- **2026-10-12:** os helpers de leitura de pintura dos testes de animação ficam em `e2e/paint.ts` (`effectiveOpacity` e `isDisplaced`). O `contact.spec.ts` passou a usar o `effectiveOpacity`.
 
 - **2026-10-10:** o título do Contato tem a frase completa em `sr-only` ("Vamos construir algo juntos?", com a primeira palavra) e a parte visual com `aria-hidden`. A troca de palavras é a ilha `RotatingWord` (`src/components/ui/RotatingWord.tsx`). Ela começa quando a palavra entra na tela (`IntersectionObserver`), distribui as trocas em 3 s e para na última palavra, e a transição final termina em 3,5 s. Com movimento reduzido, fica a primeira palavra. O `Contact` virou Server Component.
 - **2026-10-10:** as palavras fora da vez ficam recortadas pelo `overflow-hidden`, só com deslocamento, sem o fade de opacidade de antes. No meio do fade, o axe media contraste de 1,06 no título e derrubava o `e2e/axe.spec.ts` da home. A regra entrou em `docs/agents/standards.md` ("Texto que troca").
@@ -117,7 +124,10 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-12 — Remoção do `motion`, entrada das seções em CSS e movimento reduzido respeitado mergeados na `develop` (#57), e o #40 foi fechado. Nenhum ticket é liberado: o #45 ainda espera #39 e #43. O #39 também mexe no `Hero.tsx`: na resolução, o `Hero` fica sem `'use client'` e com o stagger em CSS do #40. Ficam para outros tickets: o caminho do CV escrito à mão e os imports relativos `../ui/*` do `Hero` (#46) e o JS da home, ainda em 168,0 KB transferidos, acima dos 150 KB (#45). Se o #46 mudar a estrutura do hero ou o `alt` dos ícones, confira `heroStackIcons` em `e2e/motion.spec.ts`.
 - 2026-10-12 — #39 em andamento na branch `feat/39-projects-list-images`.
+- 2026-10-12 — #40 em revisão no PR #57: entrada das seções com `IntersectionObserver` e CSS, visível sem JS e parada com movimento reduzido; stagger do hero em CSS e `Hero` no servidor; reset de movimento reduzido com uma iteração e rolagem sem suavidade; `motion` e `tailwindcss-animate` removidos (JS da home de 206,7 KB para 168,0 KB transferidos).
+- 2026-10-12 — #40 em andamento na branch `fix/40-reduced-motion`.
 - 2026-10-10 — Seção de contato acessível mergeada na `develop` (#55), e o #42 foi fechado. Nenhum ticket é liberado: o #45 ainda espera #39, #40 e #43. Ficam para outros tickets: o caminho do CV escrito à mão no `Hero` (#40 ou #46), o `mailto:` em nova aba e sem aviso de nova aba no menu (#41) e o fade-in das trocas de idioma da tela de boas-vindas (#40). Os helpers de "texto pintado" de `e2e/contact.spec.ts` servem para os testes de movimento do #40.
 - 2026-10-10 — #42 em revisão no PR #55: título do contato legível por leitor de tela e com um único ciclo, contraste do card, links sociais com ícone nos dados e seção como Server Component.
 - 2026-10-10 — Rotas estáticas, tela de boas-vindas decidida no `<head>` uma vez por sessão, marcador `data-js` e site sem Server Action mergeados na `develop` (#52), e o #36 foi fechado. Ficam livres #40 e #44.

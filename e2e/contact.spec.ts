@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { effectiveOpacity } from './paint'
 
 const TITLE = 'Vamos construir algo juntos?'
 
@@ -38,17 +39,7 @@ function animatedPart(title: Locator) {
 // Espera o elemento ficar com opacidade total, somando a dos ancestrais: a animação de entrada
 // das seções começa com opacidade 0.
 async function expectFullyOpaque(locator: Locator) {
-  await expect
-    .poll(() =>
-      locator.evaluate((element) => {
-        let opacity = 1
-        for (let node: Element | null = element; node; node = node.parentElement) {
-          opacity *= Number(getComputedStyle(node).opacity)
-        }
-        return opacity
-      }),
-    )
-    .toBe(1)
+  await expect.poll(() => effectiveOpacity(locator)).toBe(1)
 }
 
 // Texto que o elemento pinta: só os trechos sem `display: none`, `visibility: hidden` ou

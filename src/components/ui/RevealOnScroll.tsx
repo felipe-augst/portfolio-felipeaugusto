@@ -1,32 +1,53 @@
 'use client'
 
-import { motion } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
+import { cn } from '@/lib/cn'
+
+// O conteúdo entra quando passa 80 px da borda de baixo da tela.
+const ROOT_MARGIN = '0px 0px -80px 0px'
 
 type RevealOnScrollProps = {
   children: ReactNode
-  delay?: number
-  duration?: number
-  y?: number
+  delayMs?: number
   className?: string
 }
 
-export function RevealOnScroll({
-  children,
-  delay = 0,
-  duration = 0.6,
-  y = 30,
-  className,
-}: RevealOnScrollProps) {
+// Entrada do conteúdo ao rolar até ele. O IntersectionObserver só tira o estado inicial oculto, e a
+// transição é CSS. O estado oculto só vale com JS (variante `js:`) e sem pedido de movimento
+// reduzido (`motion-safe:`): nos outros casos, o conteúdo fica visível e parado desde o início.
+export function RevealOnScroll({ children, delayMs = 0, className }: RevealOnScrollProps) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [revealed, setRevealed] = useState(false)
+
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return
+        observer.disconnect()
+        setRevealed(true)
+      },
+      { rootMargin: ROOT_MARGIN },
+    )
+    observer.observe(element)
+
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration, delay, ease: 'easeOut' }}
-      className={className}
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delayMs}ms` }}
+      className={cn(
+        'motion-safe:transition-[opacity,translate] motion-safe:duration-600 motion-safe:ease-out',
+        !revealed && 'motion-safe:js:translate-y-7.5 motion-safe:js:opacity-0',
+        className,
+      )}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }
