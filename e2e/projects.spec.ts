@@ -101,6 +101,19 @@ function projectLinks(project: Project) {
   })
 }
 
+function projectById(id: string) {
+  const project = PROJECTS.find((candidate) => candidate.id === id)
+  if (!project) throw new Error(`projeto ${id} não existe nos dados`)
+  return project
+}
+
+// `href` de cada link dentro do elemento.
+function linkHrefs(locator: Locator) {
+  return locator
+    .getByRole('link')
+    .evaluateAll((links) => links.map((link) => link.getAttribute('href') ?? ''))
+}
+
 // Nome acessível do elemento, como aparece na árvore de acessibilidade.
 async function accessibleName(locator: Locator) {
   const snapshot = await locator.ariaSnapshot()
@@ -209,6 +222,33 @@ for (const { route, name, projects } of LISTS) {
 
     expect(names).not.toContain('')
     expect(names.filter((linkName, index) => names.indexOf(linkName) !== index)).toEqual([])
+  })
+
+  test(`${route}: os links do GitHub dos cards abrem a página do repositório, sem .git`, async ({
+    page,
+  }) => {
+    await page.goto(route)
+
+    const githubLinks = (await linkHrefs(projectList(page, name))).filter(
+      (href) => new URL(href).hostname === 'github.com',
+    )
+
+    expect(githubLinks).not.toEqual([])
+    expect(githubLinks.filter((href) => href.endsWith('.git'))).toEqual([])
+  })
+
+  test(`${route}: o card da DevStore API não linka o front da DevStore`, async ({ page }) => {
+    const store = projectById('devstore')
+    const api = projectById('devstore-api')
+    expect(store.links.live, 'deploy do front da DevStore').toBeDefined()
+    await page.goto(route)
+
+    const apiCard = projectList(page, name)
+      .getByRole('listitem')
+      .filter({ has: page.getByRole('heading', { name: api.title, exact: true }) })
+
+    await expect(apiCard).toHaveCount(1)
+    expect(await linkHrefs(apiCard)).not.toContain(store.links.live)
   })
 
   test(`${route}: "Ler mais" só existe nos cards cuja descrição transborda e alterna aria-expanded`, async ({
