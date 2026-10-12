@@ -23,6 +23,20 @@ function parsePermissionsPolicy(header = '') {
   )
 }
 
+// Fontes de cada diretiva da CSP (`frame-ancestors 'none'` dá `frame-ancestors` → `["'none'"]`).
+function parseCsp(header = '') {
+  return new Map(
+    header
+      .split(';')
+      .map((directive) => directive.trim())
+      .filter(Boolean)
+      .map((directive) => {
+        const [name = '', ...sources] = directive.split(/\s+/)
+        return [name, sources]
+      }),
+  )
+}
+
 for (const route of ROUTES) {
   test(`${route} não anuncia o framework no X-Powered-By`, async ({ request }) => {
     const response = await request.get(route)
@@ -41,5 +55,15 @@ for (const route of ROUTES) {
     for (const feature of DENIED_FEATURES) {
       expect(permissions.get(feature), `Permissions-Policy: ${feature}`).toBe('()')
     }
+  })
+
+  test(`${route} envia a CSP só em report-only, sem permitir que outro site a ponha num iframe`, async ({
+    request,
+  }) => {
+    const headers = (await request.get(route)).headers()
+    const csp = parseCsp(headers['content-security-policy-report-only'])
+
+    expect(headers['content-security-policy'], 'CSP aplicada').toBeUndefined()
+    expect(csp.get('frame-ancestors')).toEqual(["'none'"])
   })
 }
