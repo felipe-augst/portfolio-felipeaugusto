@@ -30,6 +30,53 @@ test('o botão Menu abre o menu como diálogo modal, com nome acessível e fundo
   await expect(menuButton(page)).not.toBeFocused()
 })
 
+test('o botão Menu declara que abre um diálogo, qual diálogo controla e se está expandido', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const button = menuButton(page)
+
+  await expect(button).toHaveAttribute('aria-haspopup', 'dialog')
+  await expect(button).toHaveAttribute('aria-expanded', 'false')
+  const controls = await button.getAttribute('aria-controls')
+  expect(controls, 'aria-controls').toBeTruthy()
+
+  await button.click()
+
+  await expect(menuDialog(page)).toHaveAttribute('id', controls ?? '')
+  await expect(button).toHaveAttribute('aria-expanded', 'true')
+})
+
+test('pelo teclado, o foco entra no menu, fica preso nele e volta ao botão Menu com Escape', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const button = menuButton(page)
+  const dialog = menuDialog(page)
+  const focusIsInDialog = () =>
+    dialog.evaluate((element) => element.contains(document.activeElement))
+
+  await button.focus()
+  await page.keyboard.press('Enter')
+
+  await expect(dialog).toBeVisible()
+  await expect(button).toHaveAttribute('aria-expanded', 'true')
+  expect(await focusIsInDialog(), 'foco dentro do diálogo ao abrir').toBe(true)
+
+  // Mais Tabs do que elementos focáveis no diálogo: o foco dá a volta sem sair dele.
+  const focusableCount = await dialog.locator('a, button').count()
+  for (let press = 1; press <= focusableCount + 2; press++) {
+    await page.keyboard.press('Tab')
+    expect(await focusIsInDialog(), `foco dentro do diálogo depois de ${press} Tab`).toBe(true)
+  }
+
+  await page.keyboard.press('Escape')
+
+  await expect(dialog).toBeHidden()
+  await expect(button).toBeFocused()
+  await expect(button).toHaveAttribute('aria-expanded', 'false')
+})
+
 test('com o menu aberto, a página atrás não rola', async ({ page }) => {
   await page.goto('/')
   const viewport = page.viewportSize()
