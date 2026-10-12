@@ -76,12 +76,16 @@ body {
   background: var(--color-accent);
 }
 
+/* Movimento reduzido: animações terminam na hora e uma vez só (uma animação infinita de 0,01 ms
+   cintilaria), transições são instantâneas e a rolagem não é suave. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
