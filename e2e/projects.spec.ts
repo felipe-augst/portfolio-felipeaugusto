@@ -334,6 +334,18 @@ test.describe('sem JavaScript', () => {
 
       expect(await fullSizeItems(projectList(page, name))).toHaveLength(projects.length)
     })
+
+    test(`${route}: as descrições aparecem inteiras, sem "Ler mais"`, async ({ page }) => {
+      await page.goto(route)
+      const list = projectList(page, name)
+      const items = list.getByRole('listitem')
+
+      await expect(list.getByRole('button', { name: 'Ler mais' })).toHaveCount(0)
+      for (const [index, project] of projects.entries()) {
+        const description = items.nth(index).getByText(project.description, { exact: true })
+        expect(await overflows(description), project.title).toBe(false)
+      }
+    })
   }
 })
 
