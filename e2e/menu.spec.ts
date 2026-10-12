@@ -116,6 +116,24 @@ test('o cabeçalho e o menu têm o mesmo foco visível dos botões da página', 
   }
 })
 
+test('no menu, o e-mail abre na mesma aba e os outros links sociais avisam que abrem em nova aba', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await menuButton(page).click()
+  const dialog = menuDialog(page)
+
+  const email = dialog.getByRole('link', { name: 'E-mail' })
+  await expect(email).toHaveAttribute('href', /^mailto:/)
+  await expect(email).not.toHaveAttribute('target')
+
+  for (const name of ['GitHub', 'LinkedIn', 'WhatsApp']) {
+    const link = dialog.getByRole('link', { name: new RegExp(`^${name}`) })
+    await expect(link).toHaveAttribute('target', '_blank')
+    await expect(link).toHaveAccessibleName(`${name} (abre em nova aba)`)
+  }
+})
+
 test('com o menu aberto, a página atrás não rola', async ({ page }) => {
   await page.goto('/')
   const viewport = page.viewportSize()
