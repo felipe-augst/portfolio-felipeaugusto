@@ -1,6 +1,6 @@
 import type { AboutContent } from '@/types/about'
 
-export const ABOUT: AboutContent = {
+export const ABOUT = {
   title: 'Desenvolvedor fullstack movido a',
   titleHighlight: 'qualidade',
   paragraphs: [

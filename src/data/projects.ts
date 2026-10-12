@@ -1,7 +1,7 @@
 import type { Project } from '@/types/projects'
 import { TECHNOLOGIES } from '@/data/technologies'
 
-export const PROJECTS: Project[] = [
+export const PROJECTS = [
   {
     id: 'devstore',
     title: 'DevStore',
@@ -183,4 +183,4 @@ export const PROJECTS: Project[] = [
     },
     featured: false,
   },
-]
+] as const satisfies readonly Project[]
