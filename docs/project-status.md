@@ -27,7 +27,7 @@ Status:
 | #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
 | #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`       | #53 |
 | #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em andamento | —                              | —   |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | em andamento | `fix/40-reduced-motion`        | —   |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | em revisão   | `fix/40-reduced-motion`        | #57 |
 | #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em andamento | —                              | —   |
 | #42   | Seção de contato acessível                               | #35                | entregue     | `fix/42-accessible-contact`    | #55 |
 | #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado    | —                              | —   |
@@ -35,7 +35,7 @@ Status:
 | #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
 | #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** #44. O #39 e o #41 estão em andamento em outros terminais, e o #40 está em andamento na `fix/40-reduced-motion`.
+**Frontier:** #44. O #39 e o #41 estão em andamento em outros terminais, e o #40 está em revisão no PR #57.
 
 ## Handoff
 
@@ -45,9 +45,12 @@ _O #39 e o #41 estão em andamento, com o handoff nas próprias branches._
 
 ### #40 — fix/40-reduced-motion
 
-- **Estado:** branch criada a partir da `develop` (`1a5a000`), nada implementado.
-- **Próximo passo:** primeiro ciclo red → green, com os testes em `e2e/motion.spec.ts`.
-- **Atenção:** o #39 também mexe no `Hero.tsx` (`preload` e `alt=""` do fundo); conflito provável no merge.
+- **Estado:** em revisão no PR #57. Todos os critérios têm teste em `e2e/motion.spec.ts` e `e2e/splash-screen.spec.ts`. `format:check`, `lint`, `typecheck`, `build` (tudo `○ (Static)`) e a suíte E2E (92 testes) passam. `motion` e `tailwindcss-animate` saíram, e o JS da home caiu de 206,7 KB para 168,0 KB transferidos.
+- **Próximo passo:** depois do merge, passo 7 do workflow (fechar a issue e liberar o #45 quando #39 e #43 também estiverem entregues).
+- **Atenção:**
+  - O #39 também mexe no `Hero.tsx` (`preload` e `alt=""` do fundo). Conflito provável no merge: mantenha o `Hero` sem `'use client'` e o stagger em CSS deste ticket.
+  - Os testes dos ícones do hero localizam as imagens do bloco de conteúdo do `<h1>`. Se o #46 mudar a estrutura do hero ou o `alt` dos ícones, confira `heroStackIcons` em `e2e/motion.spec.ts`.
+  - Ficam para outros tickets: o caminho do CV escrito à mão no `Hero` (#46, configuração central do site), os imports relativos `../ui/*` do `Hero` (#46) e o restante do orçamento de JS, que segue acima de 150 KB (#45).
 
 <!--
 Modelo de entrada:
@@ -72,6 +75,13 @@ Valem até o ticket indicado ser entregue. Remova o aviso quando isso acontecer.
 ## Registro de decisões
 
 Decisões que não estão na spec #33. A mais recente fica no topo.
+
+- **2026-10-12:** a entrada das seções (`RevealOnScroll`) só aplica o estado oculto com `motion-safe:` e com o marcador `data-js`, pela variante `js:` do Tailwind (`@custom-variant js` no `globals.css`). Com movimento reduzido, as seções ficam visíveis e paradas desde o início, sem nem um fade. A seção entra quando passa 80 px da borda de baixo da tela, uma vez, com os mesmos 600 ms, 30 px e atrasos de 100/200/300 ms de antes. A prop virou `delayMs`.
+- **2026-10-12:** o stagger dos ícones do hero usa a animação `rise-in` (`--animate-rise-in`, com `fill-mode: both` para o ícone ficar oculto durante o atraso) e `animation-delay` inline de 100 ms + 150 ms por ícone, os tempos do `motion`. Ela roda também sem JS, porque é só CSS e termina com os ícones visíveis. O ponto de disponibilidade (`animate-pulse`) ficou sob `motion-safe:`.
+- **2026-10-12:** o fade-in da troca de idioma da tela de boas-vindas foi recriado como `--animate-fade-in` (300 ms, `ease-out`), como pede o critério do #40. Ele continua baixando o contraste da saudação por 300 ms a cada troca, o que a regra "Texto que troca" de `docs/agents/standards.md` desaconselha. A tela é decorativa (`aria-hidden`) e o axe roda antes das trocas. Trocar o fade por recorte é decisão do dono. Todos os keyframes ficam no `@theme`, inclusive o do `scan`.
+- **2026-10-12:** os testes do reset de movimento reduzido injetam CSS novo na página (uma animação infinita e `scroll-behavior: smooth`), porque hoje nenhum CSS do site tem animação infinita fora de `motion-safe:` nem rolagem suave. A rolagem suave é medida pelo `scrollY` logo depois de `scrollTo`.
+- **2026-10-12:** nos testes dos ícones do hero, "visível" é opacidade efetiva acima de 0,5, porque os ícones têm `opacity-90` de propósito. Os ícones são as imagens do bloco de conteúdo do `<h1>`, que deixa o fundo do hero de fora. Com movimento reduzido, o teste lê os ícones repetidamente desde a chegada do HTML por 2,5 s: uma leitura única depois do `load` passava com o `motion` quando o carregamento era lento. O teste do fade-in registra os `animationstart` num script de init, porque o fade dura 300 ms.
+- **2026-10-12:** os helpers de leitura de pintura dos testes de animação ficam em `e2e/paint.ts` (`effectiveOpacity` e `isDisplaced`). O `contact.spec.ts` passou a usar o `effectiveOpacity`.
 
 - **2026-10-10:** o título do Contato tem a frase completa em `sr-only` ("Vamos construir algo juntos?", com a primeira palavra) e a parte visual com `aria-hidden`. A troca de palavras é a ilha `RotatingWord` (`src/components/ui/RotatingWord.tsx`). Ela começa quando a palavra entra na tela (`IntersectionObserver`), distribui as trocas em 3 s e para na última palavra, e a transição final termina em 3,5 s. Com movimento reduzido, fica a primeira palavra. O `Contact` virou Server Component.
 - **2026-10-10:** as palavras fora da vez ficam recortadas pelo `overflow-hidden`, só com deslocamento, sem o fade de opacidade de antes. No meio do fade, o axe media contraste de 1,06 no título e derrubava o `e2e/axe.spec.ts` da home. A regra entrou em `docs/agents/standards.md` ("Texto que troca").
@@ -105,6 +115,9 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 ## Log
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
+
+- 2026-10-12 — #40 em revisão no PR #57: entrada das seções com `IntersectionObserver` e CSS, visível sem JS e parada com movimento reduzido; stagger do hero em CSS e `Hero` no servidor; reset de movimento reduzido com uma iteração e rolagem sem suavidade; `motion` e `tailwindcss-animate` removidos (JS da home de 206,7 KB para 168,0 KB transferidos).
+- 2026-10-12 — #40 em andamento na branch `fix/40-reduced-motion`.
 
 - 2026-10-10 — Seção de contato acessível mergeada na `develop` (#55), e o #42 foi fechado. Nenhum ticket é liberado: o #45 ainda espera #39, #40 e #43. Ficam para outros tickets: o caminho do CV escrito à mão no `Hero` (#40 ou #46), o `mailto:` em nova aba e sem aviso de nova aba no menu (#41) e o fade-in das trocas de idioma da tela de boas-vindas (#40). Os helpers de "texto pintado" de `e2e/contact.spec.ts` servem para os testes de movimento do #40.
 - 2026-10-10 — #42 em revisão no PR #55: título do contato legível por leitor de tela e com um único ciclo, contraste do card, links sociais com ícone nos dados e seção como Server Component.
