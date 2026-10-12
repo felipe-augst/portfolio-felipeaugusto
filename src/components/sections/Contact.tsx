@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { ServerImage } from '@/components/ui/ServerImage'
 import { ArrowRight, MapPin } from 'lucide-react'
 import { Button, focusRing } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
@@ -50,7 +50,7 @@ export function Contact() {
                       focusRing,
                     )}
                   >
-                    <Image
+                    <ServerImage
                       src={icon}
                       alt=""
                       width={50}

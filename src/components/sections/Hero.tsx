@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { ServerImage } from '@/components/ui/ServerImage'
 import { Button } from '../ui/Button'
 import { HERO } from '@/data/hero'
 import { Download } from 'lucide-react'
@@ -16,7 +16,7 @@ export function Hero() {
     <section className="relative min-h-200 md:min-h-225 lg:min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 md:px-12 pb-15">
       {/* Background Image (decorativa) */}
       <div className="absolute inset-0 z-0">
-        <Image
+        <ServerImage
           src="/images/hero/hero_background2.webp"
           alt=""
           fill
