@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test'
 import { PROJECTS } from '@/data/projects'
+import { NEW_TAB_NOTICE } from '@/lib/links'
 import type { Project } from '@/types/projects'
 import { expect, test } from './fixtures'
 import { effectiveOpacity, isPainted } from './paint'
@@ -7,6 +8,13 @@ import { markSplashSeen } from './session'
 
 // Limite de Tabs para o foco chegar a um elemento da página.
 const MAX_TABS = 40
+
+// Texto visível do link de cada campo de `links` do projeto.
+const LINK_LABELS: Record<keyof Project['links'], string> = {
+  github: 'Código',
+  live: 'Deploy',
+  apiDocs: 'Documentação',
+}
 
 // Listas de projetos: os destaques da home e a página com todos os projetos.
 const LISTS = [
@@ -81,6 +89,24 @@ async function revealList(list: Locator) {
   await expect.poll(() => effectiveOpacity(list)).toBe(1)
 }
 
+function escapeRegExp(text: string) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+// Links do projeto nos dados, com o texto visível que cada um tem no card.
+function projectLinks(project: Project) {
+  return (Object.keys(LINK_LABELS) as (keyof Project['links'])[]).flatMap((key) => {
+    const href = project.links[key]
+    return href ? [{ label: LINK_LABELS[key], href }] : []
+  })
+}
+
+// Nome acessível do elemento, como aparece na árvore de acessibilidade.
+async function accessibleName(locator: Locator) {
+  const snapshot = await locator.ariaSnapshot()
+  return snapshot.match(/^- \w+ "((?:[^"\\]|\\.)*)"/)?.[1] ?? ''
+}
+
 // Se o texto do elemento passa da altura dele, como numa descrição cortada pelo clamp.
 function overflows(locator: Locator) {
   return locator.evaluate((element) => element.scrollHeight - element.clientHeight > 1)
@@ -148,6 +174,41 @@ for (const { route, name, projects } of LISTS) {
         items.nth(index).getByRole('heading', { name: project.title, exact: true }),
       ).toBeAttached()
     }
+  })
+
+  test(`${route}: os links de cada card levam aos endereços dos dados, com o título do projeto no nome e aviso de nova aba`, async ({
+    page,
+  }) => {
+    await page.goto(route)
+    const items = projectList(page, name).getByRole('listitem')
+
+    for (const [index, project] of projects.entries()) {
+      const item = items.nth(index)
+      const expected = projectLinks(project)
+      await expect(item.getByRole('link'), project.title).toHaveCount(expected.length)
+
+      for (const { label, href } of expected) {
+        const link = item.getByRole('link', { name: label })
+        await expect(link).toHaveAttribute('href', href)
+        await expect(link).toHaveAttribute('target', '_blank')
+        // O nome começa pelo texto visível e traz o título do projeto e o aviso de nova aba.
+        await expect(link).toHaveAccessibleName(
+          new RegExp(
+            `^${escapeRegExp(label)}\\b.*${escapeRegExp(project.title)}.*${escapeRegExp(NEW_TAB_NOTICE)}$`,
+          ),
+        )
+      }
+    }
+  })
+
+  test(`${route}: os links dos cards têm nomes acessíveis únicos`, async ({ page }) => {
+    await page.goto(route)
+    const links = await projectList(page, name).getByRole('link').all()
+
+    const names = await Promise.all(links.map(accessibleName))
+
+    expect(names).not.toContain('')
+    expect(names.filter((linkName, index) => names.indexOf(linkName) !== index)).toEqual([])
   })
 
   test(`${route}: "Ler mais" só existe nos cards cuja descrição transborda e alterna aria-expanded`, async ({
