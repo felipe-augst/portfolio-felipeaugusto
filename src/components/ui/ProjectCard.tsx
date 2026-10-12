@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { ExpandableDescription } from '@/components/ui/ExpandableDescription'
 import { ProjectLinks } from '@/components/ui/ProjectLinks'
+import { TechIcon } from '@/components/ui/TechIcon'
 import { cn } from '@/lib/cn'
 import type { Project } from '@/types/projects'
 
@@ -40,9 +41,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
           )}
         >
           {project.technologies.map((tech) => (
-            <div key={tech.name} className="relative w-7 h-7" title={tech.name}>
-              <Image src={tech.icon} alt={tech.name} fill className="object-contain" />
-            </div>
+            <span key={tech.name} className="flex" title={tech.name}>
+              <TechIcon technology={tech} size={28} className="size-7 object-contain" />
+            </span>
           ))}
         </div>
       </div>
