@@ -19,39 +19,29 @@ Status:
 - `em revisão` — PR aberto para a `develop`;
 - `entregue` — mergeado na `develop` e issue fechada.
 
-| Issue | Ticket                                                   | Bloqueado por      | Status     | Branch                            | PR  |
-| ----- | -------------------------------------------------------- | ------------------ | ---------- | --------------------------------- | --- |
-| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue   | `chore/34-update-next-deps`       | #49 |
-| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue   | `chore/35-e2e-infra-ci`           | #50 |
-| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue   | `feat/36-static-routes-splash`    | #52 |
-| #37   | SEO e metadados por rota                                 | #35                | entregue   | `fix/37-seo-metadata`             | #51 |
-| #38   | Shell de página, landmarks e página 404                  | #35                | entregue   | `feat/38-page-shell-404`          | #53 |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue   | `feat/39-projects-list-images`    | #59 |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue   | `fix/40-reduced-motion`           | #57 |
-| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | entregue   | `feat/41-modal-menu-navigation`   | #61 |
-| #42   | Seção de contato acessível                               | #35                | entregue   | `fix/42-accessible-contact`       | #55 |
-| #43   | Card de projeto acessível + correção dos dados           | #39                | em revisão | `feat/43-accessible-project-card` | #63 |
-| #44   | Headers de segurança + CSP report-only                   | #36                | livre      | —                                 | —   |
-| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado  | —                                 | —   |
-| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado  | —                                 | —   |
+| Issue | Ticket                                                   | Bloqueado por      | Status    | Branch                            | PR  |
+| ----- | -------------------------------------------------------- | ------------------ | --------- | --------------------------------- | --- |
+| #34   | Atualizar Next.js e dependências vulneráveis             | —                  | entregue  | `chore/34-update-next-deps`       | #49 |
+| #35   | Infra E2E com Playwright + CI endurecido                 | #34                | entregue  | `chore/35-e2e-infra-ci`           | #50 |
+| #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue  | `feat/36-static-routes-splash`    | #52 |
+| #37   | SEO e metadados por rota                                 | #35                | entregue  | `fix/37-seo-metadata`             | #51 |
+| #38   | Shell de página, landmarks e página 404                  | #35                | entregue  | `feat/38-page-shell-404`          | #53 |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | entregue  | `feat/39-projects-list-images`    | #59 |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue  | `fix/40-reduced-motion`           | #57 |
+| #41   | Menu como diálogo modal + navegação interna consistente  | #35                | entregue  | `feat/41-modal-menu-navigation`   | #61 |
+| #42   | Seção de contato acessível                               | #35                | entregue  | `fix/42-accessible-contact`       | #55 |
+| #43   | Card de projeto acessível + correção dos dados           | #39                | entregue  | `feat/43-accessible-project-card` | #63 |
+| #44   | Headers de segurança + CSP report-only                   | #36                | livre     | —                                 | —   |
+| #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | livre     | —                                 | —   |
+| #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado | —                                 | —   |
 
-**Frontier:** #44.
+**Frontier:** #44. Também está livre o #45.
 
 ## Handoff
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
-### #43 — feat/43-accessible-project-card
-
-- **Estado:** em revisão no PR #63. Todos os critérios estão atendidos, com testes em `e2e/projects.spec.ts`, `e2e/tech-icons.spec.ts`, `e2e/landmarks.http.spec.ts` e `e2e/axe.spec.ts`. O critério do `apiDocs` foi verificado com dado temporário (registro de decisões). `format:check` (arquivos versionados), `lint`, `typecheck` e `build` passam, e as rotas são `○ (Static)`.
-- **Próximo passo:** o dono revisa e faz o merge do #63. Depois, passo 7: fechar o #43 e marcar como entregue. O #45 fica livre, porque espera só #39, #40, #42 e #43.
-- **Atenção:**
-  - Na suíte completa, falharam algumas vezes, sob carga, testes que já constam no log como intermitentes. Todos passaram repetidos:
-    - o CLS da home, pela troca de fonte do hero e do botão Menu (#45). Passou 8 de 8 vezes no desktop, na branch e na `develop`;
-    - o axe da home, que pegou a saudação da tela de boas-vindas no meio do fade-in da troca de idioma (#40);
-    - o axe de `/stack`, que estourou os 30 s enquanto outro processo pesado rodava na máquina.
-  - Para o #46: no `StackTile`, o nome do tile de `/stack` só aparece com hover a partir de `md`, inclusive em tablet sem hover, o que fere "informação revelada por hover" (`no-hover:` resolve). O ícone já é o `TechIcon` decorativo.
-  - Para o dono: preencher o `apiDocs` da DevStore API quando houver a URL da documentação e, se quiser, trocar o `homepage` do repositório `devstore-api` no GitHub, que aponta para o front da DevStore.
+_Nenhum ticket em andamento ou em revisão._
 
 <!--
 Modelo de entrada:
@@ -140,6 +130,7 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
 
+- 2026-10-12 — Card de projeto acessível mergeado na `develop` (#63), e o #43 foi fechado: gaveta de tecnologias aberta sem hover e com foco dentro do card, "Ler mais" que mede o transbordo, `ProjectCard` no servidor, `ProjectLinks`, `TechIcon` e dados dos projetos corrigidos. Fica livre o #45. Ficam para outros tickets: no #45, o teste de CLS da home (troca de fonte do hero e do botão Menu) falhou algumas vezes sob carga e passou 8 de 8 vezes no desktop, tanto na branch do #43 quanto na `develop` anterior a ele. O axe de `/stack` estourou os 30 s enquanto outro processo pesado rodava na máquina. O axe da home pegou a saudação da tela de boas-vindas no meio do fade-in da troca de idioma (decisão do #40). No #46, o nome do tile de `/stack` só aparece com hover a partir de `md`, inclusive em tablet sem hover, e o `StackTile` pode usar a variante `no-hover:`. Para o dono: preencher o `apiDocs` da DevStore API quando houver a URL da documentação e, se quiser, trocar o `homepage` do repositório `devstore-api` no GitHub, que aponta para o front da DevStore.
 - 2026-10-12 — #43 em revisão no PR #63: gaveta de tecnologias aberta sem hover e com foco dentro do card; "Ler mais" como ilha que mede o transbordo, com `aria-expanded` e `aria-controls`; `ProjectCard` no servidor; `ProjectLinks` com o título do projeto e aviso de nova aba; `TechIcon` com texto alternativo em pt-BR; título do card em `<h2>` em `/projects`; links do GitHub sem `.git` (o do KinoGarten agora aponta para `kinogarten`), sem o deploy errado da DevStore API e sem o espaço duplo da Cidade Viva API.
 - 2026-10-12 — #43 em andamento na branch `feat/43-accessible-project-card`.
 - 2026-10-12 — Menu como diálogo modal, `Button` com variante `outline` e `<button>` nativo, navegação interna com `next/link`, `mailto:` na mesma aba e "Voltar" que não sai do site mergeados na `develop` (#61), e o #41 foi fechado. Nenhum ticket é liberado: o #46 ainda espera #43, #44 e #45. Ficam para outros tickets: no #45, o teste de CLS da home (`e2e/layout-shift.spec.ts`) falhou uma vez em suíte cheia no desktop, pela troca de fonte (`display: swap`) que muda a largura do botão Menu; com as fontes atrasadas em 1,5 s, o build anterior ao #41 desloca o mesmo valor (0,0049). O teste de largura dos cards (`e2e/projects.spec.ts`) e o de entrada das seções (`e2e/motion.spec.ts`) também falharam uma vez sob carga e passaram em 3 repetições. No #46, o "Voltar" usa um registro por documento, e não por entrada do histórico (limitação no registro de decisões), e o `src/hooks/` deixou de estar vazio. No #43, o `NEW_TAB_NOTICE` e o `focusRing` servem para os links "Código" e "Deploy" do card.
