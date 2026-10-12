@@ -2,12 +2,15 @@
 import { useId, useState } from 'react'
 import Link from 'next/link'
 import { Button, focusRing } from '@/components/ui/Button'
+import { useTrackClientNavigation } from '@/hooks/use-client-navigation'
 import { cn } from '@/lib/cn'
 import { MenuOverlay } from './MenuOverlay'
 
 export function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuId = useId()
+  // O Nav está em todas as rotas: daqui o "Voltar" sabe se a entrada anterior é do site.
+  useTrackClientNavigation()
 
   return (
     <>
