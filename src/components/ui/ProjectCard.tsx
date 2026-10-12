@@ -30,6 +30,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
           src={project.image}
           alt={project.title}
           fill
+          // Largura do card na lista: ~1/3 da tela em xl, 1/2 a partir de md e 80% na fileira.
+          sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 80vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
 
