@@ -17,7 +17,7 @@ export function Hero() {
           src="/images/hero/hero_background2.webp"
           alt="Duna solitária sob céu estrelado"
           fill
-          priority
+          preload
           sizes="100vw"
           className="object-cover object-center opacity-30"
         />

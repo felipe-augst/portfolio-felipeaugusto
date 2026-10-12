@@ -8,10 +8,9 @@ import type { Project } from '@/types/projects'
 
 type ProjectCardProps = {
   project: Project
-  priority?: boolean
 }
 
-export function ProjectCard({ project, priority = false }: ProjectCardProps) {
+export function ProjectCard({ project }: ProjectCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   // Define se o texto é longo o suficiente para precisar do botão
@@ -31,7 +30,6 @@ export function ProjectCard({ project, priority = false }: ProjectCardProps) {
           src={project.image}
           alt={project.title}
           fill
-          priority={priority}
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
 
@@ -44,15 +42,9 @@ export function ProjectCard({ project, priority = false }: ProjectCardProps) {
             'translate-y-full lg:group-hover:translate-y-0 max-md:in-data-[active=true]:translate-y-0',
           )}
         >
-          {project.technologies.map((tech, index) => (
+          {project.technologies.map((tech) => (
             <div key={tech.name} className="relative w-7 h-7" title={tech.name}>
-              <Image
-                src={tech.icon}
-                alt={tech.name}
-                priority={index < 2}
-                fill
-                className="object-contain"
-              />
+              <Image src={tech.icon} alt={tech.name} fill className="object-contain" />
             </div>
           ))}
         </div>
