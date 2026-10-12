@@ -26,7 +26,7 @@ Status:
 | #36   | Rotas estáticas + tela de boas-vindas uma vez por sessão | #35                | entregue     | `feat/36-static-routes-splash` | #52 |
 | #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
 | #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`       | #53 |
-| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em andamento | —                              | —   |
+| #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em andamento | `feat/39-projects-list-images` | —   |
 | #40   | Remover motion e respeitar movimento reduzido            | #36                | livre        | —                              | —   |
 | #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em andamento | —                              | —   |
 | #42   | Seção de contato acessível                               | #35                | entregue     | `fix/42-accessible-contact`    | #55 |
@@ -41,7 +41,13 @@ Status:
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
-_O #39 e o #41 estão em andamento, com o handoff nas próprias branches._
+_O #41 está em andamento em outro terminal, com o handoff na própria branch._
+
+### #39 — feat/39-projects-list-images
+
+- **Estado:** branch criada a partir da `develop` (`1a5a000`). Nenhum ciclo red → green feito ainda.
+- **Próximo passo:** primeiro ciclo: teste de request com os títulos dos projetos no HTML da home e de `/projects`.
+- **Atenção:** o #41 roda em paralelo em outra worktree. Rode a suíte E2E numa porta própria (ver "Avisos de ambiente").
 
 <!--
 Modelo de entrada:
