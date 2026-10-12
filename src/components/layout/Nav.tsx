@@ -4,7 +4,7 @@ import { NAV_ITEMS } from '@/data/nav'
 import { SOCIAL_LINKS } from '@/data/social'
 import { cn } from '@/lib/cn'
 import { NEW_TAB_NOTICE, opensInNewTab } from '@/lib/links'
-import { MenuOverlay } from './MenuOverlay'
+import { MenuOverlay } from '@/components/layout/MenuOverlay'
 
 export function Nav() {
   return (

@@ -1,9 +1,9 @@
 import { ServerImage } from '@/components/ui/ServerImage'
-import { Button } from '../ui/Button'
+import { Button } from '@/components/ui/Button'
 import { HERO } from '@/data/hero'
 import { SITE } from '@/data/site'
 import { Download } from 'lucide-react'
-import { ShimmerText } from '../ui/ShimmerText'
+import { ShimmerText } from '@/components/ui/ShimmerText'
 import { TechIcon } from '@/components/ui/TechIcon'
 import { CORE_STACK } from '@/data/technologies'
 

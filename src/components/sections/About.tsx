@@ -1,6 +1,6 @@
 import { ABOUT } from '@/data/about'
 import { TECH_CATEGORIES } from '@/data/technologies'
-import { Button } from '../ui/Button'
+import { Button } from '@/components/ui/Button'
 import { ArrowRight } from 'lucide-react'
 import { Section } from '@/components/ui/Section'
 import { SectionEyebrow } from '@/components/ui/SectionEyebrow'

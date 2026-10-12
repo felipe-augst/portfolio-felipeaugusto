@@ -12,6 +12,20 @@ const eslintConfig = defineConfig([
       '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
+  {
+    // Imports internos de `src/` passam pelo alias `@/`.
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            { group: ['./*', '../*'], message: 'Use o alias @/ nos imports internos de src/.' },
+          ],
+        },
+      ],
+    },
+  },
   globalIgnores([
     '.next/**',
     'out/**',
