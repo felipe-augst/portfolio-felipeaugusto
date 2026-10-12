@@ -27,7 +27,7 @@ Status:
 | #37   | SEO e metadados por rota                                 | #35                | entregue     | `fix/37-seo-metadata`          | #51 |
 | #38   | Shell de página, landmarks e página 404                  | #35                | entregue     | `feat/38-page-shell-404`       | #53 |
 | #39   | Lista de projetos no HTML inicial + imagens e fontes     | #35                | em andamento | —                              | —   |
-| #40   | Remover motion e respeitar movimento reduzido            | #36                | em revisão   | `fix/40-reduced-motion`        | #57 |
+| #40   | Remover motion e respeitar movimento reduzido            | #36                | entregue     | `fix/40-reduced-motion`        | #57 |
 | #41   | Menu como diálogo modal + navegação interna consistente  | #35                | em andamento | —                              | —   |
 | #42   | Seção de contato acessível                               | #35                | entregue     | `fix/42-accessible-contact`    | #55 |
 | #43   | Card de projeto acessível + correção dos dados           | #39                | bloqueado    | —                              | —   |
@@ -35,22 +35,13 @@ Status:
 | #45   | Web Vitals em produção + orçamento de JS inicial         | #39, #40, #42, #43 | bloqueado    | —                              | —   |
 | #46   | Fonte única de dados + limpeza + documentação            | #36–#45            | bloqueado    | —                              | —   |
 
-**Frontier:** #44. O #39 e o #41 estão em andamento em outros terminais, e o #40 está em revisão no PR #57.
+**Frontier:** #44. O #39 e o #41 estão em andamento em outros terminais.
 
 ## Handoff
 
 Uma entrada por ticket `em andamento` ou `em revisão`. A entrada é removida quando o ticket é entregue.
 
 _O #39 e o #41 estão em andamento, com o handoff nas próprias branches._
-
-### #40 — fix/40-reduced-motion
-
-- **Estado:** em revisão no PR #57. Todos os critérios têm teste em `e2e/motion.spec.ts` e `e2e/splash-screen.spec.ts`. `format:check`, `lint`, `typecheck`, `build` (tudo `○ (Static)`) e a suíte E2E (92 testes) passam. `motion` e `tailwindcss-animate` saíram, e o JS da home caiu de 206,7 KB para 168,0 KB transferidos.
-- **Próximo passo:** depois do merge, passo 7 do workflow (fechar a issue e liberar o #45 quando #39 e #43 também estiverem entregues).
-- **Atenção:**
-  - O #39 também mexe no `Hero.tsx` (`preload` e `alt=""` do fundo). Conflito provável no merge: mantenha o `Hero` sem `'use client'` e o stagger em CSS deste ticket.
-  - Os testes dos ícones do hero localizam as imagens do bloco de conteúdo do `<h1>`. Se o #46 mudar a estrutura do hero ou o `alt` dos ícones, confira `heroStackIcons` em `e2e/motion.spec.ts`.
-  - Ficam para outros tickets: o caminho do CV escrito à mão no `Hero` (#46, configuração central do site), os imports relativos `../ui/*` do `Hero` (#46) e o restante do orçamento de JS, que segue acima de 150 KB (#45).
 
 <!--
 Modelo de entrada:
@@ -115,6 +106,8 @@ Decisões que não estão na spec #33. A mais recente fica no topo.
 ## Log
 
 Uma linha por evento, no formato `data — evento (issue/PR)`. O mais recente fica no topo.
+
+- 2026-10-12 — Remoção do `motion`, entrada das seções em CSS e movimento reduzido respeitado mergeados na `develop` (#57), e o #40 foi fechado. Nenhum ticket é liberado: o #45 ainda espera #39 e #43. O #39 também mexe no `Hero.tsx`: na resolução, o `Hero` fica sem `'use client'` e com o stagger em CSS do #40. Ficam para outros tickets: o caminho do CV escrito à mão e os imports relativos `../ui/*` do `Hero` (#46) e o JS da home, ainda em 168,0 KB transferidos, acima dos 150 KB (#45). Se o #46 mudar a estrutura do hero ou o `alt` dos ícones, confira `heroStackIcons` em `e2e/motion.spec.ts`.
 
 - 2026-10-12 — #40 em revisão no PR #57: entrada das seções com `IntersectionObserver` e CSS, visível sem JS e parada com movimento reduzido; stagger do hero em CSS e `Hero` no servidor; reset de movimento reduzido com uma iteração e rolagem sem suavidade; `motion` e `tailwindcss-animate` removidos (JS da home de 206,7 KB para 168,0 KB transferidos).
 - 2026-10-12 — #40 em andamento na branch `fix/40-reduced-motion`.
