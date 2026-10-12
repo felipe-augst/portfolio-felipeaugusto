@@ -7,7 +7,10 @@ const SECURITY_HEADERS = [
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
   { key: 'X-Frame-Options', value: 'DENY' },
   // Só em report-only: o navegador aponta as violações no console, sem bloquear nada.
-  { key: 'Content-Security-Policy-Report-Only', value: "frame-ancestors 'none'" },
+  {
+    key: 'Content-Security-Policy-Report-Only',
+    value: "script-src 'self'; frame-ancestors 'none'",
+  },
 ]
 
 const nextConfig: NextConfig = {
