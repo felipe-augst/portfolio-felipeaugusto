@@ -2,7 +2,11 @@ import type { Locator, Page } from '@playwright/test'
 import { PROJECTS } from '@/data/projects'
 import type { Project } from '@/types/projects'
 import { expect, test } from './fixtures'
-import { isPainted } from './paint'
+import { effectiveOpacity, isPainted } from './paint'
+import { markSplashSeen } from './session'
+
+// Limite de Tabs para o foco chegar a um elemento da página.
+const MAX_TABS = 40
 
 // Listas de projetos: os destaques da home e a página com todos os projetos.
 const LISTS = [
@@ -58,12 +62,32 @@ function fullSizeItems(list: Locator) {
     )
 }
 
-// A gaveta de tecnologias do card está aberta: o ícone da primeira tecnologia é pintado.
-async function expectTechDrawerOpen(item: Locator, project: Project) {
+// Ícone da primeira tecnologia do projeto, na gaveta de tecnologias do card.
+function techDrawerIcon(item: Locator, project: Project) {
   const technology = project.technologies[0]
   expect(technology, `${project.title} tem tecnologias`).toBeDefined()
-  const icon = item.getByRole('img', { name: technology?.name, exact: true })
+  return item.getByRole('img', { name: technology?.name, exact: true })
+}
+
+// A gaveta de tecnologias do card está aberta: o ícone da primeira tecnologia é pintado.
+async function expectTechDrawerOpen(item: Locator, project: Project) {
+  const icon = techDrawerIcon(item, project)
   await expect.poll(() => isPainted(icon), `gaveta de ${project.title}`).toBe(true)
+}
+
+// Rola até a lista e espera a entrada da seção terminar, para a lista ficar com opacidade total.
+async function revealList(list: Locator) {
+  await list.scrollIntoViewIfNeeded()
+  await expect.poll(() => effectiveOpacity(list)).toBe(1)
+}
+
+// Aperta Tab até o foco chegar ao elemento.
+async function tabTo(page: Page, target: Locator) {
+  for (let tab = 0; tab < MAX_TABS; tab++) {
+    await page.keyboard.press('Tab')
+    if (await target.evaluate((element) => element === document.activeElement)) return
+  }
+  throw new Error(`o foco não chegou ao elemento em ${MAX_TABS} Tabs`)
 }
 
 // Altura de layout da seção de projetos da home, depois de as fontes carregarem.
@@ -136,6 +160,53 @@ test.describe('em telas estreitas', () => {
   }
 })
 
+test.describe('em dispositivos sem hover', () => {
+  test.skip(({ isMobile }) => !isMobile, 'o perfil mobile é touch, sem hover')
+
+  for (const { route, name, projects } of LISTS) {
+    test(`${route}: a gaveta de tecnologias de todos os cards fica visível sem interação com eles`, async ({
+      page,
+    }) => {
+      await page.goto(route)
+      const list = projectList(page, name)
+      const items = list.getByRole('listitem')
+      await revealList(list)
+
+      // Fora da área de rolagem da lista, o card fica recortado: conta só o recorte do próprio card.
+      for (const [index, project] of projects.entries()) {
+        const item = items.nth(index)
+        await expect
+          .poll(() => isPainted(techDrawerIcon(item, project), item), project.title)
+          .toBe(true)
+      }
+    })
+  }
+})
+
+test.describe('em dispositivos com hover', () => {
+  test.skip(({ isMobile }) => isMobile, 'o perfil desktop tem mouse')
+
+  for (const { route, name, projects } of LISTS) {
+    test(`${route}: a gaveta de tecnologias começa fechada e abre quando um link do card recebe foco pelo teclado`, async ({
+      page,
+    }) => {
+      await markSplashSeen(page)
+      await page.goto(route)
+      const list = projectList(page, name)
+      const item = list.getByRole('listitem').first()
+      const project = projects[0]
+      if (!project) throw new Error(`${route} não tem projetos`)
+      const icon = techDrawerIcon(item, project)
+      await revealList(list)
+      expect(await isPainted(icon), 'gaveta antes do foco').toBe(false)
+
+      await tabTo(page, item.getByRole('link').first())
+
+      await expect.poll(() => isPainted(icon), 'gaveta com foco no link').toBe(true)
+    })
+  }
+})
+
 test.describe('a partir de md', () => {
   test.skip(({ isMobile }) => isMobile, 'layout do perfil desktop')
   test.use({ viewport: { width: 800, height: 900 } })
@@ -160,6 +231,22 @@ test.describe('a partir de md', () => {
       await page.waitForLoadState('networkidle')
 
       expect(await fullSizeItems(list)).toHaveLength(projects.length)
+    })
+
+    test(`${route}: a gaveta de tecnologias abre com o mouse sobre o card`, async ({ page }) => {
+      await markSplashSeen(page)
+      await page.goto(route)
+      const list = projectList(page, name)
+      const item = list.getByRole('listitem').first()
+      const project = projects[0]
+      if (!project) throw new Error(`${route} não tem projetos`)
+      const icon = techDrawerIcon(item, project)
+      await revealList(list)
+      expect(await isPainted(icon), 'gaveta antes do hover').toBe(false)
+
+      await item.hover()
+
+      await expect.poll(() => isPainted(icon), 'gaveta com hover').toBe(true)
     })
   }
 })
