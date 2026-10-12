@@ -11,30 +11,36 @@ type ProjectLinksProps = {
   links: Project['links']
 }
 
+type ProjectLink = {
+  key: keyof Project['links']
+  label: string
+  icon: LucideIcon
+  className: string
+}
+
 // Ordem, texto visível, ícone e cor de cada link do card.
-const LINKS: { key: keyof Project['links']; label: string; icon: LucideIcon; className: string }[] =
-  [
-    { key: 'github', label: 'Código', icon: Link, className: 'text-sand-muted hover:text-sand' },
-    {
-      key: 'live',
-      label: 'Deploy',
-      icon: ExternalLink,
-      className: 'text-accent hover:text-accent-warm',
-    },
-    {
-      key: 'apiDocs',
-      label: 'Documentação',
-      icon: BookOpen,
-      className: 'text-sand-muted hover:text-sand',
-    },
-  ]
+const PROJECT_LINKS = [
+  { key: 'github', label: 'Código', icon: Link, className: 'text-sand-muted hover:text-sand' },
+  {
+    key: 'live',
+    label: 'Deploy',
+    icon: ExternalLink,
+    className: 'text-accent hover:text-accent-warm',
+  },
+  {
+    key: 'apiDocs',
+    label: 'Documentação',
+    icon: BookOpen,
+    className: 'text-sand-muted hover:text-sand',
+  },
+] as const satisfies readonly ProjectLink[]
 
 // Links do card de projeto. O leitor de tela ouve de qual projeto é cada link e se ele abre em
 // nova aba: o texto visível vem primeiro, e o resto fica em sr-only.
 export function ProjectLinks({ title, links }: ProjectLinksProps) {
   return (
     <div className="mt-auto flex items-center justify-between gap-4 pt-4 border-t border-border-strong/50">
-      {LINKS.map(({ key, label, icon, className }) => {
+      {PROJECT_LINKS.map(({ key, label, icon, className }) => {
         const href = links[key]
         if (!href) return null
         const newTab = opensInNewTab(href)
