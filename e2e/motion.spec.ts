@@ -16,6 +16,12 @@ function homeSections(page: Page) {
   ]
 }
 
+// Os ícones de stack do hero são um pouco transparentes de propósito. Nos testes, visível é
+// opacidade efetiva acima deste valor.
+const ICON_VISIBLE_OPACITY = 0.5
+// Duração da entrada dos ícones, do primeiro atraso ao fim da última, com folga.
+const ICON_ENTRANCE_MS = 2_500
+
 // Ícones de stack do hero: as imagens do bloco de conteúdo do <h1>. O fundo do hero fica fora dele.
 function heroStackIcons(page: Page) {
   return page.getByRole('heading', { level: 1 }).locator('..').getByRole('img')
@@ -95,7 +101,7 @@ test('os ícones de stack do hero entram em sequência por CSS e ficam visíveis
   expect(increasing, `atrasos: ${delays.join(', ')}`).toBe(true)
 
   for (const icon of await icons.all()) {
-    await expect.poll(() => effectiveOpacity(icon)).toBe(1)
+    await expect.poll(() => effectiveOpacity(icon)).toBeGreaterThan(ICON_VISIBLE_OPACITY)
   }
 })
 
@@ -113,16 +119,20 @@ test.describe('com movimento reduzido', () => {
     }
   })
 
-  test('os ícones de stack do hero aparecem visíveis e sem deslocamento desde o início', async ({
+  test('os ícones de stack do hero ficam visíveis e sem deslocamento desde o início', async ({
     page,
   }) => {
-    await page.goto('/')
+    await page.goto('/', { waitUntil: 'commit' })
     const icons = heroStackIcons(page)
-
     await expect(icons).not.toHaveCount(0)
-    for (const icon of await icons.all()) {
-      expect(await effectiveOpacity(icon)).toBe(1)
-      expect(await isDisplaced(icon)).toBe(false)
+
+    // Lê os ícones repetidamente, do HTML recém-chegado até depois do tempo que a entrada duraria.
+    const deadline = Date.now() + ICON_ENTRANCE_MS
+    while (Date.now() < deadline) {
+      for (const icon of await icons.all()) {
+        expect(await effectiveOpacity(icon)).toBeGreaterThan(ICON_VISIBLE_OPACITY)
+        expect(await isDisplaced(icon)).toBe(false)
+      }
     }
   })
 
@@ -181,8 +191,9 @@ test.describe('sem JavaScript', () => {
     const icons = heroStackIcons(page)
 
     await expect(icons).not.toHaveCount(0)
+    // A entrada em CSS roda sem JS e termina com os ícones visíveis.
     for (const icon of await icons.all()) {
-      expect(await effectiveOpacity(icon)).toBe(1)
+      await expect.poll(() => effectiveOpacity(icon)).toBeGreaterThan(ICON_VISIBLE_OPACITY)
     }
   })
 })
