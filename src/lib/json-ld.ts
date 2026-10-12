@@ -1,6 +1,6 @@
 import { SITE } from '@/data/site'
 import { SOCIAL_LINKS } from '@/data/social'
-import { CORE_STACK } from '@/data/stack'
+import { CORE_STACK } from '@/data/technologies'
 import type { SocialPlatform } from '@/types/social'
 
 // Perfis públicos que identificam a pessoa. E-mail e WhatsApp são canais de contato, não perfis.

@@ -1,8 +1,8 @@
 import { ServerImage } from '@/components/ui/ServerImage'
-import type { Technology } from '@/types/skills'
+import type { IconTechnology } from '@/types/technologies'
 
 type TechIconProps = {
-  technology: Technology
+  technology: IconTechnology
   // Largura e altura, em px.
   size: number
   // Ao lado do nome visível da tecnologia, o ícone é decorativo e fica com `alt=""`.

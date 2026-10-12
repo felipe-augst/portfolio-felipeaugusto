@@ -4,7 +4,7 @@ import { HERO } from '@/data/hero'
 import { Download } from 'lucide-react'
 import { ShimmerText } from '../ui/ShimmerText'
 import { TechIcon } from '@/components/ui/TechIcon'
-import { CORE_STACK } from '@/data/stack'
+import { CORE_STACK } from '@/data/technologies'
 
 // Entrada dos ícones de stack: o primeiro começa depois de STACK_DELAY_MS, e cada um
 // STACK_STAGGER_MS depois do anterior.

@@ -1,5 +1,6 @@
 import { PROJECTS } from '@/data/projects'
-import { CORE_STACK, STACKS_PAGE_DATA } from '@/data/stack'
+import { CORE_STACK, TECH_CATEGORIES } from '@/data/technologies'
+import type { Technology } from '@/types/technologies'
 import { expect, test } from './fixtures'
 
 // Ícones de tecnologia: o texto alternativo é o nome da tecnologia, sem "icon" em inglês, e o
@@ -25,7 +26,9 @@ test('em /stack, os ícones ficam fora da árvore de acessibilidade, ao lado do 
   const main = page.getByRole('main')
 
   await expect(main.getByRole('img')).toHaveCount(0)
-  for (const technology of STACKS_PAGE_DATA.flatMap((category) => category.stacks)) {
+  for (const technology of TECH_CATEGORIES.flatMap<Technology>(
+    (category) => category.technologies,
+  )) {
     await expect(main.getByText(technology.name, { exact: true }).first()).toBeAttached()
   }
 })

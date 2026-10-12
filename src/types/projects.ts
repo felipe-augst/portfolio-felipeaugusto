@@ -1,4 +1,4 @@
-import type { Technology } from './skills'
+import type { IconTechnology } from '@/types/technologies'
 
 export type ProjectCategory = 'frontend' | 'backend' | 'fullstack'
 
@@ -8,7 +8,7 @@ export type Project = {
   description: string
   image: string
   category: ProjectCategory
-  technologies: Technology[]
+  technologies: readonly IconTechnology[]
   links: {
     github?: string
     live?: string
